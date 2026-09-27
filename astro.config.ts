@@ -20,7 +20,9 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap({
-      // Drafts are noindex'd; keep them out of the sitemap too.
+      // Drafts aren't emitted by a production build, so they can't reach the
+      // sitemap that way. Under BUILD_DRAFTS they would — they're noindex'd,
+      // which is the backstop. This filter only drops the 404 page.
       filter: (page) => !page.includes('/404'),
     }),
   ],
