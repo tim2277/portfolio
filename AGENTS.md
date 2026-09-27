@@ -9,9 +9,24 @@ are in `README.md`.
 Breaking any of these is a bug, not a style choice. If a change requires
 breaking one, stop and say so rather than working around it.
 
-- **Zero client-side JavaScript on content pages.** No `client:*` directives, no
-  framework components, no analytics, no web fonts. The dark-mode "toggle" is
-  `prefers-color-scheme` and stays that way.
+- **No framework runtimes.** No React, Vue or Svelte, no `client:*` directives,
+  no analytics, no tag managers. Vanilla JavaScript is welcome where it earns
+  its place — the theme toggle in `src/layouts/BaseLayout.astro` is the worked
+  example: about thirty lines, no dependencies, and it degrades to
+  `prefers-color-scheme` when it doesn't run.
+- **Enhancements only.** A content page must do its whole job with scripts
+  blocked. Anything JavaScript adds is on top of a page that already works —
+  no controls that sit there dead, no content that arrives late.
+- **Self-hosted fonts only.** No Google Fonts, no CDN, nothing that makes the
+  reader's browser talk to a third party — that's the part of the old no-web-
+  fonts rule worth keeping. Fraunces ships from `_astro/` via
+  `@fontsource-variable/fraunces`, weight axis only, headings alone. Body and
+  code stay on locally installed stacks. Adding a second family is a
+  dependency decision, not a styling one.
+- **Every inline script is pinned in the CSP by hash.** `script-src` in
+  `public/staticwebapp.config.json` lists a sha256 per script. Edit one without
+  recomputing it and the browser silently refuses to run it — the feature dies,
+  the build stays green, and nothing says why. See the traps below.
 - **Static output only.** No adapter, no SSR, no server islands.
 - **British English** in all prose, UI copy, and content.
 - **No employer code and no client names.** Content is concepts, patterns and
@@ -30,7 +45,8 @@ npm run build
 Then confirm the build actually produced a site:
 
 - `dist/_astro/*.css` exists — see the junction trap below
-- zero `<script` in `dist/**/*.html`
+- every `<script` in `dist/**/*.html` is inline, and each one's sha256 appears
+  in `script-src` in `dist/staticwebapp.config.json`
 - `dist/staticwebapp.config.json` exists
 
 A build can "succeed" and still fail all three.
@@ -45,6 +61,20 @@ the module graph splits, and every stylesheet is dropped from the build. The
 site builds fine and renders unstyled. `astro.config.ts` sets
 `vite.resolve.preserveSymlinks` to hold both halves on one path — don't remove
 it, and if CSS ever vanishes, look here first.
+
+**A stale CSP hash kills a script in silence.** Inline scripts are `is:inline`,
+so Astro emits them byte-for-byte and the sha256 in `script-src` has to match.
+Nothing in `npm run check` or `npm run build` verifies this. After touching a
+script, rebuild and recompute:
+
+```powershell
+$html = Get-Content dist\index.html -Raw
+$body = [regex]::Match($html, '(?s)<script>(.*?)</script>').Groups[1].Value
+$bytes = [System.Text.Encoding]::UTF8.GetBytes($body)
+"sha256-$([Convert]::ToBase64String([System.Security.Cryptography.SHA256]::Create().ComputeHash($bytes)))"
+```
+
+Paste the result into `script-src` in `public/staticwebapp.config.json`.
 
 **`staticwebapp.config.json` must live in `public/`.** Only `dist/` is uploaded,
 and Astro copies `public/` into it. At the repo root the file is ignored

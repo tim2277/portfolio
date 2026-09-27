@@ -1,4 +1,22 @@
-# core.autocrlf would check these out with CRLF, and sh refuses to run a script
-# with \r in it — the pre-push hook would fail open on a fresh clone.
+# Normalise every text file to LF *in the repository*. Windows checkouts still
+# get CRLF in the working tree via core.autocrlf, and the ubuntu-latest runner
+# gets LF. Neither side has to care, and diffs stay free of line-ending churn.
+* text=auto
+
+# Never convert, never diff as text.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.avif binary
+*.gif binary
+*.ico binary
+*.woff2 binary
+*.woff binary
+*.pdf binary
+
+# sh refuses to run a script containing \r, so these stay LF on every platform
+# regardless of the checkout setting — otherwise the pre-push hook fails open
+# on a fresh Windows clone, which is the one place it needs to work.
 .githooks/* text eol=lf
 *.sh text eol=lf
