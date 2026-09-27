@@ -1,0 +1,4 @@
+# core.autocrlf would check these out with CRLF, and sh refuses to run a script
+# with \r in it — the pre-push hook would fail open on a fresh clone.
+.githooks/* text eol=lf
+*.sh text eol=lf

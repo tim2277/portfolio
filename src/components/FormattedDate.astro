@@ -1,0 +1,18 @@
+---
+import { SITE_LOCALE } from '../consts';
+
+interface Props {
+  date: Date;
+  prefix?: string;
+}
+
+const { date, prefix } = Astro.props;
+
+const formatted = new Intl.DateTimeFormat(SITE_LOCALE, {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+}).format(date);
+---
+
+<time datetime={date.toISOString()}>{prefix ? `${prefix} ${formatted}` : formatted}</time>

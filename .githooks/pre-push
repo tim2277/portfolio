@@ -1,0 +1,53 @@
+#!/bin/sh
+#
+# Refuse to push drafts/* branches to the public remote.
+#
+# Tracked in the repo rather than left in .git/hooks so it survives a clone.
+# Activate with:  git config core.hooksPath .githooks
+#
+# git passes the remote name as $1 and its URL as $2, and the refs being
+# pushed on stdin as: <local ref> <local sha> <remote ref> <remote sha>
+
+remote_name="$1"
+remote_url="$2"
+
+is_public=0
+[ "$remote_name" = "origin" ] && is_public=1
+# Match the repo name exactly so portfolio-drafts doesn't trip this.
+case "$remote_url" in
+  */portfolio|*/portfolio.git) is_public=1 ;;
+esac
+
+[ "$is_public" -eq 1 ] || exit 0
+
+blocked=""
+while read -r local_ref _ remote_ref _; do
+  case "$local_ref:$remote_ref" in
+    *refs/heads/drafts/*)
+      blocked="$blocked  ${local_ref#refs/heads/}
+"
+      ;;
+  esac
+done
+
+[ -n "$blocked" ] || exit 0
+
+cat >&2 <<EOF
+
+pre-push: refusing to push draft branches to the public remote ($remote_name):
+
+$blocked
+Draft branches belong on 'private'. Either:
+
+  git push private ${blocked%%
+*}
+
+or, if you genuinely mean to publish this branch as-is:
+
+  git push --no-verify $remote_name <branch>
+
+Prefer squash-merging the branch into main instead — a plain merge carries
+every intermediate draft commit into the public repo permanently.
+
+EOF
+exit 1

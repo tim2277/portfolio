@@ -1,0 +1,90 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+
+interface Props {
+  entry: CollectionEntry<'posts'> | CollectionEntry<'projects'>;
+  /** Label for the 'back to index' link, e.g. 'All posts'. */
+  backLabel: string;
+  backHref: string;
+}
+
+const { entry, backLabel, backHref } = Astro.props;
+const { data } = entry;
+const isProject = 'status' in data;
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.description}
+  type="article"
+  publishedAt={data.date}
+  updatedAt={data.updated}
+  noindex={data.draft}
+>
+  <article>
+    <header>
+      <p class="entry-meta">
+        <FormattedDate date={data.date} />
+        {data.updated && <FormattedDate date={data.updated} prefix="· updated" />}
+        {isProject && <span>· {data.status}</span>}
+        {data.draft && <span class="badge-draft">draft</span>}
+      </p>
+      <h1>{data.title}</h1>
+      <p class="lede">{data.description}</p>
+      {
+        data.tags.length > 0 && (
+          <ul class="tags">
+            {data.tags.map((tag) => (
+              <li class="tag">{tag}</li>
+            ))}
+          </ul>
+        )
+      }
+      {
+        isProject && (data.repo || data.url) && (
+          <p class="entry-meta">
+            {data.repo && <a href={data.repo}>Source</a>}
+            {data.url && <a href={data.url}>Live</a>}
+          </p>
+        )
+      }
+      {
+        data.heroImage && (
+          <Image
+            src={data.heroImage}
+            alt={data.heroAlt ?? ''}
+            widths={[480, 800, 1200]}
+            sizes="(min-width: 68ch) 68ch, 100vw"
+            loading="eager"
+            class="hero"
+          />
+        )
+      }
+    </header>
+
+    <slot />
+  </article>
+
+  <hr />
+  <p><a href={backHref}>← {backLabel}</a></p>
+</BaseLayout>
+
+<style>
+  article :global(.hero) {
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    margin-block: 1.75rem 0;
+  }
+
+  header {
+    margin-block-end: 2.5rem;
+  }
+
+  /* First heading in the body shouldn't collide with the header block. */
+  article :global(h2:first-of-type) {
+    margin-block-start: 0;
+  }
+</style>

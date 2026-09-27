@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EntryList from '../../components/EntryList.astro';
+import { getProjects } from '../../lib/content';
+
+const projects = await getProjects();
+---
+
+<BaseLayout
+  title="Projects"
+  description="Things I've built — write-ups of the interesting decisions rather than a gallery of screenshots."
+>
+  <h1>Projects</h1>
+  <p class="lede">
+    Things I've built. These are write-ups of the interesting decisions rather than a
+    gallery of screenshots.
+  </p>
+  <EntryList
+    entries={projects}
+    base="/projects"
+    emptyMessage="No projects published yet. Watch this space."
+  />
+</BaseLayout>

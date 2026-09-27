@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import EntryList from '../components/EntryList.astro';
+import { getPosts, getProjects } from '../lib/content';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+
+const posts = (await getPosts()).slice(0, 5);
+const projects = (await getProjects()).slice(0, 3);
+---
+
+<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+  <h1>Hello — I'm Tim.</h1>
+  <p class="lede">
+    I build software, and I spend a fair amount of time working out where AI agents
+    genuinely earn their keep in a delivery workflow — and where they just make a mess
+    faster.
+  </p>
+  <p>
+    This is where I write that down: architecture notes, agent workflows in the SDLC, and
+    the occasional post-mortem on something that didn't work. Concepts and write-ups only
+    — nothing here is employer code.
+  </p>
+
+  <h2>Latest posts</h2>
+  <EntryList entries={posts} base="/posts" emptyMessage="No posts published yet." />
+  <p><a href="/posts/">All posts →</a></p>
+
+  <h2>Projects</h2>
+  <EntryList entries={projects} base="/projects" emptyMessage="No projects published yet." />
+  <p><a href="/projects/">All projects →</a></p>
+</BaseLayout>

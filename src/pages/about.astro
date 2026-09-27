@@ -1,0 +1,51 @@
+---
+// TODO (Tim): skeleton in your voice, not your CV. Swap in the real specifics —
+// stack, domains, years, the bits you want to be found for. Deliberately no
+// invented employers or dates.
+// Keep notes in this fence, not in HTML comments: Astro passes `<!-- -->`
+// straight through to the rendered page.
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="About"
+  description="Who I am, what I work on, and why this site leans towards write-ups rather than screenshots."
+>
+  <h1>About</h1>
+
+  <p class="lede">
+    I'm a software engineer. I've spent a long time shipping things, and rather less time
+    writing about it than I probably should have. This site is the correction.
+  </p>
+
+  <h2>What I work on</h2>
+  <p>
+    Mostly backend and platform work, with a steady interest in the seam between
+    engineering practice and tooling — the parts of delivery that quietly decide whether a
+    team ships weekly or quarterly.
+  </p>
+
+  <h2>AI Ops</h2>
+  <p>
+    The other half of what I write about here. Not "AI will write your code", but the more
+    interesting and less glamorous question: where do agents actually fit into an existing
+    SDLC? Review, triage, migration, test scaffolding, documentation that stays current.
+    What needs a human gate, what doesn't, and what breaks when you get that boundary
+    wrong.
+  </p>
+  <p>
+    I'm sceptical by default and reasonably well-calibrated about it. Things that work get
+    written up; so do the things that didn't.
+  </p>
+
+  <h2>What you won't find here</h2>
+  <p>
+    Any employer code. Everything on this site is concepts, patterns and write-ups —
+    generalised deliberately, and written from my own projects where there's code to show.
+  </p>
+
+  <h2>Elsewhere</h2>
+  <ul>
+    <li><a href="/rss.xml">RSS feed</a></li>
+  </ul>
+</BaseLayout>

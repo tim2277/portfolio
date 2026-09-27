@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EntryList from '../../components/EntryList.astro';
+import { getPosts } from '../../lib/content';
+
+const posts = await getPosts();
+---
+
+<BaseLayout
+  title="Posts"
+  description="Write-ups on software delivery, architecture, and using AI agents inside real SDLC workflows."
+>
+  <h1>Posts</h1>
+  <p class="lede">
+    Write-ups on software delivery, architecture, and AI Ops — agents doing real work in a
+    real pipeline.
+  </p>
+  <EntryList entries={posts} base="/posts" emptyMessage="No posts published yet. Watch this space." />
+</BaseLayout>

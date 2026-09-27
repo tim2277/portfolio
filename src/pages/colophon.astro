@@ -1,0 +1,147 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Callout from '../components/Callout.astro';
+---
+
+<BaseLayout
+  title="How this site is built"
+  description="Astro, Azure Static Web Apps, Bicep and GitHub Actions — the whole pipeline, including the bits that were more awkward than the docs suggest."
+>
+  <h1>How this site is built</h1>
+  <p class="lede">
+    Astro on Azure Static Web Apps, provisioned with Bicep and deployed by GitHub Actions.
+    The whole thing is static — no server, no adapter, and no client-side JavaScript on a
+    content page.
+  </p>
+
+  <h2>The stack, briefly</h2>
+  <table>
+    <thead>
+      <tr><th>Layer</th><th>Choice</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Site generator</td><td>Astro 7, static output</td></tr>
+      <tr><td>Content</td><td>MDX in content collections, Zod-typed frontmatter</td></tr>
+      <tr><td>Styling</td><td>One hand-written stylesheet, CSS custom properties</td></tr>
+      <tr><td>Hosting</td><td>Azure Static Web Apps, Free tier</td></tr>
+      <tr><td>Infrastructure</td><td>Bicep, one resource</td></tr>
+      <tr><td>Pipeline</td><td>GitHub Actions, with PR preview environments</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Content is typed, not trusted</h2>
+  <p>
+    Both collections — <code>posts</code> and <code>projects</code> — share a Zod schema for
+    title, description, date, tags and draft status, with projects adding a status enum and
+    optional repo/live links. A typo in frontmatter fails the build rather than quietly
+    rendering an empty <code>&lt;title&gt;</code>, which is the entire point.
+  </p>
+  <p>
+    Drafts are visible in <code>astro dev</code> and excluded from a production build. There's
+    an escape hatch — a <code>BUILD_DRAFTS</code> environment variable — so the templates can
+    be exercised by a real build before anything is published.
+  </p>
+
+  <h2>Zero JavaScript, deliberately</h2>
+  <p>
+    Nothing here needs to be interactive, so nothing here ships a runtime. Two consequences
+    worth noting:
+  </p>
+  <ul>
+    <li>
+      <strong>Dark mode has no toggle.</strong> It follows
+      <code>prefers-color-scheme</code>, because the alternative is a script, a storage
+      read, and a flash of the wrong theme on first paint. A toggle is a real feature; it
+      just isn't a free one.
+    </li>
+    <li>
+      <strong>Syntax highlighting is build-time.</strong> Shiki emits both themes as CSS
+      variables and a media query picks one. The highlighter never reaches the browser.
+    </li>
+  </ul>
+
+  <h2>Diagrams</h2>
+  <p>
+    Mermaid isn't wired up yet, and that's a decision rather than an oversight. Both routes
+    cost something:
+  </p>
+  <ul>
+    <li>
+      <strong>rehype-mermaid</strong> runs the real Mermaid inside a headless Chromium at
+      build time. Perfect fidelity, but it puts a browser download in the CI pipeline.
+    </li>
+    <li>
+      <strong>A pure-JS renderer</strong> such as beautiful-mermaid emits SVG with no DOM
+      at all. Fast, but it's a reimplementation, so the long tail of Mermaid syntax is a
+      question mark.
+    </li>
+  </ul>
+  <p>
+    Either produces inline SVG with no client JS, which is the requirement. The choice gets
+    made when there's a post that actually needs a diagram, and the diagram will show which
+    one is right.
+  </p>
+
+  <h2>Infrastructure</h2>
+  <p>
+    One Bicep file, one resource: a <code>Microsoft.Web/staticSites</code> on the Free tier
+    with <code>provider: 'Custom'</code> and staging environments enabled. <code>Custom</code>
+    matters — it stops Azure trying to generate its own workflow file and wire itself to the
+    repository. The pipeline owns the deployment; Bicep owns the resource.
+  </p>
+
+  <h2>The pipeline, and the Oryx detour</h2>
+  <p>
+    The default Static Web Apps workflow hands your repository to Oryx, Azure's build
+    engine, and lets it work out how to build the site. That's convenient right up until
+    you want to control the Node version, run a type check, or know why a build failed.
+  </p>
+  <p>
+    So this pipeline doesn't use it. GitHub Actions checks out, installs on a pinned Node,
+    runs <code>astro check</code>, runs <code>astro build</code>, and then the deploy action
+    runs with <code>skip_app_build: true</code> — it uploads <code>dist</code> and nothing
+    else.
+  </p>
+
+  <Callout type="tip" title="The gotcha">
+    With <code>skip_app_build</code>, <code>app_location</code> stops meaning "where the
+    source is" and starts meaning "where the built output is". And because only
+    <code>dist</code> gets uploaded, <code>staticwebapp.config.json</code> has to be inside
+    it — so it lives in <code>public/</code> and Astro copies it across. Leave it at the
+    repository root and it's silently ignored: no error, no headers, just a site that scores
+    badly on a security scan for no visible reason.
+  </Callout>
+
+  <p>
+    Pull requests get their own preview environment on a stable URL, and a second job tears
+    it down when the PR closes. The Free tier allows three at once, which is more than
+    enough for one person.
+  </p>
+
+  <h2>Headers and caching</h2>
+  <p>
+    <code>staticwebapp.config.json</code> sets a restrictive CSP, HSTS, <code>nosniff</code>,
+    a referrer policy and a <code>Permissions-Policy</code> that switches off hardware APIs
+    this site will never ask for. Astro's hashed assets under <code>/_astro/</code> get a
+    year of immutable caching; HTML gets <code>must-revalidate</code>, so a deploy is visible
+    immediately.
+  </p>
+  <p>
+    The CSP still carries <code>'unsafe-inline'</code> for styles, because Astro's scoped
+    component styles are inlined. Removing it means nonces or hashes, which means
+    server-side rendering — a real trade against "static only". It stays for now, and it's
+    worth being honest that it's there.
+  </p>
+
+  <h2>What's deliberately missing</h2>
+  <ul>
+    <li>No analytics.</li>
+    <li>No comments.</li>
+    <li>No web fonts — the system stack loads instantly and looks fine.</li>
+    <li>
+      No interactive islands. There's room for a self-contained Blazor WebAssembly demo as
+      an exhibit later, which is exactly the kind of thing an island is for. It isn't built
+      yet.
+    </li>
+  </ul>
+</BaseLayout>

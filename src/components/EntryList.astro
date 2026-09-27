@@ -1,0 +1,42 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import FormattedDate from './FormattedDate.astro';
+
+interface Props {
+  entries: (CollectionEntry<'posts'> | CollectionEntry<'projects'>)[];
+  /** Collection route prefix, e.g. '/posts'. */
+  base: string;
+  emptyMessage?: string;
+}
+
+const { entries, base, emptyMessage = 'Nothing published here yet.' } = Astro.props;
+---
+
+{
+  entries.length === 0 ? (
+    <p class="muted">{emptyMessage}</p>
+  ) : (
+    <ul class="entry-list">
+      {entries.map((entry) => (
+        <li>
+          <p class="entry-meta">
+            <FormattedDate date={entry.data.date} />
+            {'status' in entry.data && <span>· {entry.data.status}</span>}
+            {entry.data.draft && <span class="badge-draft">draft</span>}
+          </p>
+          <h2 class="entry-title">
+            <a href={`${base}/${entry.id}/`}>{entry.data.title}</a>
+          </h2>
+          <p class="entry-desc">{entry.data.description}</p>
+          {entry.data.tags.length > 0 && (
+            <ul class="tags">
+              {entry.data.tags.map((tag) => (
+                <li class="tag">{tag}</li>
+              ))}
+            </ul>
+          )}
+        </li>
+      ))}
+    </ul>
+  )
+}
