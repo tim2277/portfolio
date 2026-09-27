@@ -89,8 +89,12 @@ Two remotes, one working copy:
 
 | Remote | Repo | Holds |
 | --- | --- | --- |
-| `origin` | `portfolio` (public) | `main` only |
-| `private` | `portfolio-drafts` (private) | `drafts/*` branches |
+| `origin` | `portfolio` (public) | `main` |
+| `private` | `portfolio-drafts` (private) | `drafts/*`, plus `main` as a base |
+
+`main` lives on both, with its upstream set to `origin` — a bare `git push` on
+`main` is always the public one. The private copy exists so draft branches have
+a base; refresh it with `git push private main`.
 
 Unfinished writing lives on a `drafts/<topic>` branch pushed only to `private`,
 so it isn't readable on the public repo while it's still half-formed. Rules:

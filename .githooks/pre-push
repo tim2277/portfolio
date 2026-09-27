@@ -21,10 +21,13 @@ esac
 [ "$is_public" -eq 1 ] || exit 0
 
 blocked=""
+first=""
 while read -r local_ref _ remote_ref _; do
   case "$local_ref:$remote_ref" in
     *refs/heads/drafts/*)
-      blocked="$blocked  ${local_ref#refs/heads/}
+      branch="${local_ref#refs/heads/}"
+      [ -n "$first" ] || first="$branch"
+      blocked="$blocked  $branch
 "
       ;;
   esac
@@ -39,8 +42,7 @@ pre-push: refusing to push draft branches to the public remote ($remote_name):
 $blocked
 Draft branches belong on 'private'. Either:
 
-  git push private ${blocked%%
-*}
+  git push private $first
 
 or, if you genuinely mean to publish this branch as-is:
 

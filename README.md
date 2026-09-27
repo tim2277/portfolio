@@ -48,7 +48,12 @@ One working copy, two remotes. `main` is public; unfinished writing lives on a
 | Remote | Repo | Holds |
 | --- | --- | --- |
 | `origin` | `portfolio` (public) | `main` |
-| `private` | `portfolio-drafts` (private) | `drafts/*` |
+| `private` | `portfolio-drafts` (private) | `drafts/*`, plus `main` as a base |
+
+`main` exists on both. Its upstream is `origin`, so a bare `git push` on `main`
+always goes public — the private copy is only there to give draft branches
+something to branch from and diff against. Refresh it with `git push private
+main` when it's drifted.
 
 Starting a draft:
 
