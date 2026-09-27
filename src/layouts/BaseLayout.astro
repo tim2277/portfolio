@@ -15,12 +15,53 @@ interface Props {
 }
 
 const props = Astro.props;
+
+// The only client-side JavaScript on the site. It runs before <body> parses so
+// an explicit theme choice is applied before first paint — deferring it would
+// flash the OS theme first. `is:inline` keeps Astro from bundling it, which
+// also keeps the bytes stable: the CSP in public/staticwebapp.config.json
+// carries a sha256 of exactly this text, so editing it means recomputing the
+// hash or the script stops running. See AGENTS.md.
 ---
 
 <!doctype html>
 <html lang={SITE_LOCALE}>
   <head>
     <BaseHead {...props} />
+    <script is:inline>
+      (() => {
+        const root = document.documentElement;
+        const mq = matchMedia('(prefers-color-scheme: dark)');
+        let stored = null;
+        try {
+          stored = localStorage.getItem('theme');
+        } catch {}
+        if (stored === 'light' || stored === 'dark') root.dataset.theme = stored;
+
+        const current = () => root.dataset.theme || (mq.matches ? 'dark' : 'light');
+
+        const label = (btn) => {
+          const next = current() === 'dark' ? 'light' : 'dark';
+          btn.textContent = next === 'dark' ? 'Dark' : 'Light';
+          btn.setAttribute('aria-label', `Switch to the ${next} theme`);
+        };
+
+        addEventListener('DOMContentLoaded', () => {
+          const btn = document.querySelector('.theme-toggle');
+          if (!btn) return;
+          btn.hidden = false;
+          label(btn);
+          btn.addEventListener('click', () => {
+            const next = current() === 'dark' ? 'light' : 'dark';
+            root.dataset.theme = next;
+            try {
+              localStorage.setItem('theme', next);
+            } catch {}
+            label(btn);
+          });
+        });
+      })();
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
