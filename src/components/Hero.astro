@@ -1,0 +1,148 @@
+---
+import { Picture } from 'astro:assets';
+
+type BaseProps = {
+  title: string;
+  /** Small mono line above the title — a section label, not a tagline. */
+  eyebrow?: string;
+};
+
+// Alt text isn't optional when there's an image. Pass an empty string to say
+// "decorative" deliberately, rather than by forgetting.
+type Props = BaseProps &
+  ({ image?: undefined; imageAlt?: never } | { image: ImageMetadata; imageAlt: string });
+
+const { title, eyebrow, image, imageAlt } = Astro.props;
+---
+
+<section class:list={['hero', image && 'has-image']}>
+  {
+    image && (
+      <div class="hero-image">
+        <Picture
+          src={image}
+          alt={imageAlt}
+          widths={[640, 960, 1280, 1600]}
+          sizes="(max-width: 48rem) 100vw, 48rem"
+          formats={['avif', 'webp']}
+          loading="eager"
+          fetchpriority="high"
+        />
+      </div>
+    )
+  }
+
+  <div class="hero-inner">
+    <div class="hero-body">
+      {eyebrow && <p class="hero-eyebrow">{eyebrow}</p>}
+      <h1>{title}</h1>
+      <div class="hero-lede"><slot /></div>
+    </div>
+
+    {/* Stands in for a photo. Same chevron language as the favicon. */}
+    {
+      !image && (
+        <svg class="hero-motif" viewBox="0 0 130 120" aria-hidden="true">
+          <g
+            fill="none"
+            stroke="currentColor"
+            stroke-width="4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M20 22 52 60 20 98" opacity="0.9" />
+            <path d="M55 22 87 60 55 98" opacity="0.5" />
+            <path d="M90 22 122 60 90 98" opacity="0.22" />
+          </g>
+        </svg>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    margin-inline: calc(var(--gutter) * -1);
+    margin-block-end: 2.5rem;
+    border-block-end: 1px solid var(--border);
+    background: var(--bg-subtle);
+  }
+
+  .hero-inner {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: clamp(1.5rem, 5vw, 2.5rem) var(--gutter);
+  }
+
+  /*
+    Text sits under the photo rather than on it. Overlaid copy needs a scrim
+    to stay legible, and a scrim heavy enough to pass contrast ruins the
+    photograph — so: band, then words.
+  */
+  .hero-image {
+    aspect-ratio: 3 / 1;
+    border-block-end: 1px solid var(--border);
+  }
+
+  .hero-image :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 40rem) {
+    .hero-image {
+      aspect-ratio: 2 / 1;
+    }
+  }
+
+  .hero-body {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--accent);
+    margin: 0 0 0.6rem;
+  }
+
+  .hero h1 {
+    margin-block: 0 0.6rem;
+  }
+
+  .hero-lede :global(p) {
+    font-family: var(--font-heading);
+    font-size: 1.25em;
+    line-height: 1.45;
+    color: var(--text-muted);
+    text-wrap: pretty;
+    margin-block: 0 0.8rem;
+  }
+
+  .hero-lede :global(p:last-child) {
+    margin-block-end: 0;
+  }
+
+  .hero-motif {
+    flex: none;
+    width: clamp(5rem, 18vw, 8.5rem);
+    color: var(--accent);
+    opacity: 0.5;
+    margin-inline-end: -2.5rem;
+  }
+
+  /* Below the measure the motif costs more than it gives. */
+  @media (max-width: 34rem) {
+    .hero-motif {
+      display: none;
+    }
+  }
+</style>

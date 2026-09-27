@@ -9,9 +9,7 @@ import Callout from '../components/Callout.astro';
 >
   <h1>How this site is built</h1>
   <p class="lede">
-    Astro on Azure Static Web Apps, provisioned with Bicep and deployed by GitHub Actions.
-    The whole thing is static — no server, no adapter, and no client-side JavaScript on a
-    content page.
+    Astro, static, on Azure Static Web Apps. No server, no adapter, and exactly one script — which started as zero, and the story of how it got to one is most of this page.
   </p>
 
   <h2>The stack, briefly</h2>
@@ -23,6 +21,7 @@ import Callout from '../components/Callout.astro';
       <tr><td>Site generator</td><td>Astro 7, static output</td></tr>
       <tr><td>Content</td><td>MDX in content collections, Zod-typed frontmatter</td></tr>
       <tr><td>Styling</td><td>One hand-written stylesheet, CSS custom properties</td></tr>
+      <tr><td>Type</td><td>Fraunces, self-hosted, for headings; system stacks below</td></tr>
       <tr><td>Hosting</td><td>Azure Static Web Apps, Free tier</td></tr>
       <tr><td>Infrastructure</td><td>Bicep, one resource</td></tr>
       <tr><td>Pipeline</td><td>GitHub Actions, with PR preview environments</td></tr>
@@ -31,76 +30,54 @@ import Callout from '../components/Callout.astro';
 
   <h2>Content is typed, not trusted</h2>
   <p>
-    Both collections — <code>posts</code> and <code>projects</code> — share a Zod schema for
-    title, description, date, tags and draft status, with projects adding a status enum and
-    optional repo/live links. A typo in frontmatter fails the build rather than quietly
-    rendering an empty <code>&lt;title&gt;</code>, which is the entire point.
+    Both collections — <code>posts</code> and <code>projects</code> — share a Zod schema for title, description, date, tags and draft status, with projects adding a status enum and
+    optional repo/live links.
+    A typo in front matter means I won't accidentally post a half-completed thought or, worse, a syntax error <i>gasp</i>.
   </p>
   <p>
-    Drafts are visible in <code>astro dev</code> and excluded from a production build. There's
-    an escape hatch — a <code>BUILD_DRAFTS</code> environment variable — so the templates can
-    be exercised by a real build before anything is published.
+    Drafts are visible in <code>astro dev</code> and excluded from a production build.
   </p>
 
-  <h2>Zero JavaScript, deliberately</h2>
+  <h2>One script, and what it cost</h2>
   <p>
-    Nothing here needs to be interactive, so nothing here ships a runtime. Two consequences
-    worth noting:
+    This site started with a guideline (Claude says it was a rule): no client-side JavaScript on a content page.
+    Dark mode followed <code>prefers-color-scheme</code> and that was the end of it.
+    The rule held until the first person asked for a theme toggle. That person was me, after looking at the boring UI I had just built.
   </p>
+  <p>
+    So there is exactly one script. It sets a <code>data-theme</code> attribute before <code>&lt;body&gt;</code> parses, reads and writes one <code>localStorage</code> key, and falls back to <code>prefers-color-scheme</code> when it doesn't run.
+    About thirty lines, no dependencies, no framework — the type of efficiency that software dev promises but rarely achieves.
+  </p>
+  <p>It wasn't free, and the bill is the interesting part:</p>
   <ul>
     <li>
-      <strong>Dark mode has no toggle.</strong> It follows
-      <code>prefers-color-scheme</code>, because the alternative is a script, a storage
-      read, and a flash of the wrong theme on first paint. A toggle is a real feature; it
-      just isn't a free one.
+      <strong>The <abbr title="Content Security Policy">CSP</abbr> pins it by hash.</strong>
+      Having co-authored a few internal docs on ISO standards over the years, this was the first thing to set my cyber senses tingling.
+      The boring technical bit: <code>script-src</code> carries a sha256 of that exact script rather than <code>'self'</code>, so nothing else can execute (cybersecurity win!).
     </li>
     <li>
-      <strong>Syntax highlighting is build-time.</strong> Shiki emits both themes as CSS
-      variables and a media query picks one. The highlighter never reaches the browser.
+      <strong>Every themed rule now has two routes.</strong> The OS preference when the reader hasn't chosen (dark for those L337 hackers and light for everyone else), <code>[data-theme]</code> when they have.
+    </li>
+    <li>
+      <strong>Syntax highlighting is still build-time.</strong> Shiki emits both themes as CSS custom properties and the switch picks one.
     </li>
   </ul>
-
-  <h2>Diagrams</h2>
-  <p>
-    Mermaid isn't wired up yet, and that's a decision rather than an oversight. Both routes
-    cost something:
-  </p>
-  <ul>
-    <li>
-      <strong>rehype-mermaid</strong> runs the real Mermaid inside a headless Chromium at
-      build time. Perfect fidelity, but it puts a browser download in the CI pipeline.
-    </li>
-    <li>
-      <strong>A pure-JS renderer</strong> such as beautiful-mermaid emits SVG with no DOM
-      at all. Fast, but it's a reimplementation, so the long tail of Mermaid syntax is a
-      question mark.
-    </li>
-  </ul>
-  <p>
-    Either produces inline SVG with no client JS, which is the requirement. The choice gets
-    made when there's a post that actually needs a diagram, and the diagram will show which
-    one is right.
-  </p>
 
   <h2>Infrastructure</h2>
   <p>
-    One Bicep file, one resource: a <code>Microsoft.Web/staticSites</code> on the Free tier
-    with <code>provider: 'Custom'</code> and staging environments enabled. <code>Custom</code>
-    matters — it stops Azure trying to generate its own workflow file and wire itself to the
-    repository. The pipeline owns the deployment; Bicep owns the resource.
+    It's always great to design the best and coolest thingy, but if no one can see it or read it or touch it — then it's really just décor.
+    So I made it easy: <strong>one Bicep file</strong> (keep it KISS and DRY!).
+    The pipeline owns the deployment; Bicep owns the resource.
   </p>
 
   <h2>The pipeline, and the Oryx detour</h2>
   <p>
-    The default Static Web Apps workflow hands your repository to Oryx, Azure's build
-    engine, and lets it work out how to build the site. That's convenient right up until
-    you want to control the Node version, run a type check, or know why a build failed.
+    The default Static Web Apps workflow hands your repository to Oryx, Azure's build engine (so thoughtful!), and lets it work out how to build the site.
+    That's convenient right up until you want any customisation or to run something completely different like Astro or Docusaurus.
   </p>
   <p>
-    So this pipeline doesn't use it. GitHub Actions checks out, installs on a pinned Node,
-    runs <code>astro check</code>, runs <code>astro build</code>, and then the deploy action
-    runs with <code>skip_app_build: true</code> — it uploads <code>dist</code> and nothing
-    else.
+    "Sometimes the absence of something is all you need".
+    GitHub Actions checks out, installs on a pinned Node, runs <code>astro check</code>, runs <code>astro build</code>, and then the deploy action runs with <code>skip_app_build: true</code> — it uploads <code>dist</code> and nothing else.
   </p>
 
   <Callout type="tip" title="The gotcha">
@@ -113,35 +90,38 @@ import Callout from '../components/Callout.astro';
   </Callout>
 
   <p>
-    Pull requests get their own preview environment on a stable URL, and a second job tears
-    it down when the PR closes. The Free tier allows three at once, which is more than
-    enough for one person.
+    Preview before publishing to GA — not doing that is like forgetting to put pants on, and that just isn't comfortable for anyone.
+    Pull requests get their own preview environment on a stable URL, and a second job tears it down when the PR closes (<span role="img" aria-label="celebrate">🎉</span> yay for automation).
   </p>
 
   <h2>Headers and caching</h2>
   <p>
-    <code>staticwebapp.config.json</code> sets a restrictive CSP, HSTS, <code>nosniff</code>,
-    a referrer policy and a <code>Permissions-Policy</code> that switches off hardware APIs
-    this site will never ask for. Astro's hashed assets under <code>/_astro/</code> get a
-    year of immutable caching; HTML gets <code>must-revalidate</code>, so a deploy is visible
-    immediately.
+    <strong>Cache all the things!*</strong>
   </p>
   <p>
-    The CSP still carries <code>'unsafe-inline'</code> for styles, because Astro's scoped
-    component styles are inlined. Removing it means nonces or hashes, which means
-    server-side rendering — a real trade against "static only". It stays for now, and it's
-    worth being honest that it's there.
+    <small>
+      *: <code>staticwebapp.config.json</code> sets a restrictive CSP, HSTS, <code>nosniff</code>, a referrer policy and a <code>Permissions-Policy</code> that switches off hardware APIs this site shouldn't be asking for.
+      Astro's hashed assets under <code>/_astro/</code> get a year of immutable caching; HTML gets <code>must-revalidate</code>, so a deploy is visible immediately.
+    </small>
+  </p>
+  <p>
+    Now the confession. The CSP isn't as tight as I'd like — <code>style-src</code> still carries <code>'unsafe-inline'</code>, and there are two culprits.
+    Astro inlines its smaller stylesheets straight into the page, and Shiki writes every syntax colour as an inline <code>style</code> attribute.
+    The first I could fix. The second would mean <code>style-src-attr</code>, which Firefox and Safari don't implement — so my code blocks would go grey on two engines out of three (a cybersecurity loss, but a readability win).
+  </p>
+  <p>
+    So it stays. And I'd rather say it here than have you find it in View Source, which — let's be honest — you were going to do anyway.
   </p>
 
   <h2>What's deliberately missing</h2>
   <ul>
     <li>No analytics.</li>
-    <li>No comments.</li>
-    <li>No web fonts — the system stack loads instantly and looks fine.</li>
+    <li>No comments (we've got enough of those elsewhere).</li>
     <li>
-      No interactive islands. There's room for a self-contained Blazor WebAssembly demo as
-      an exhibit later, which is exactly the kind of thing an island is for. It isn't built
-      yet.
+      No third-party requests. KISS!
+    </li>
+    <li>
+      No interactive islands, yet! That's very much a <i>"let's build it when it's needed"</i> — a completely valid engineering decision.
     </li>
   </ul>
 </BaseLayout>

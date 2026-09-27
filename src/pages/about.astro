@@ -1,51 +1,70 @@
 ---
-// TODO (Tim): skeleton in your voice, not your CV. Swap in the real specifics —
-// stack, domains, years, the bits you want to be found for. Deliberately no
-// invented employers or dates.
-// Keep notes in this fence, not in HTML comments: Astro passes `<!-- -->`
-// straight through to the rendered page.
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import Panel from '../components/Panel.astro';
 ---
 
 <BaseLayout
   title="About"
-  description="Who I am, what I work on, and why this site leans towards write-ups rather than screenshots."
+  description="Two decades shipping software, and rather less time writing about it. Robotics, .NET, and where AI agents actually fit into a delivery workflow."
 >
-  <h1>About</h1>
+  <Hero title="About" eyebrow="Who's writing this">
+    <p>Why write when you can show? Then agentic dev came along, and the excuses stopped working.</p>
+  </Hero>
 
-  <p class="lede">
-    I'm a software engineer. I've spent a long time shipping things, and rather less time
-    writing about it than I probably should have. This site is the correction.
+  <Panel title="At a glance">
+    <dl>
+      <dt>Based</dt><dd>Ireland</dd>
+      <dt>Background</dt><dd>BSc Eng Mechatronics &amp; Robotics, MSc AI</dd>
+      <dt>Works on</dt><dd>Backend and platform</dd>
+      <dt>Writes about</dt><dd>Engineering, Software, AI Agents</dd>
+    </dl>
+  </Panel>
+
+  <p>
+    I'm an engineer. I started in Mechatronics and Robotics and progressed into an MSc in Artificial Intelligence.
+    I've spent a long time building, creating, designing, and shipping things, but significantly less time writing about it.
+  </p>
+  <p>
+    After using the excuse of "too much work", "who's going to maintain it", "social media posts are boring", along came agentic dev and suddenly the excuses no longer hold.
   </p>
 
   <h2>What I work on</h2>
   <p>
-    Mostly backend and platform work, with a steady interest in the seam between
-    engineering practice and tooling — the parts of delivery that quietly decide whether a
-    team ships weekly or quarterly.
+    I've extensive experience in developing and architecting .NET Applications.
+    I've been with .NET since 2005, while being relatively competent in C++/C for robotics and IoT applications.
+    My day job's focus is distributed .NET Blazor applications.
+  </p>
+  <p>
+    As I've advanced my career I've had a steady interest in the seam between engineering practice, ISO standards (looking at you ISO 27001), and tooling — the parts of delivery that quietly decide whether a team ships monthly or quarterly or not at all because a change breaks all access controls!
   </p>
 
   <h2>AI Ops</h2>
   <p>
-    The other half of what I write about here. Not "AI will write your code", but the more
-    interesting and less glamorous question: where do agents actually fit into an existing
-    SDLC? Review, triage, migration, test scaffolding, documentation that stays current.
-    What needs a human gate, what doesn't, and what breaks when you get that boundary
-    wrong.
+    The other half of what I write about here. Not "AI will write your code", but the more interesting and less glamorous question: where do agents actually fit into an existing SDLC? Review, triage, migration, test scaffolding, documentation that stays current.
+    What needs a human gate, what doesn't, and what breaks when you get that boundary wrong.
   </p>
   <p>
-    I'm sceptical by default and reasonably well-calibrated about it. Things that work get
-    written up; so do the things that didn't.
+    I'm sceptical by default and reasonably well-calibrated about it.
+    Things that work get written up; so do the things that didn't.
+  </p>
+
+  <h2>When I'm not engineering</h2>
+  <p>
+    When I'm not engineering you can find me exploring latest RPGs on Xbox, PC, or Switch 2 <span role="img" aria-label="game controller">🎮</span>
+  </p>
+  <p>
+    Or planning my next holiday <span role="img" aria-label="plane">✈️</span>
   </p>
 
   <h2>What you won't find here</h2>
   <p>
-    Any employer code. Everything on this site is concepts, patterns and write-ups —
-    generalised deliberately, and written from my own projects where there's code to show.
+    Any employer code. Everything on this site is concepts, patterns and write-ups — generalised deliberately, and written from my own projects where there's code to show.
   </p>
 
   <h2>Elsewhere</h2>
   <ul>
+    <li><a href="https://github.com/tim2277">GitHub</a></li>
     <li><a href="/rss.xml">RSS feed</a></li>
   </ul>
 </BaseLayout>

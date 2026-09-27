@@ -1,5 +1,5 @@
 ---
-import { NAV_LINKS, SITE_AUTHOR } from '../consts';
+import { NAV_LINKS, SITE_WORDMARK } from '../consts';
 
 // Trailing slashes are normalised so '/posts' and '/posts/' both match, and
 // a post page marks its section ('/posts/foo/' -> Posts) as current.
@@ -11,15 +11,36 @@ const isCurrent = (href: string) =>
 
 <header class="site-header">
   <div class="wrap">
-    <a class="site-name" href="/">{SITE_AUTHOR}</a>
-    <nav class="site-nav" aria-label="Primary">
-      {
-        NAV_LINKS.filter((link) => link.href !== '/').map((link) => (
-          <a href={link.href} aria-current={isCurrent(link.href) ? 'page' : undefined}>
-            {link.label}
-          </a>
-        ))
-      }
-    </nav>
+    <a class="site-name" href="/">
+      <svg
+        class="site-mark"
+        viewBox="0 0 32 32"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M11 9.5 4.5 16 11 22.5" />
+        <path d="M19.5 7.5 12.5 24.5" />
+        <path d="M21 9.5 27.5 16 21 22.5" />
+      </svg>
+      {SITE_WORDMARK}
+    </a>
+
+    <div class="site-tools">
+      <nav class="site-nav" aria-label="Primary">
+        {
+          NAV_LINKS.filter((link) => link.href !== '/').map((link) => (
+            <a href={link.href} aria-current={isCurrent(link.href) ? 'page' : undefined}>
+              {link.label}
+            </a>
+          ))
+        }
+      </nav>
+      {/* Label and [hidden] are set by the inline script in BaseLayout. */}
+      <button class="theme-toggle" type="button" hidden>Theme</button>
+    </div>
   </div>
 </header>
