@@ -14,19 +14,37 @@ const baseSchema = ({ image }: SchemaContext) =>
     heroAlt: z.string().optional(),
   });
 
+type HeroFields = { heroImage?: unknown; heroAlt?: string };
+
+/*
+  A hero with no alt text is a silent accessibility hole, and `?? ''` in the
+  layout would paper over it. An empty string is still allowed — that says
+  'decorative' deliberately, rather than by forgetting.
+
+  Applied last, after any `.extend()`: `.refine()` returns a ZodEffects, which
+  has no `.extend()` on it.
+*/
+const requireHeroAlt = <T extends z.ZodType<HeroFields>>(schema: T) =>
+  schema.refine((data) => data.heroImage === undefined || data.heroAlt !== undefined, {
+    message: 'heroAlt is required when heroImage is set (use "" for a decorative image)',
+    path: ['heroAlt'],
+  });
+
 const posts = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/posts' }),
-  schema: baseSchema,
+  schema: (ctx: SchemaContext) => requireHeroAlt(baseSchema(ctx)),
 });
 
 const projects = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/projects' }),
   schema: (ctx: SchemaContext) =>
-    baseSchema(ctx).extend({
-      status: z.enum(['active', 'shipped', 'archived', 'exploration']).default('active'),
-      repo: z.url().optional(),
-      url: z.url().optional(),
-    }),
+    requireHeroAlt(
+      baseSchema(ctx).extend({
+        status: z.enum(['active', 'shipped', 'archived', 'exploration']).default('active'),
+        repo: z.url().optional(),
+        url: z.url().optional(),
+      })
+    ),
 });
 
 export const collections = { posts, projects };

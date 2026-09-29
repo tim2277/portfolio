@@ -5,6 +5,13 @@ type BaseProps = {
   title: string;
   /** Small mono line above the title — a section label, not a tagline. */
   eyebrow?: string;
+  /**
+   * object-position for the crop. The band is far wider than it is tall, so a
+   * portrait source loses most of its height — this says which part to keep.
+   */
+  imagePosition?: string;
+  /** Override the band's aspect ratio, e.g. '2.6 / 1' for a taller subject. */
+  ratio?: string;
 };
 
 // Alt text isn't optional when there's an image. Pass an empty string to say
@@ -12,61 +19,74 @@ type BaseProps = {
 type Props = BaseProps &
   ({ image?: undefined; imageAlt?: never } | { image: ImageMetadata; imageAlt: string });
 
-const { title, eyebrow, image, imageAlt } = Astro.props;
+const { title, eyebrow, image, imageAlt, imagePosition, ratio } = Astro.props;
 ---
 
-<section class:list={['hero', image && 'has-image']}>
-  {
-    image && (
-      <div class="hero-image">
-        <Picture
-          src={image}
-          alt={imageAlt}
-          widths={[640, 960, 1280, 1600]}
-          sizes="(max-width: 48rem) 100vw, 48rem"
-          formats={['avif', 'webp']}
-          loading="eager"
-          fetchpriority="high"
-        />
-      </div>
-    )
-  }
-
-  <div class="hero-inner">
-    <div class="hero-body">
-      {eyebrow && <p class="hero-eyebrow">{eyebrow}</p>}
-      <h1>{title}</h1>
-      <div class="hero-lede"><slot /></div>
-    </div>
-
-    {/* Stands in for a photo. Same chevron language as the favicon. */}
+<div class="hero-outer">
+  <section class:list={['hero', image && 'has-image']}>
     {
-      !image && (
-        <svg class="hero-motif" viewBox="0 0 130 120" aria-hidden="true">
-          <g
-            fill="none"
-            stroke="currentColor"
-            stroke-width="4"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M20 22 52 60 20 98" opacity="0.9" />
-            <path d="M55 22 87 60 55 98" opacity="0.5" />
-            <path d="M90 22 122 60 90 98" opacity="0.22" />
-          </g>
-        </svg>
+      image && (
+        <div
+          class="hero-image"
+          style={{ '--hero-ratio': ratio, '--hero-position': imagePosition }}
+        >
+          <Picture
+            src={image}
+            alt={imageAlt}
+            widths={[640, 960, 1280, 1600, 2000]}
+            sizes="(max-width: 82rem) 100vw, 82rem"
+            formats={['avif', 'webp']}
+            loading="eager"
+            fetchpriority="high"
+          />
+        </div>
       )
     }
-  </div>
-</section>
+
+    <div class="hero-inner">
+      <div class="hero-body">
+        {eyebrow && <p class="hero-eyebrow">{eyebrow}</p>}
+        <h1>{title}</h1>
+        <div class="hero-lede"><slot /></div>
+      </div>
+
+      {/* Stands in for a photo. Same chevron language as the favicon. */}
+      {
+        !image && (
+          <svg class="hero-motif" viewBox="0 0 130 120" aria-hidden="true">
+            <g
+              fill="none"
+              stroke="currentColor"
+              stroke-width="4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M20 22 52 60 20 98" opacity="0.9" />
+              <path d="M55 22 87 60 55 98" opacity="0.5" />
+              <path d="M90 22 122 60 90 98" opacity="0.22" />
+            </g>
+          </svg>
+        )
+      }
+    </div>
+  </section>
+</div>
 
 <style>
+  /* Lives outside .wrap, so it spans the header's width rather than the
+     reading measure. Edges line up with the wordmark. */
+  .hero-outer {
+    max-width: var(--shell);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+    margin-block-end: 2.5rem;
+  }
+
   .hero {
     position: relative;
     overflow: hidden;
-    margin-inline: calc(var(--gutter) * -1);
-    margin-block-end: 2.5rem;
-    border-block-end: 1px solid var(--border);
+    border: 1px solid var(--border);
+    border-radius: 6px;
     background: var(--bg-subtle);
   }
 
@@ -83,8 +103,16 @@ const { title, eyebrow, image, imageAlt } = Astro.props;
     photograph — so: band, then words.
   */
   .hero-image {
-    aspect-ratio: 3 / 1;
+    aspect-ratio: var(--hero-ratio, 3 / 1);
     border-block-end: 1px solid var(--border);
+  }
+
+  /* A fixed ratio that reads well at 600px is a wall at 1250px — flatten the
+     band as it widens so it stays a header, not a splash screen. */
+  @media (min-width: 64rem) {
+    .hero-image {
+      aspect-ratio: var(--hero-ratio, 4.5 / 1);
+    }
   }
 
   .hero-image :global(img) {
@@ -92,11 +120,12 @@ const { title, eyebrow, image, imageAlt } = Astro.props;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: var(--hero-position, 50% 50%);
   }
 
   @media (max-width: 40rem) {
     .hero-image {
-      aspect-ratio: 2 / 1;
+      aspect-ratio: var(--hero-ratio, 2 / 1);
     }
   }
 
@@ -136,7 +165,6 @@ const { title, eyebrow, image, imageAlt } = Astro.props;
     width: clamp(5rem, 18vw, 8.5rem);
     color: var(--accent);
     opacity: 0.5;
-    margin-inline-end: -2.5rem;
   }
 
   /* Below the measure the motif costs more than it gives. */

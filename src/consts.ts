@@ -18,6 +18,4 @@ export const NAV_LINKS = [
   { href: '/posts/', label: 'Posts' },
   { href: '/projects/', label: 'Projects' },
   { href: '/about/', label: 'About' },
-  // The colophon is linked from the footer only — it's a curiosity, not a
-  // destination, and it was the widest thing in the header.
 ] as const;

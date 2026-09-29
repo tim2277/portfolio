@@ -1,0 +1,91 @@
+---
+import type { MarkdownHeading } from 'astro';
+import { TOC_MINIMUM, tocHeadings } from '../lib/content';
+
+interface Props {
+  headings: MarkdownHeading[];
+  minimum?: number;
+}
+
+const { headings, minimum = TOC_MINIMUM } = Astro.props;
+
+// Astro slugs the ids, so these anchors need no extra work.
+const items = tocHeadings(headings);
+const show = items.length >= minimum;
+---
+
+{
+  show && (
+    <aside class="toc" aria-labelledby="toc-heading">
+      <h2 id="toc-heading" class="toc-title">
+        On this page
+      </h2>
+      <nav>
+        <ol>
+          {items.map((item) => (
+            <li class:list={[item.depth === 3 && 'is-nested']}>
+              <a href={`#${item.slug}`}>{item.text}</a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    </aside>
+  )
+}
+
+<style>
+  .toc {
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+
+  /* Follows the reader down the page, but only where there's height to spare —
+     a sticky panel taller than the viewport traps its own overflow. */
+  @media (min-width: 64rem) and (min-height: 32rem) {
+    .toc {
+      position: sticky;
+      top: 2rem;
+      max-height: calc(100vh - 4rem);
+      overflow-y: auto;
+    }
+  }
+
+  .toc-title {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--text-muted);
+    margin-block: 0 0.75rem;
+    padding-block-end: 0.5rem;
+    border-block-end: 1px solid var(--border);
+  }
+
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: toc;
+  }
+
+  li {
+    margin-block-end: 0.5rem;
+  }
+
+  .is-nested {
+    padding-inline-start: 0.85rem;
+  }
+
+  a {
+    color: var(--text-muted);
+    text-decoration: none;
+    display: block;
+    text-wrap: pretty;
+  }
+
+  a:hover,
+  a:focus-visible {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+</style>

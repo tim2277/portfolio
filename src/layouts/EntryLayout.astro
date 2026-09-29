@@ -1,78 +1,156 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
+import type { MarkdownHeading } from 'astro';
 import BaseLayout from './BaseLayout.astro';
 import FormattedDate from '../components/FormattedDate.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import { TOC_MINIMUM, tocHeadings } from '../lib/content';
 
 interface Props {
   entry: CollectionEntry<'posts'> | CollectionEntry<'projects'>;
+  headings?: MarkdownHeading[];
   /** Label for the 'back to index' link, e.g. 'All posts'. */
   backLabel: string;
   backHref: string;
 }
 
-const { entry, backLabel, backHref } = Astro.props;
+const { entry, headings = [], backLabel, backHref } = Astro.props;
 const { data } = entry;
 const isProject = 'status' in data;
+
+// Decided here as well as in the component: the page has to know whether to
+// reserve a second column before it renders one.
+const hasToc = tocHeadings(headings).length >= TOC_MINIMUM;
+
+// A bare "Source" tells the reader nothing about where they're being sent;
+// github.com vs a gist vs somewhere else is the useful part.
+const linkText = (href: string) => href.replace(/^https?:\/\//, '').replace(/\/$/, '');
+
+/*
+  Share cards get their own derivative rather than reusing an article-sized
+  render: 1200x630 is what the scrapers want, and avif/webp aren't safe to send
+  them. Without this, a post with a hero still shares as a bare `summary` card.
+*/
+const share = data.heroImage
+  ? await getImage({
+      src: data.heroImage,
+      width: 1200,
+      height: 630,
+      fit: 'cover',
+      format: 'jpeg',
+    })
+  : undefined;
 ---
 
 <BaseLayout
   title={data.title}
   description={data.description}
   type="article"
+  image={share?.src}
+  imageAlt={data.heroAlt}
+  imageWidth={share && 1200}
+  imageHeight={share && 630}
   publishedAt={data.date}
   updatedAt={data.updated}
   noindex={data.draft}
+  width={hasToc ? 'shell' : 'measure'}
 >
-  <article>
-    <header>
-      <p class="entry-meta">
-        <FormattedDate date={data.date} />
-        {data.updated && <FormattedDate date={data.updated} prefix="· updated" />}
-        {isProject && <span>· {data.status}</span>}
-        {data.draft && <span class="badge-draft">draft</span>}
-      </p>
-      <h1>{data.title}</h1>
-      <p class="lede">{data.description}</p>
-      {
-        data.tags.length > 0 && (
-          <ul class="tags">
-            {data.tags.map((tag) => (
-              <li class="tag">{tag}</li>
-            ))}
-          </ul>
-        )
-      }
+  <div class:list={[hasToc && 'toc-layout']}>
+    <article>
+      <header>
+        <p class="entry-meta">
+          <FormattedDate date={data.date} />
+          {data.updated && <FormattedDate date={data.updated} prefix="· updated" />}
+          {isProject && <span>· {data.status}</span>}
+          {data.draft && <span class="badge-draft">draft</span>}
+        </p>
+        <h1>{data.title}</h1>
+        <p class="lede">{data.description}</p>
+        {
+          data.tags.length > 0 && (
+            <ul class="tags">
+              {data.tags.map((tag) => (
+                <li class="tag">{tag}</li>
+              ))}
+            </ul>
+          )
+        }
+        {
+          data.heroImage && (
+            <Image
+              src={data.heroImage}
+              alt={data.heroAlt ?? ''}
+              widths={[480, 800, 1200]}
+              sizes="(min-width: 74ch) 74ch, 100vw"
+              loading="eager"
+              class="hero"
+            />
+          )
+        }
+      </header>
+
+      <slot />
+
       {
         isProject && (data.repo || data.url) && (
-          <p class="entry-meta">
-            {data.repo && <a href={data.repo}>Source</a>}
-            {data.url && <a href={data.url}>Live</a>}
-          </p>
+          <aside class="entry-links">
+            <p class="entry-links-label">Source</p>
+            <p>
+              {data.repo && (
+                <>
+                  Source code can be found at <a href={data.repo}>{linkText(data.repo)}</a>.{' '}
+                </>
+              )}
+              {data.url && (
+                <>
+                  A live version is at <a href={data.url}>{linkText(data.url)}</a>.
+                </>
+              )}
+            </p>
+          </aside>
         )
       }
-      {
-        data.heroImage && (
-          <Image
-            src={data.heroImage}
-            alt={data.heroAlt ?? ''}
-            widths={[480, 800, 1200]}
-            sizes="(min-width: 68ch) 68ch, 100vw"
-            loading="eager"
-            class="hero"
-          />
-        )
-      }
-    </header>
 
-    <slot />
-  </article>
+      <hr />
+      <p><a href={backHref}>← {backLabel}</a></p>
+    </article>
 
-  <hr />
-  <p><a href={backHref}>← {backLabel}</a></p>
+    {hasToc && <TableOfContents headings={headings} minimum={TOC_MINIMUM} />}
+  </div>
 </BaseLayout>
 
 <style>
+  /* Sits at the end of the read, where "go and look at the code" is the
+     natural next move — not above the article as stray metadata. */
+  .entry-links {
+    margin-block-start: 2.5rem;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid var(--border);
+    border-inline-start: 3px solid var(--accent);
+    border-radius: 4px;
+    background: var(--bg-subtle);
+  }
+
+  .entry-links > p {
+    margin-block: 0;
+  }
+
+  .entry-links > .entry-links-label {
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin-block-end: 0.35rem;
+  }
+
+  .entry-links a {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    overflow-wrap: anywhere;
+  }
+
   article :global(.hero) {
     border-radius: 6px;
     border: 1px solid var(--border);

@@ -10,9 +10,9 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 const { project } = Astro.props;
-const { Content } = await render(project);
+const { Content, headings } = await render(project);
 ---
 
-<EntryLayout entry={project} backHref="/projects/" backLabel="All projects">
+<EntryLayout entry={project} headings={headings} backHref="/projects/" backLabel="All projects">
   <Content />
 </EntryLayout>

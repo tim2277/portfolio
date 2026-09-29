@@ -6,7 +6,10 @@
 :root {
   color-scheme: light dark;
 
-  --measure: 68ch;
+  --measure: 74ch;
+  /* Header and footer span this instead, so site chrome reaches toward the
+     edges of a wide display while prose stays at a readable measure. */
+  --shell: 82rem;
   --gutter: clamp(1rem, 4vw, 2rem);
 
   --font-body: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
@@ -110,6 +113,82 @@ body {
   max-width: var(--measure);
   margin-inline: auto;
   padding-inline: var(--gutter);
+}
+
+.wrap-shell {
+  max-width: var(--shell);
+}
+
+/*
+  Prose plus a contents sidebar. Single column until there's room for both, and
+  the prose keeps its measure either way — the second column takes the extra
+  width, never the text. Used by entry pages and /about/.
+*/
+.toc-layout > :first-child {
+  max-width: var(--measure);
+  min-width: 0;
+}
+
+@media (min-width: 64rem) {
+  .toc-layout {
+    display: grid;
+    grid-template-columns: minmax(0, var(--measure)) minmax(11rem, 17rem);
+    justify-content: space-between;
+    gap: 3rem;
+    align-items: start;
+  }
+}
+
+/*
+  remark-gfm's footnotes. It marks the heading `sr-only` and expects that class
+  to exist; here the label is worth seeing, so it's styled to match the
+  contents list rather than hidden.
+*/
+.footnotes {
+  margin-block-start: 3rem;
+  padding-block-start: 1.25rem;
+  border-block-start: 1px solid var(--border);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.footnotes #footnote-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-muted);
+  margin-block: 0 1rem;
+}
+
+.footnotes li {
+  margin-block-end: 0.6rem;
+}
+
+.footnotes li:target {
+  /* Lands the reader on the right note when several wrap to similar lengths. */
+  background: var(--bg-subtle);
+  border-radius: 3px;
+  box-shadow: 0 0 0 0.4rem var(--bg-subtle);
+}
+
+.footnotes .data-footnote-backref {
+  text-decoration: none;
+  margin-inline-start: 0.25rem;
+}
+
+/* Anchor jumps otherwise land with the heading flush against the top edge. */
+:is(h2, h3, h4)[id],
+.footnotes li[id],
+[id^='user-content-fnref-'] {
+  scroll-margin-top: 2rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 main {
@@ -389,11 +468,15 @@ td {
   padding-block: 1rem;
 }
 
+/* Not baseline: .site-name is an inline-flex led by the SVG mark, which has no
+   baseline of its own, so the browser synthesises one from the box edge and
+   the wordmark rides up a few pixels against the nav. */
 .site-header .wrap {
+  max-width: var(--shell);
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem 1.25rem;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
 }
 
@@ -418,6 +501,8 @@ td {
 
 /* Hidden until the inline script removes [hidden] — without JS it does
    nothing, so it shouldn't be there to click. */
+/* Fixed square, not padding — sun and moon differ in width, and a button that
+   resizes on click nudges the whole header sideways. */
 .theme-toggle {
   background: none;
   border: 1px solid var(--border);
@@ -425,9 +510,20 @@ td {
   color: var(--text-muted);
   cursor: pointer;
   font: inherit;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   line-height: 1;
-  padding: 0.35rem 0.7rem;
+  padding: 0;
+  inline-size: 2rem;
+  block-size: 2rem;
+  display: grid;
+  place-items: center;
+}
+
+/* Emoji glyphs sit high on the baseline and look off-centre in a circle. */
+.theme-icon {
+  font-size: 1rem;
+  line-height: 1;
+  transform: translateY(0.5px);
 }
 
 .theme-toggle:hover {
@@ -476,8 +572,10 @@ td {
 }
 
 .site-footer .wrap {
+  max-width: var(--shell);
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem 1rem;
+  align-items: center;
   justify-content: space-between;
 }

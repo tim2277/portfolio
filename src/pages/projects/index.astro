@@ -1,22 +1,55 @@
 ---
+import { getImage } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
 import EntryList from '../../components/EntryList.astro';
 import { getProjects } from '../../lib/content';
+import heroImage from '../../assets/photos/projects-hero.jpg';
 
 const projects = await getProjects();
+
+const share = await getImage({
+  src: heroImage,
+  width: 1200,
+  height: 630,
+  fit: 'cover',
+  format: 'jpeg',
+});
 ---
 
 <BaseLayout
   title="Projects"
-  description="Things I've built — write-ups of the interesting decisions rather than a gallery of screenshots."
+  description="Things I’ve built — write-ups of the interesting decisions rather than a gallery of screenshots."
+  image={share.src}
+  imageAlt=""
+  imageWidth={1200}
+  imageHeight={630}
+  width="shell"
 >
-  <h1>Projects</h1>
-  <p class="lede">
-    Things I've built, half-built, or thought about. These are write-ups of the interesting decisions rather than a gallery of screenshots.
-  </p>
-  <EntryList
-    entries={projects}
-    base="/projects"
-    emptyMessage="No projects published yet. Watch this space."
-  />
+  <Hero
+    slot="hero"
+    title="Projects"
+    eyebrow="Things I’ve built"
+    image={heroImage}
+    imageAlt="A terraced limestone hill under a wide cloudy sky, bare grey rock pavement running down to scrub and water."
+  >
+    <p>
+      Things I’ve built, half-built, or thought about. These are write-ups of the interesting decisions rather than a gallery of screenshots.
+    </p>
+  </Hero>
+
+  {/* The page is shell-width for the hero; the list keeps the measure. */}
+  <div class="entry-column">
+    <EntryList
+      entries={projects}
+      base="/projects"
+      emptyMessage="No projects published yet. Watch this space."
+    />
+  </div>
 </BaseLayout>
+
+<style>
+  .entry-column {
+    max-width: var(--measure);
+  }
+</style>

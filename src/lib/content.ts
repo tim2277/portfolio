@@ -1,4 +1,19 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
+import type { MarkdownHeading } from 'astro';
+
+/** Below this many sections a contents list is furniture, not navigation. */
+export const TOC_MINIMUM = 3;
+
+/**
+ * h1 is the page title and lives in the header, h4 and deeper are too granular
+ * to navigate by, and remark-gfm's 'Footnotes' heading is machinery rather
+ * than a section — left in, it both pads the count and lists itself.
+ */
+export function tocHeadings(headings: MarkdownHeading[]): MarkdownHeading[] {
+  return headings.filter(
+    (h) => (h.depth === 2 || h.depth === 3) && h.slug !== 'footnote-label'
+  );
+}
 
 /**
  * Drafts are visible in `astro dev` so you can preview what you're writing,

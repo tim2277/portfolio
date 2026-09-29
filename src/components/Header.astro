@@ -39,8 +39,12 @@ const isCurrent = (href: string) =>
           ))
         }
       </nav>
-      {/* Label and [hidden] are set by the inline script in BaseLayout. */}
-      <button class="theme-toggle" type="button" hidden>Theme</button>
+      {/* Icon and [hidden] are set by the inline script in BaseLayout. The
+          emoji is aria-hidden so the name comes from aria-label — 'sun with
+          face' announced aloud helps nobody. */}
+      <button class="theme-toggle" type="button" hidden>
+        <span class="theme-icon" aria-hidden="true"></span>
+      </button>
     </div>
   </div>
 </header>

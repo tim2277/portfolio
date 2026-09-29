@@ -1,18 +1,51 @@
 ---
+import { getImage } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
 import EntryList from '../../components/EntryList.astro';
 import { getPosts } from '../../lib/content';
+import heroImage from '../../assets/photos/posts-hero.jpg';
 
 const posts = await getPosts();
+
+const share = await getImage({
+  src: heroImage,
+  width: 1200,
+  height: 630,
+  fit: 'cover',
+  format: 'jpeg',
+});
 ---
 
 <BaseLayout
   title="Posts"
   description="Write-ups on software delivery, architecture, and using AI agents inside real SDLC workflows."
+  image={share.src}
+  imageAlt=""
+  imageWidth={1200}
+  imageHeight={630}
+  width="shell"
 >
-  <h1>Posts</h1>
-  <p class="lede">
-    Write-ups on software delivery, architecture, and AI Ops — agents doing real work in a real pipeline.
-  </p>
-  <EntryList entries={posts} base="/posts" emptyMessage="No posts published yet. Watch this space." />
+  <Hero
+    slot="hero"
+    title="Posts"
+    eyebrow="Writing"
+    image={heroImage}
+    imageAlt="A city skyline across still harbour water at dawn, masts of moored boats in front of it."
+  >
+    <p>
+      Write-ups on software delivery, architecture, and AI Ops — agents doing real work in a real pipeline.
+    </p>
+  </Hero>
+
+  {/* The page is shell-width for the hero; the list keeps the measure. */}
+  <div class="entry-column">
+    <EntryList entries={posts} base="/posts" emptyMessage="No posts published yet. Watch this space." />
+  </div>
 </BaseLayout>
+
+<style>
+  .entry-column {
+    max-width: var(--measure);
+  }
+</style>

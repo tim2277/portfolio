@@ -8,13 +8,19 @@ interface Props {
   title: string;
   description?: string;
   image?: string;
+  imageAlt?: string;
+  imageWidth?: number;
+  imageHeight?: number;
   type?: 'website' | 'article';
   publishedAt?: Date;
   updatedAt?: Date;
   noindex?: boolean;
+  /** 'shell' widens the content column to match the header, for pages that
+      put something beside the prose. The prose itself stays at --measure. */
+  width?: 'measure' | 'shell';
 }
 
-const props = Astro.props;
+const { width = 'measure', ...props } = Astro.props;
 
 // The only client-side JavaScript on the site. It runs before <body> parses so
 // an explicit theme choice is applied before first paint — deferring it would
@@ -40,10 +46,14 @@ const props = Astro.props;
 
         const current = () => root.dataset.theme || (mq.matches ? 'dark' : 'light');
 
+        // Shows the theme you'd get by clicking, not the one you're in.
+        // Escaped codepoints keep this file ASCII — the CSP hashes its bytes.
         const label = (btn) => {
           const next = current() === 'dark' ? 'light' : 'dark';
-          btn.textContent = next === 'dark' ? 'Dark' : 'Light';
+          const icon = btn.querySelector('.theme-icon');
+          if (icon) icon.textContent = next === 'dark' ? '\u{1F319}' : '\u{2600}\u{FE0F}';
           btn.setAttribute('aria-label', `Switch to the ${next} theme`);
+          btn.setAttribute('title', `Switch to the ${next} theme`);
         };
 
         addEventListener('DOMContentLoaded', () => {
@@ -67,7 +77,8 @@ const props = Astro.props;
     <a class="skip-link" href="#main">Skip to content</a>
     <Header />
     <main id="main">
-      <div class="wrap">
+      <slot name="hero" />
+      <div class:list={['wrap', width === 'shell' && 'wrap-shell']}>
         <slot />
       </div>
     </main>

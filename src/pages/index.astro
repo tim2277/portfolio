@@ -1,33 +1,88 @@
 ---
+import { getImage } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import EntryList from '../components/EntryList.astro';
 import { getPosts, getProjects } from '../lib/content';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import heroImage from '../assets/photos/home-hero.jpg';
 
 const posts = (await getPosts()).slice(0, 5);
 const projects = (await getProjects()).slice(0, 3);
+
+// Same 1200x630 jpeg treatment the entry pages get — see EntryLayout.
+const share = await getImage({
+  src: heroImage,
+  width: 1200,
+  height: 630,
+  fit: 'cover',
+  format: 'jpeg',
+});
 ---
 
-<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
-  <Hero title="Hello — I'm Tim" eyebrow="Engineer · Ireland">
+<BaseLayout
+  title={SITE_TITLE}
+  description={SITE_DESCRIPTION}
+  image={share.src}
+  imageAlt=""
+  imageWidth={1200}
+  imageHeight={630}
+  width="shell"
+>
+  <Hero
+    slot="hero"
+    title="Hello — I’m Tim"
+    eyebrow="Engineer · Ireland"
+    image={heroImage}
+    imageAlt="A floodlit medieval tower house against a deep purple dusk sky, its stone lit warm amber."
+    imagePosition="50% 28%"
+  >
     <p>I build things. Occasionally I write down how it went.</p>
   </Hero>
 
-  <p>
-    Mechatronics and robotics first, then an MSc in AI, with .NET running through the middle of it since 2005.
-    My day job is distributed Blazor applications; my attention keeps drifting to the seam between engineering practice and tooling — and to where AI agents genuinely earn their keep in a delivery workflow, rather than just making a mess faster.
-  </p>
-  <p>
-    This is where that gets written down. Architecture notes, agent workflows in the SDLC, and the occasional post-mortem on something that didn't work.
-    Concepts and write-ups only — nothing here is employer code.
-  </p>
+  {/* Prose keeps the measure even though the page is shell-width. */}
+  <div class="home-intro">
+    <p>
+      Mechatronics and robotics first, then an MSc in AI, with .NET running through the middle of it since 2005.
+      My day job is distributed Blazor applications; my attention keeps drifting to the seam between engineering practice and tooling — and to where AI agents genuinely earn their keep in a delivery workflow, rather than just making a mess faster.
+    </p>
+    <p>
+      This is where that gets written down. Architecture notes, agent workflows in the SDLC, and the occasional post-mortem on something that didn’t work.
+      Concepts and write-ups only — nothing here is employer code.
+    </p>
+  </div>
 
-  <h2>Latest posts</h2>
-  <EntryList entries={posts} base="/posts" emptyMessage="No posts published yet." />
-  <p><a href="/posts/">All posts →</a></p>
+  <div class="home-columns">
+    <section>
+      <h2>Latest posts</h2>
+      <EntryList entries={posts} base="/posts" emptyMessage="No posts published yet." />
+      <p><a href="/posts/">All posts →</a></p>
+    </section>
 
-  <h2>Projects</h2>
-  <EntryList entries={projects} base="/projects" emptyMessage="No projects published yet." />
-  <p><a href="/projects/">All projects →</a></p>
+    <section>
+      <h2>Projects</h2>
+      <EntryList entries={projects} base="/projects" emptyMessage="No projects published yet." />
+      <p><a href="/projects/">All projects →</a></p>
+    </section>
+  </div>
+
+  <style>
+    .home-intro {
+      max-width: var(--measure);
+    }
+
+    /* Two columns only where each still gets a sane line length — below that
+       they stack, which is what the single-column layout already did. */
+    @media (min-width: 60rem) {
+      .home-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem 3rem;
+      }
+    }
+
+    .home-columns h2 {
+      margin-block-start: 2.5rem;
+    }
+  </style>
 </BaseLayout>
