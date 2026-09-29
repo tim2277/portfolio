@@ -1,0 +1,72 @@
+---
+title: Hello world
+description: >-
+  It wouldn’t be right if we didn’t start with a hello world post.
+date: 2026-09-27
+tags: ['ai']
+draft: false
+heroImage: ../../assets/photos/hello-world-hero.jpg
+heroAlt: >-
+  A forested mountainside dropping away to a deep blue fjord, snow-capped peaks
+  along the far shore.
+---
+
+import Callout from '../../components/Callout.astro';
+
+"Hello world 👋", classic computer science stuff there.
+
+Why do we say hello world? It's as though we're granting sentience to something that didn't have it a moment ago. Is that just us anthropomorphising anything that holds still long enough, or is there something deeper in it?
+
+Philosophical digressions aside, ye probably want to know why I built this site and what it's initially for.
+
+<Callout type="note">
+  A brief introduction to me and this site.
+</Callout>
+
+## Why this site?
+
+_Just a tiny bit of background_
+
+I'm not going to launch into a detailed spiel about when I started programming, or engineering, or software development — that's what an About page is for. This post is about the why.
+
+**Simple.** Machine learning and artificial intelligence have been around roughly forever. Turing was describing learning machines in the 1940s[^turing-1948], and went on to write one of the best essays anybody has written on the subject[^turing-1950] — I'd recommend it to anyone with a shred of interest in where this all came from. Progress after that was mostly slow. It was only once we started solving natural language problems with <abbr title="Large Language Model">LLM</abbr>s that the strides got long, and the pace of it since has been christened the new AI era.
+
+🐷 _Hogwash._ This AI era is just the latest in a long line of phoenix rebirths since Turing's paper. What makes it different isn't the era's promises — every one of them promised plenty — it's the applications that have actually turned out to be possible.
+
+The phoenix's previous lives were each aimed at one specific problem: knowledge systems, computer vision, robotic control, big data analytics, chatbots, et cetera ad infinitum. What LLMs did instead was set off a chain reaction in how we work with information at all. Largely courtesy of a small research lab called OpenAI, and the GPT models it published between 2018 and 2020.
+
+Gone is crawling the search results pages. Gone is trawling Wikipedia, gone is the endless Google Scholar rabbit hole, gone is squinting at cryptic software docs. Ask an agent instead and it does the legwork, ideally saving you several hours of it. But the more interesting realisation was that LLMs could do more than fetch — they could turn a prompt into something that did real work. Enter, stage left, GitHub Copilot[^copilot-preview]: humble beginnings as a model trained on public GitHub code, and now multi-provider and multi-agent.
+
+<Callout type="note" title="Copilot">
+  Copilot became the name of every Microsoft AI initiative around 2023. Copilot sounds better than AI.
+</Callout>
+
+I can't overstate how revolutionary Copilot was. A glorified chatbot could suddenly read our code and our content and give an answer grounded in something real. No more editing and replacing the same line by hand forty times — an extremely risky task. No more writing comments that were clear to the author and to nobody else. In came the term "AI pair programmer", at a very reasonable ten dollars a month[^copilot-ga], and one of the first LLM products a working developer actually paid for out of their own pocket.
+
+Then the models themselves got smarter, thanks in large part to a relatively small company called Anthropic, founded in 2021 by former OpenAI staff. A new challenger dethroned the incumbent: Claude 3 Opus, with Claude 3.5 Sonnet three months behind it[^claude-3]. Copilot started supporting models from more than one provider. And so the frontier model race began.
+
+By 2025, agentic AI had arrived properly, popularised under the name vibe coding[^vibe-coding]. It was limited to well-trodden ground at first — TypeScript and JavaScript websites and the like. Talk of tokens became commonplace. Developers were made to look rather closely at what they actually did versus what an agent does. Copilot gained full agent modes, then coding agents proper: running in their own containers, reviewing pull requests, driving Playwright tests in a browser.
+
+That trend carried into 2026. The race is now for faster, cheaper models and larger context windows. Underneath it all has been a steadier, less glamorous effort to make agents reason better and work unsupervised for longer.
+
+And yet, for all of that, it's the **actual operationalisation** of agentic AI inside an existing <abbr title="Software Development Lifecycle">SDLC</abbr> that remains the weakest part of the whole business. ISO standards — 27001, looking at you — internal operating procedures, tooling, deployment processes, the daily work, the work items, and the skill of the team all combine. Agentic AI might have solved writing the code. It cannot do the rest without being fitted with skill, knowledge and experience. That is what this site is for, at least initially: exploring the paths that let a team deliver good work more effectively.
+
+## What's the point?
+
+You might reasonably ask why you should operationalise any of this. Why not just tell the agent what you need and let it get on with it?
+
+That only works if the agent can absorb your project-specific knowledge, or reliably reference it. Or if you happen to be building something so well-trodden it's already documented a thousand times over. Neither is realistic with what we have today — never mind the cybersecurity, legal and commercial questions sitting alongside. And not every agent needs all of the context all of the time. Some models get measurably worse with too much of it, which is a familiar shape: it's overfitting, wearing a different hat.
+
+What you end up with is several competing axes intersecting at once. The pragmatic engineering answer is the usual one — fit the tool and the resources to the task in front of you. This site is an exploration of the concepts and methods that have been tried in a real development team, with real end users, even when the end user is another agent or the developer sitting next to you.
+
+[^turing-1948]: A. M. Turing, _Intelligent Machinery_, National Physical Laboratory report, written 1948. His supervisor dismissed it as a "schoolboy essay" and it went unpublished until 1968, fourteen years after Turing's death. It contains an early description of neural networks and of machines that learn by reconfiguring themselves.
+
+[^turing-1950]: A. M. Turing, "Computing Machinery and Intelligence", _Mind_, Volume LIX, Issue 236, October 1950, pp. 433–460. [doi:10.1093/mind/LIX.236.433](https://doi.org/10.1093/mind/LIX.236.433)
+
+[^copilot-preview]: ["Introducing GitHub Copilot: your AI pair programmer"](https://github.blog/news-insights/product-news/introducing-github-copilot-ai-pair-programmer/), The GitHub Blog, 29 June 2021. Launched as a technical preview, powered by OpenAI Codex.
+
+[^copilot-ga]: ["GitHub Copilot is generally available to all developers"](https://github.blog/news-insights/product-news/github-copilot-is-generally-available-to-all-developers/), The GitHub Blog, 21 June 2022 — "$10 USD/month or $100 USD/year".
+
+[^claude-3]: [The Claude 3 model family](https://www.anthropic.com/news/claude-3-family) was announced on 4 March 2024, with [Claude 3.5 Sonnet](https://www.anthropic.com/news/claude-3-5-sonnet) following on 21 June 2024.
+
+[^vibe-coding]: Coined by Andrej Karpathy on X, 2 February 2025 — "There's a new kind of coding I call 'vibe coding', where you fully give in to the vibes, embrace exponentials, and forget that the code even exists." Collins made it their word of the year for 2025. Summarised, with the original post cited, on [Wikipedia](https://en.wikipedia.org/wiki/Vibe_coding).

@@ -12,7 +12,7 @@
     }
   },
   "globalHeaders": {
-    "Content-Security-Policy": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'sha256-wuLDvC7uypY+zNcss+QEGv8ksGgXPaKQFQ0Kqi8UJCc='; font-src 'self'; connect-src 'self'; form-action 'none'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests",
+    "Content-Security-Policy": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'sha256-66nvgXv3i01r3DHyJqN456WvellSbhV//o3ltnEcxy8='; font-src 'self'; connect-src 'self'; form-action 'none'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests",
     "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "strict-origin-when-cross-origin",
@@ -21,6 +21,11 @@
     "X-Frame-Options": "DENY"
   },
   "routes": [
+    {
+      "route": "/colophon*",
+      "redirect": "/projects/this-site/",
+      "statusCode": 301
+    },
     {
       "route": "/_astro/*",
       "headers": {

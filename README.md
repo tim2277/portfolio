@@ -4,7 +4,7 @@ Personal site and blog — software work plus AI Ops (AI agents inside real SDLC
 workflows). Astro, static output, hosted on Azure Static Web Apps.
 
 There's a fuller write-up of the architecture on the site itself, at
-`/colophon/` ("How this site is built").
+`/projects/this-site/` ("How this site is built"). `/colophon/` redirects there.
 
 ## Requirements
 

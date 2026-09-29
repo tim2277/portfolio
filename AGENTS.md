@@ -1,7 +1,8 @@
 # AGENTS.md
 
 Personal portfolio and blog. Astro 7, static output, Azure Static Web Apps.
-Architecture write-up lives on the site at `/colophon/`; setup and deploy steps
+Architecture write-up lives on the site as the `this-site` project entry
+(`/projects/this-site/`, with `/colophon/` redirecting to it); setup and deploy steps
 are in `README.md`.
 
 ## Invariants
@@ -28,7 +29,9 @@ breaking one, stop and say so rather than working around it.
   recomputing it and the browser silently refuses to run it — the feature dies,
   the build stays green, and nothing says why. See the traps below.
 - **Static output only.** No adapter, no SSR, no server islands.
-- **British English** in all prose, UI copy, and content.
+- **British English** in all prose, UI copy, and content. Hiberno-English is
+  welcome where it's Tim's actual voice ("ye", "grand") — it isn't an error to
+  be corrected. See Voice below.
 - **No employer code and no client names.** Content is concepts, patterns and
   write-ups. Generalise anything drawn from paid work.
 - **Ask before adding a dependency** that isn't an official Astro integration.
@@ -97,6 +100,93 @@ failures readable.
 **Astro 7 deprecations.** Import `z` from `astro/zod`, not `astro:content`. Use
 `z.url()`, not `z.string().url()`.
 
+**MDX has no autolinks.** `<https://example.com>` is valid Markdown and a
+syntax error in MDX — `<` starts a JSX tag, so the build fails outright with
+`Unexpected character after \`<\``. Always `[text](url)`. This one at least
+fails loudly.
+
+**remark-gfm emits its own `Footnotes` heading**, `<h2 id="footnote-label">`.
+It lands in the `headings` array from `render()`, so left alone it appears in
+the contents list *and* counts toward the three-heading threshold — a post
+with two real sections grows a sidebar listing "Footnotes". `tocHeadings()` in
+`src/lib/content.ts` strips it, and both `EntryLayout` and `TableOfContents`
+go through it so they can't disagree. GFM also tags that heading `sr-only`, a
+class this site doesn't define; `global.css` styles the block instead.
+
+**`Callout` takes `type` from a fixed union.** `note`, `warning`, `tip` — and
+nothing else. Pass anything else and `labels[type]` is `undefined`, so the
+label renders empty against an unstyled class. For a custom label use
+`title="…"` and leave `type` alone. `astro check` does not catch this in MDX.
+
+**A photograph dropped straight into `src/assets/` publishes its EXIF.** Phone
+images carry GPS coordinates, camera make and model, and a capture timestamp.
+Astro re-encodes on build but preserves what it's given, so the coordinates of
+wherever the picture was taken reach the live site. Nothing warns you. Every
+photograph goes through the converter first:
+
+```powershell
+./scripts/Convert-Heic.ps1 -Path ~/Downloads/Whatever.heic -Name posts-hero `
+  -Location "Coal Harbour, Vancouver" -SafeRatio 4.5
+```
+
+It strips metadata, caps the longest edge at 2400px, honours EXIF orientation,
+and burns in the location and copyright line. Decoding needs
+`Microsoft.HEIFImageExtension` from the Store; without it `BitmapDecoder`
+fails on HEIC.
+
+**The watermark arguments have to match the `Hero` props.** The credit is burnt
+into the pixels, so it's placed at conversion time against a crop the script
+can only be told about:
+
+| Script | `Hero` prop | Meaning |
+| --- | --- | --- |
+| `-SafeRatio` | `ratio` | Band shape, default 4.5:1 above 64rem |
+| `-SafePosition` | Y of `imagePosition` | Which slice of the source is kept |
+
+Get either wrong and the credit sits outside the visible band — present in the
+downloaded file, invisible on the page, which is backwards. Omit both for
+in-article images: those render uncropped, so the mark goes in the true corner.
+Changing a hero's `ratio` or `imagePosition` later means re-running the
+converter, not just editing the template.
+
+## Voice
+
+The posts are Tim writing, not a house style. An edit that leaves the prose
+correct and lifeless has failed — the jokes and asides are the reason anyone
+finishes the piece. Derived from the `hello-world` copy pass; extend it as
+more posts land.
+
+**Keep, always.** The running gag, the aside in brackets, the one-word
+paragraph used as a drum hit. Hogwash. `27001, looking at you`. A joke that
+survives the edit is worth more than a sentence that reads smoothly. Never
+explain one — if it needs a gloss, cut it instead.
+
+**Rhythm over uniformity.** A long, winding sentence and then a short one.
+Fragments are fine deliberately. Em dashes carry asides; semicolons rarely do.
+Read it aloud — if you run out of breath, split it.
+
+**Cut, don't pad.** Throat-clearing ("Arguably you may ask…"), hedges, and
+stacked qualifiers all go. Say it once, in the active voice. History goes in
+the past tense and stays there; the drift into present tense is the most
+common thing to fix.
+
+**Fix facts, don't soften them.** A wrong claim gets corrected and cited, not
+vagued up — "the world's first paid LLM product" became "one of the first a
+working developer paid for out of their own pocket" because the original was
+simply untrue. Anything dated, priced or attributed gets a footnote, and the
+source is *fetched* before citing. Don't write a plausible URL.
+
+**Footnotes are GFM** — `[^slug]` inline, `[^slug]: …` at the foot. Named, not
+numbered, so inserting one doesn't renumber the rest. remark-gfm handles them;
+no plugin.
+
+**Terms get expanded once**, on first use, via `<abbr title="…">`.
+
+**A copy pass is not a rewrite.** Match the existing register rather than
+importing one. This is also why a copy pass is poor delegation material: an
+agent starting cold re-derives the rules from the text and reliably sands the
+personality off.
+
 ## Content
 
 Two collections, `posts` and `projects`, schemas in `src/content.config.ts`.
@@ -153,7 +243,10 @@ PowerShell, not bash. Prefer the file tools over either.
 
 ## Don't
 
-- Deploy, or create Azure resources. Give the `az` commands to run instead.
+- Deploy, or create Azure resources, **without asking first**. Running `az` is
+  fine once Tim has said go — show the commands, get the nod, then run them.
+  It's a personal subscription, not a work one; the rule is about consent, not
+  about keeping hands off the CLI.
 - Commit or push unless asked.
 - Check framework APIs from memory — Astro moves fast. Read the live docs.
 

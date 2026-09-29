@@ -1,39 +1,130 @@
 ---
 title: This site
 description: >-
-  A sample project entry — the site you're reading, used here to show the
-  projects schema in use. Swap it for something real.
-date: 2026-09-27
-tags: ['astro', 'azure', 'bicep']
+  Astro, static, on Azure Static Web Apps. No server, no adapter, and exactly
+  one script — which started as zero, and the story of how it got to one is
+  most of this page.
+date: 2026-09-29
+tags: ['astro', 'azure', 'bicep', 'csp']
 status: active
-draft: true
-# repo: https://github.com/tim2277/portfolio
-# url: https://www.example.com
+repo: https://github.com/tim2277/portfolio
+draft: false
+heroImage: ../../assets/photos/this-site-hero.jpg
+heroAlt: >-
+  A terraced limestone hill above a wide expanse of bare grey pavement, thin
+  grass in the cracks.
 ---
 
-This is a sample project. It exists so the `projects` schema has something to
-validate against. It's `draft: true`, so it renders in `astro dev` and is left
-out of a production build.
+import Callout from '../../components/Callout.astro';
 
-Projects carry three fields posts don't:
+## The stack, briefly
 
-- `status` — one of `active`, `shipped`, `archived`, `exploration`
-- `repo` — optional source link
-- `url` — optional live link
+| Layer | Choice |
+| --- | --- |
+| Site generator | Astro 7, static output |
+| Content | MDX in content collections, Zod-typed frontmatter |
+| Styling | One hand-written stylesheet, CSS custom properties |
+| Type | Fraunces, self-hosted, for headings; system stacks below |
+| Hosting | Azure Static Web Apps, Free tier |
+| Infrastructure | Bicep, one resource |
+| Pipeline | GitHub Actions, with PR preview environments |
 
-## The shape of a good project write-up
+## Content is typed, not trusted
 
-Lead with the decision, not the feature list. What was the constraint, what did
-you rule out, and what did it cost you? A screenshot tells a reader what it
-looks like; the trade-off tells them whether you can think.
+Both collections — `posts` and `projects` — share a Zod schema for title,
+description, date, tags and draft status, with projects adding a status enum
+and optional repo/live links. A typo in front matter means I won't
+accidentally post a half-completed thought or, worse, a syntax error _gasp_.
 
-## Constraints
+Drafts are visible in `astro dev` and excluded from a production build.
 
-- Static output only, no server
-- Free hosting tier
-- Zero client JS on a content page
+## One script, and what it cost
 
-## What I'd do differently
+This site started with a guideline (Claude says it was a rule): no client-side
+JavaScript on a content page. Dark mode followed `prefers-color-scheme` and
+that was the end of it. The rule held until the first person asked for a theme
+toggle. That person was me, after looking at the boring UI I had just built.
 
-Left deliberately blank. Fill it in honestly — it's the section people actually
-read.
+So there is exactly one script. It sets a `data-theme` attribute before
+`<body>` parses, reads and writes one `localStorage` key, and falls back to
+`prefers-color-scheme` when it doesn't run. About thirty lines, no
+dependencies, no framework — the type of efficiency that software dev promises
+but rarely achieves.
+
+It wasn't free, and the bill is the interesting part:
+
+- **The <abbr title="Content Security Policy">CSP</abbr> pins it by hash.**
+  Having co-authored a few internal docs on ISO standards over the years, this
+  was the first thing to set my cyber senses tingling. The boring technical
+  bit: `script-src` carries a sha256 of that exact script rather than
+  `'self'`, so nothing else can execute (cybersecurity win!).
+- **Every themed rule now has two routes.** The OS preference when the reader
+  hasn't chosen (dark for those L337 hackers and light for everyone else),
+  `[data-theme]` when they have.
+- **Syntax highlighting is still build-time.** Shiki emits both themes as CSS
+  custom properties and the switch picks one.
+
+## Infrastructure
+
+It's always great to design the best and coolest thingy, but if no one can see
+it or read it or touch it — then it's really just décor. So I made it easy:
+**one Bicep file** (keep it KISS and DRY!). The pipeline owns the deployment;
+Bicep owns the resource.
+
+## The pipeline, and the Oryx detour
+
+The default Static Web Apps workflow hands your repository to Oryx, Azure's
+build engine (so thoughtful!), and lets it work out how to build the site.
+That's convenient right up until you want any customisation, or to run
+something completely different like Astro or Docusaurus.
+
+"Sometimes the absence of something is all you need". GitHub Actions checks
+out, installs on a pinned Node, runs `astro check`, runs `astro build`, and
+then the deploy action runs with `skip_app_build: true` — it uploads `dist`
+and nothing else.
+
+<Callout type="tip" title="The gotcha">
+  With `skip_app_build`, `app_location` stops meaning "where the source is" and
+  starts meaning "where the built output is". And because only `dist` gets
+  uploaded, `staticwebapp.config.json` has to be inside it — so it lives in
+  `public/` and Astro copies it across. Leave it at the repository root and
+  it's silently ignored: no error, no headers, just a site that scores badly on
+  a security scan for no visible reason.
+</Callout>
+
+Preview before publishing to GA — not doing that is like forgetting to put
+pants on, and that just isn't comfortable for anyone. Pull requests get their
+own preview environment on a stable URL, and a second job tears it down when
+the PR closes (<span role="img" aria-label="celebrate">🎉</span> yay for
+automation).
+
+## Headers and caching
+
+**Cache all the things!\***
+
+<small>
+  \*: `staticwebapp.config.json` sets a restrictive CSP, HSTS, `nosniff`, a
+  referrer policy and a `Permissions-Policy` that switches off hardware APIs
+  this site shouldn't be asking for. Astro's hashed assets under `/_astro/` get
+  a year of immutable caching; HTML gets `must-revalidate`, so a deploy is
+  visible immediately.
+</small>
+
+Now the confession. The CSP isn't as tight as I'd like — `style-src` still
+carries `'unsafe-inline'`, and there are two culprits. Astro inlines its
+smaller stylesheets straight into the page, and Shiki writes every syntax
+colour as an inline `style` attribute. The first I could fix. The second would
+mean `style-src-attr`, which Firefox and Safari don't implement — so my code
+blocks would go grey on two engines out of three (a cybersecurity loss, but a
+readability win).
+
+So it stays. And I'd rather say it here than have you find it in View Source,
+which — let's be honest — you were going to do anyway.
+
+## What's deliberately missing
+
+- No analytics.
+- No comments (we've got enough of those elsewhere).
+- No third-party requests. KISS!
+- No interactive islands, yet! That's very much a _"let's build it when it's
+  needed"_ — a completely valid engineering decision.

@@ -56,9 +56,10 @@ jobs:
           skip_app_build: true
           skip_api_build: true
           production_branch: main
-          # No Azure resource yet. Until the token secret exists, build and
-          # skip the upload rather than failing the run red.
-          skip_deploy_on_missing_secrets: true
+          # The resource and the token secret both exist now. Left true, a
+          # missing or misnamed secret produces a green run and an empty site
+          # — the most expensive kind of silent failure on a launch.
+          skip_deploy_on_missing_secrets: false
 
   close_pull_request:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
