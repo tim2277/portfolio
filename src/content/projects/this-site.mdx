@@ -124,12 +124,7 @@ that `style-src` carried `'unsafe-inline'`, with two culprits: Astro inlining
 its smaller stylesheets straight into the page, and Shiki writing every syntax
 colour as an inline `style` attribute. I'd decided to live with it.
 
-Then a security review found a third culprit I hadn't: the hero image's crop,
-passed in as a `style` attribute. Three was enough. Stylesheets now always
-ship as files (one line of config), the hero takes its crop from data
-attributes, and syntax highlighting is off — there isn't a code block on the
-site yet, and when there is, whatever colours it will have to do so with
-classes. `style-src` is `'self'`, no exceptions.
+Then a security review found a third culprit I hadn't: the hero image's crop, passed in as a `style` attribute. Three was enough. Stylesheets now always ship as files (one line of config), the hero takes its crop from data attributes, and syntax highlighting runs on Prism instead of Shiki: it classes tokens rather than inlining a colour per span, so the CSP didn't have to move. `style-src` is `'self'`, no exceptions.
 
 So go ahead and View Source, which — let's be honest — you were going to do
 anyway. This time there's nothing to find.
