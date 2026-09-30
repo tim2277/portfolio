@@ -82,10 +82,11 @@ export default defineConfig({
   ],
 
   markdown: {
-    // Off until a post needs it. Shiki writes a style="" attribute onto every
-    // token, and style-src has no 'unsafe-inline', so the browser would drop
-    // them all silently. Whatever replaces this must emit classes, not styles.
-    syntaxHighlight: false,
+    // Prism, not the default Shiki: Shiki writes a style="" attribute onto
+    // every token, and style-src has no 'unsafe-inline', so the browser would
+    // drop them all silently. Prism classes tokens instead; theme CSS is
+    // vendored in src/styles/prism.css.
+    syntaxHighlight: 'prism',
     // Mermaid: deliberately not wired up yet. When you want it, add a rehype
     // plugin here that turns ```mermaid fences into inline SVG at build time
     // (beautiful-mermaid for a pure-JS render, rehype-mermaid + Playwright for
