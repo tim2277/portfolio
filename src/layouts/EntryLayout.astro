@@ -1,11 +1,12 @@
 ---
-import { Image, getImage } from 'astro:assets';
+import { Picture, getImage } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import type { MarkdownHeading } from 'astro';
 import BaseLayout from './BaseLayout.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import { TOC_MINIMUM, tocHeadings } from '../lib/content';
+import { SITE_AUTHOR } from '../consts';
 
 interface Props {
   entry: CollectionEntry<'posts'> | CollectionEntry<'projects'>;
@@ -54,11 +55,15 @@ const share = data.heroImage
   publishedAt={data.date}
   updatedAt={data.updated}
   noindex={data.draft}
+  entryKind={isProject ? 'project' : 'post'}
   width={hasToc ? 'shell' : 'measure'}
 >
   <div class:list={[hasToc && 'toc-layout']}>
     <article>
       <header>
+        <p class="entry-byline">
+          By <a href="/about/" rel="author">{SITE_AUTHOR}</a>
+        </p>
         <p class="entry-meta">
           <FormattedDate date={data.date} />
           {data.updated && <FormattedDate date={data.updated} prefix="· updated" />}
@@ -66,7 +71,7 @@ const share = data.heroImage
           {data.draft && <span class="badge-draft">draft</span>}
         </p>
         <h1>{data.title}</h1>
-        <p class="lede">{data.description}</p>
+        <p class="lede">{data.lede ?? data.description}</p>
         {
           data.tags.length > 0 && (
             <ul class="tags">
@@ -78,12 +83,14 @@ const share = data.heroImage
         }
         {
           data.heroImage && (
-            <Image
+            <Picture
               src={data.heroImage}
               alt={data.heroAlt ?? ''}
               widths={[480, 800, 1200]}
               sizes="(min-width: 74ch) 74ch, 100vw"
+              formats={['avif', 'webp']}
               loading="eager"
+              fetchpriority="high"
               class="hero"
             />
           )
@@ -159,6 +166,15 @@ const share = data.heroImage
 
   header {
     margin-block-end: 2.5rem;
+  }
+
+  .entry-byline {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-muted);
+    margin: 0 0 0.35rem;
   }
 
   /* First heading in the body shouldn't collide with the header block. */

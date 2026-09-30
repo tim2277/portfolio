@@ -3,14 +3,9 @@ name: Build and deploy
 on:
   push:
     branches: [main]
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
-    branches: [main]
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pull-requests: write
+permissions: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -21,16 +16,19 @@ env:
 
 jobs:
   build_and_deploy:
-    if: github.event_name != 'pull_request' || github.event.action != 'closed'
     runs-on: ubuntu-latest
     name: Build and deploy
+    environment: production
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           submodules: false
           lfs: false
+          persist-credentials: false
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
@@ -43,12 +41,18 @@ jobs:
 
       # skip_app_build keeps Oryx out of it: we've already built with a pinned
       # Node, so the action only uploads dist.
+      #
+      # This job runs under the "production" environment so the deploy token
+      # only lives there, not as a plain repository secret. That environment
+      # has to exist and hold AZURE_STATIC_WEB_APPS_API_TOKEN before this
+      # workflow can deploy — skip_deploy_on_missing_secrets: false means a
+      # missing or misnamed secret fails the run loudly instead of silently
+      # skipping the deploy step and reporting green.
       - name: Deploy to Azure Static Web Apps
         id: deploy
-        uses: Azure/static-web-apps-deploy@v1
+        uses: Azure/static-web-apps-deploy@1a947af9992250f3bc2e68ad0754c0b0c11566c9 # v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
           app_location: dist
           api_location: ''
@@ -56,18 +60,4 @@ jobs:
           skip_app_build: true
           skip_api_build: true
           production_branch: main
-          # The resource and the token secret both exist now. Left true, a
-          # missing or misnamed secret produces a green run and an empty site
-          # — the most expensive kind of silent failure on a launch.
           skip_deploy_on_missing_secrets: false
-
-  close_pull_request:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    name: Tear down preview environment
-    steps:
-      - name: Close preview environment
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          action: close

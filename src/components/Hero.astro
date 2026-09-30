@@ -1,6 +1,21 @@
 ---
 import { Picture } from 'astro:assets';
 
+/*
+  The crop can't be passed through as an inline style: the CSP has no
+  'unsafe-inline' for styles, so a style="" attribute is silently ignored and
+  the band falls back to a centred crop — dropping the burnt-in credit out of
+  view. Instead each value is echoed into a data attribute and matched by a
+  rule in the <style> block below, which ships in the external stylesheet.
+
+  The unions are the contract: a value not listed here fails `astro check`
+  rather than rendering with the wrong crop. To add one, extend the union AND
+  add the matching [data-hero-position] / [data-hero-ratio] rule below — and
+  re-run the converter, since the watermark is placed against this crop.
+*/
+type HeroPosition = '50% 28%' | '50% 52%';
+type HeroRatio = '3.2 / 1';
+
 type BaseProps = {
   title: string;
   /** Small mono line above the title — a section label, not a tagline. */
@@ -9,9 +24,9 @@ type BaseProps = {
    * object-position for the crop. The band is far wider than it is tall, so a
    * portrait source loses most of its height — this says which part to keep.
    */
-  imagePosition?: string;
-  /** Override the band's aspect ratio, e.g. '2.6 / 1' for a taller subject. */
-  ratio?: string;
+  imagePosition?: HeroPosition;
+  /** Override the band's aspect ratio for a taller subject. */
+  ratio?: HeroRatio;
 };
 
 // Alt text isn't optional when there's an image. Pass an empty string to say
@@ -28,7 +43,8 @@ const { title, eyebrow, image, imageAlt, imagePosition, ratio } = Astro.props;
       image && (
         <div
           class="hero-image"
-          style={{ '--hero-ratio': ratio, '--hero-position': imagePosition }}
+          data-hero-ratio={ratio}
+          data-hero-position={imagePosition}
         >
           <Picture
             src={image}
@@ -105,6 +121,19 @@ const { title, eyebrow, image, imageAlt, imagePosition, ratio } = Astro.props;
   .hero-image {
     aspect-ratio: var(--hero-ratio, 3 / 1);
     border-block-end: 1px solid var(--border);
+  }
+
+  /* One rule per value in HeroRatio / HeroPosition above. */
+  .hero-image[data-hero-ratio='3.2 / 1'] {
+    --hero-ratio: 3.2 / 1;
+  }
+
+  .hero-image[data-hero-position='50% 28%'] {
+    --hero-position: 50% 28%;
+  }
+
+  .hero-image[data-hero-position='50% 52%'] {
+    --hero-position: 50% 52%;
   }
 
   /* A fixed ratio that reads well at 600px is a wall at 1250px — flatten the

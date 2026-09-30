@@ -8,15 +8,42 @@
     }
   },
   "globalHeaders": {
-    "Content-Security-Policy": "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'sha256-66nvgXv3i01r3DHyJqN456WvellSbhV//o3ltnEcxy8='; font-src 'self'; connect-src 'self'; form-action 'none'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests",
+    "Content-Security-Policy": "default-src 'none'; script-src 'sha256-66nvgXv3i01r3DHyJqN456WvellSbhV//o3ltnEcxy8='; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests",
     "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "strict-origin-when-cross-origin",
     "Permissions-Policy": "accelerometer=(), camera=(), geolocation=(), gyroscope=(), microphone=(), payment=(), usb=()",
     "Cross-Origin-Opener-Policy": "same-origin",
-    "X-Frame-Options": "DENY"
+    "Cross-Origin-Resource-Policy": "same-origin",
+    "X-Frame-Options": "DENY",
+    "X-XSS-Protection": ""
   },
   "routes": [
+    {
+      "route": "/.auth/login/aad",
+      "statusCode": 404
+    },
+    {
+      "route": "/.auth/login/github",
+      "statusCode": 404
+    },
+    {
+      "route": "/.auth/login/twitter",
+      "statusCode": 404
+    },
+    {
+      "route": "/.auth/*",
+      "statusCode": 404
+    },
+    {
+      "route": "/index",
+      "redirect": "/",
+      "statusCode": 301
+    },
+    {
+      "route": "/404*",
+      "statusCode": 404
+    },
     {
       "route": "/colophon*",
       "redirect": "/projects/this-site/",
@@ -55,6 +82,7 @@
     }
   ],
   "mimeTypes": {
+    ".html": "text/html; charset=utf-8",
     ".webmanifest": "application/manifest+json",
     ".avif": "image/avif"
   }

@@ -51,11 +51,11 @@ az login
 az account set --subscription "<your-subscription-id>"
 
 az group create `
-  --name rg-portfolio `
+  --name rg-portfolio-prod `
   --location westeurope
 
 az deployment group create `
-  --resource-group rg-portfolio `
+  --resource-group rg-portfolio-prod `
   --template-file infra/main.bicep `
   --parameters infra/main.bicepparam
 ```
@@ -68,14 +68,13 @@ happens.
 ```powershell
 az staticwebapp secrets list `
   --name swa-portfolio `
-  --resource-group rg-portfolio `
+  --resource-group rg-portfolio-prod `
   --query "properties.apiKey" -o tsv
 ```
 
 ### 3. GitHub secrets
 
-One secret, on the repository. `GITHUB_TOKEN` is provided automatically — the
-workflow uses it to post the preview URL onto the pull request.
+One secret: `AZURE_STATIC_WEB_APPS_API_TOKEN`.
 
 ```powershell
 gh secret set AZURE_STATIC_WEB_APPS_API_TOKEN --body "<token>"
@@ -83,13 +82,10 @@ gh secret set AZURE_STATIC_WEB_APPS_API_TOKEN --body "<token>"
 
 ### 4. Push
 
-`.github/workflows/azure-static-web-apps.yml` runs on pushes to `main` and on
-pull requests. It builds on a pinned Node, runs `astro check`, and deploys with
+`.github/workflows/azure-static-web-apps.yml` runs on pushes to `main`. It
+builds on a pinned Node, runs `astro check`, and deploys with
 `skip_app_build: true` — Azure's Oryx build engine is bypassed entirely and the
 action only uploads `dist`.
-
-Pull requests get their own preview environment; a second job tears it down when
-the PR closes. The Free tier allows three at a time.
 
 ### 5. Custom domain
 
@@ -101,7 +97,7 @@ ALIAS record; if the registrar can't do that, delegate the zone to Azure DNS
 ### Rotating the token
 
 ```powershell
-az staticwebapp secrets reset-api-key --name swa-portfolio --resource-group rg-portfolio
+az staticwebapp secrets reset-api-key --name swa-portfolio --resource-group rg-portfolio-prod
 ```
 
 Then update the GitHub secret.
@@ -110,7 +106,7 @@ Then update the GitHub secret.
 
 ```
 infra/                       Bicep — one Static Web App, Free tier
-.github/workflows/           Build, deploy, tear down PR previews
+.github/workflows/           Build and deploy on push to main
 public/
   staticwebapp.config.json   Headers, caching, 404. Must be in public/ so it
                              lands in dist/ — only dist/ is uploaded.
@@ -127,13 +123,14 @@ src/
 
 ## Licence
 
-Split, deliberately — see `LICENSE`:
+Three-way split, deliberately — see `LICENSE`:
 
 - **Code** is MIT. Components, layouts, styles, config, the pipeline. Help
   yourself.
-- **Writing** isn't. Everything under `src/content/`, the prose in
-  `src/pages/`, and the images are all rights reserved. Quote it with a link;
-  ask before republishing it.
+- **Writing** — the post and project write-ups in `src/content/`, and the
+  page copy in `src/pages/` — is CC BY-NC 4.0. Share and adapt it non-commercially with credit and a link.
+- **Photographs** under `src/assets/photos/` are all rights reserved. Quote a
+  low-res copy with credit and a link; ask before anything more.
 
 ---
 

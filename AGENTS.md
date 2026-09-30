@@ -49,10 +49,13 @@ Then confirm the build actually produced a site:
 
 - `dist/_astro/*.css` exists — see the junction trap below
 - every `<script` in `dist/**/*.html` is inline, and each one's sha256 appears
-  in `script-src` in `dist/staticwebapp.config.json`
+  in `script-src` in `dist/staticwebapp.config.json`. JSON-LD blocks
+  (`type="application/ld+json"`) are data, not script, and are exempt — but
+  each must parse as JSON
+- no `style=` attribute and no `<style` element anywhere in `dist/**/*.html`
 - `dist/staticwebapp.config.json` exists
 
-A build can "succeed" and still fail all three.
+A build can "succeed" and still fail all four.
 
 ## Traps
 
@@ -78,6 +81,21 @@ $bytes = [System.Text.Encoding]::UTF8.GetBytes($body)
 ```
 
 Paste the result into `script-src` in `public/staticwebapp.config.json`.
+
+**An inline style is dropped in silence too.** `style-src` has no
+`'unsafe-inline'`, and `build.inlineStylesheets` is `'never'` so Astro ships
+every stylesheet as a file. Any `style="…"` attribute or `<style>` element in
+the output is ignored by the browser — the build stays green and the page
+renders wrong. `Hero` passes its crop through data attributes for this reason.
+Syntax highlighting is off for the same reason: Shiki styles every token
+inline. Whatever eventually replaces it has to emit classes.
+
+**SWA config fails in both directions.** Some mistakes are silent:
+`navigationFallback` serves every unknown URL with a 200, and
+`trailingSlash: "always"` 301s every *file*, not just pages. Others fail the
+deploy: a route rule can't combine `rewrite` with `statusCode`. Check a change
+against the [configuration reference](https://learn.microsoft.com/azure/static-web-apps/configuration),
+then against the live site with `Invoke-WebRequest -MaximumRedirection 0`.
 
 **`staticwebapp.config.json` must live in `public/`.** Only `dist/` is uploaded,
 and Astro copies `public/` into it. At the repo root the file is ignored
@@ -130,7 +148,9 @@ photograph goes through the converter first:
 ```
 
 It strips metadata, caps the longest edge at 2400px, honours EXIF orientation,
-and burns in the location and copyright line. Decoding needs
+and burns in the location and copyright line. It then re-reads its own output
+and deletes it, failing, if anything beyond the encoder's five boilerplate
+tags survived — GPS, XMP, or bytes after the end of the image. Decoding needs
 `Microsoft.HEIFImageExtension` from the Store; without it `BitmapDecoder`
 fails on HEIC.
 
@@ -147,7 +167,19 @@ Get either wrong and the credit sits outside the visible band — present in the
 downloaded file, invisible on the page, which is backwards. Omit both for
 in-article images: those render uncropped, so the mark goes in the true corner.
 Changing a hero's `ratio` or `imagePosition` later means re-running the
-converter, not just editing the template.
+converter, not just editing the template. Both props take a fixed list of
+values, so a new one also needs an entry in the type in `Hero.astro` and a
+matching rule in its stylesheet — `astro check` rejects a value that isn't
+listed.
+
+## Code comments
+
+A comment says why, or explains logic that isn't obvious from the code. It
+doesn't narrate what the next line does, restate a name, or record the history
+of a change — that's what the commit message is for. The good examples here
+name the trap a line exists to avoid: `preserveSymlinks` in `astro.config.ts`
+says what breaks without it. If a comment would read the same with the code
+deleted, cut it.
 
 ## Voice
 
@@ -191,6 +223,13 @@ personality off.
 
 Two collections, `posts` and `projects`, schemas in `src/content.config.ts`.
 Invalid frontmatter fails the build by design.
+
+**`description` and `lede` do different jobs.** `description` is the pitch
+that search results, link previews, the feed and JSON-LD show. It says why
+someone should read the piece, not what it's called, and it stays under 160
+characters, roughly where Google truncates. The schema enforces the limit.
+`lede` is what the site itself shows on the entry card and as the subtitle,
+and it's where the joke goes. It's optional and falls back to `description`.
 
 `draft: true` entries render in `astro dev`, are excluded from a production
 build, and are `noindex`'d if built anyway. To exercise the templates against a

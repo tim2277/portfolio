@@ -7,9 +7,22 @@ interface Props {
   /** Collection route prefix, e.g. '/posts'. */
   base: string;
   emptyMessage?: string;
+  /** Heading level for each entry title. Defaults to h2 — the /posts/ and
+      /projects/ indexes, where an entry title is the top-level heading under
+      the page's own h1. The home page nests this list under an h2 section
+      heading ("Latest posts", "Projects"), so it passes 3 to keep the
+      outline from skipping a level. */
+  headingLevel?: 2 | 3;
 }
 
-const { entries, base, emptyMessage = 'Nothing published here yet.' } = Astro.props;
+const {
+  entries,
+  base,
+  emptyMessage = 'Nothing published here yet.',
+  headingLevel = 2,
+} = Astro.props;
+
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
 ---
 
 {
@@ -24,10 +37,10 @@ const { entries, base, emptyMessage = 'Nothing published here yet.' } = Astro.pr
             {'status' in entry.data && <span>· {entry.data.status}</span>}
             {entry.data.draft && <span class="badge-draft">draft</span>}
           </p>
-          <h2 class="entry-title">
+          <Heading class="entry-title">
             <a href={`${base}/${entry.id}/`}>{entry.data.title}</a>
-          </h2>
-          <p class="entry-desc">{entry.data.description}</p>
+          </Heading>
+          <p class="entry-desc">{entry.data.lede ?? entry.data.description}</p>
           {entry.data.tags.length > 0 && (
             <ul class="tags">
               {entry.data.tags.map((tag) => (

@@ -24,7 +24,7 @@ const share = await getImage({
   title={SITE_TITLE}
   description={SITE_DESCRIPTION}
   image={share.src}
-  imageAlt=""
+  imageAlt="A floodlit medieval tower house against a deep purple dusk sky, its stone lit warm amber."
   imageWidth={1200}
   imageHeight={630}
   width="shell"
@@ -55,13 +55,18 @@ const share = await getImage({
   <div class="home-columns">
     <section>
       <h2>Latest posts</h2>
-      <EntryList entries={posts} base="/posts" emptyMessage="No posts published yet." />
+      <EntryList entries={posts} base="/posts" emptyMessage="No posts published yet." headingLevel={3} />
       <p><a href="/posts/">All posts →</a></p>
     </section>
 
     <section>
       <h2>Projects</h2>
-      <EntryList entries={projects} base="/projects" emptyMessage="No projects published yet." />
+      <EntryList
+        entries={projects}
+        base="/projects"
+        emptyMessage="No projects published yet."
+        headingLevel={3}
+      />
       <p><a href="/projects/">All projects →</a></p>
     </section>
   </div>

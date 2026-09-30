@@ -1,19 +1,30 @@
-This file covers two different things differently.
+This repository carries three licences, one per kind of content. Which one
+applies is decided by path, not by file type:
 
-SOURCE CODE — components, layouts, styles, configuration, the build pipeline
-and everything else that makes the site work — is MIT licensed, below. Take it,
-change it, ship it.
+1. SOURCE CODE — everything except the two carve-outs below: components,
+   layouts, styles, configuration, build pipeline, scripts, and the prose of
+   this file itself. Licensed MIT. Full text below.
 
-WRITTEN CONTENT — everything under src/content/, the prose in src/pages/, and
-any images — is NOT covered by the MIT licence. Copyright (c) 2026 tim2277, all
-rights reserved. Quote it with attribution and a link by all means; ask before
-republishing it.
+2. WRITTEN CONTENT — all prose published on the site: the `posts` and
+   `projects` collections (`src/content/posts/**/*.mdx` and
+   `src/content/projects/**/*.mdx`, frontmatter and body alike), and the
+   reader-facing copy in `src/pages/` (the About page, index ledes, page
+   descriptions). The markup and code around that copy stay under MIT.
+   Licensed CC BY-NC 4.0. Notice below.
+
+3. PHOTOGRAPHS — the image files under `src/assets/photos/`, and any copy or
+   derivative Astro generates from them at build time (resized, re-encoded,
+   or otherwise transformed versions served from the built site). All rights
+   reserved. Notice below.
+
+If a future file doesn't obviously fall under one of these paths, treat it as
+source code unless it's clearly someone's photograph or someone's prose.
 
 ---
 
-MIT License
+## 1. Source code — MIT License
 
-Copyright (c) 2026 tim2277
+Copyright (c) 2026 Tim
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -35,14 +46,31 @@ SOFTWARE.
 
 ---
 
-Post content license
+## 2. Written content — CC BY-NC 4.0
 
-Unless otherwise stated, the written post content in this repository is
-licensed under the Creative Commons Attribution-NonCommercial 4.0
-International License (CC BY-NC 4.0).
+Copyright (c) 2026 Tim. Unless a specific piece says otherwise, the written
+content described in scope 2 above is licensed under the Creative Commons
+Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0).
 
-You may share and adapt the post content for non-commercial purposes, provided
-that you give appropriate credit, provide a link to the license, and indicate
-if changes were made.
+You may share and adapt this content, provided you:
 
-Full license text: https://creativecommons.org/licenses/by-nc/4.0/
+- give appropriate credit to Tim, with a link back to the original piece;
+- indicate if changes were made; and
+- do not use it for commercial purposes.
+
+No warranty is given. Full legal text:
+<https://creativecommons.org/licenses/by-nc/4.0/>
+
+---
+
+## 3. Photographs — all rights reserved
+
+Copyright (c) 2026 Tim. All photographs under `src/assets/photos/`, and any
+resized, re-encoded, or otherwise derived copy of them served by the built
+site, are all rights reserved. None of the permissions granted above extend
+to them.
+
+You may view and link to them as published on the site, and quote a low-
+resolution copy for commentary or review with credit and a link back. Any
+other use — republishing, redistributing the image file itself, or any
+commercial use — needs permission first.

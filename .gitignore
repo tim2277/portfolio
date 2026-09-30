@@ -14,8 +14,15 @@ pnpm-debug.log*
 
 
 # environment variables
-.env
-.env.production
+.env*
+!.env.example
+
+# HEIC originals - convert with scripts/Convert-Heic.ps1 before anything
+# lands in src/assets. core.ignorecase is true by default on Windows/macOS
+# checkouts, so one pattern covers both cases there; listed twice anyway so
+# a case-sensitive checkout (Linux CI) doesn't miss the uppercase form.
+*.heic
+*.HEIC
 
 # macOS-specific files
 .DS_Store

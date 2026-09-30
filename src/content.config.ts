@@ -5,7 +5,12 @@ import { z } from 'astro/zod';
 const baseSchema = ({ image }: SchemaContext) =>
   z.object({
     title: z.string().max(120),
-    description: z.string().max(300),
+    // What search results, link previews, the feed and JSON-LD show: why
+    // someone should read this. `lede` is what the site shows — the card and
+    // the subtitle — and falls back to this when absent. 160 is roughly where
+    // Google truncates a snippet.
+    description: z.string().max(160),
+    lede: z.string().max(300).optional(),
     date: z.coerce.date(),
     updated: z.coerce.date().optional(),
     tags: z.array(z.string()).default([]),

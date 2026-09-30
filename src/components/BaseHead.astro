@@ -1,5 +1,15 @@
 ---
-import { SITE_TITLE, SITE_DESCRIPTION, SITE_AUTHOR, SITE_LOCALE } from '../consts';
+import {
+  SITE_TITLE,
+  SITE_DESCRIPTION,
+  SITE_AUTHOR,
+  SITE_LOCALE,
+  SITE_URL,
+  ABOUT_URL,
+  PERSON_ID,
+  GITHUB_URL,
+  PERSON_KNOWS_ABOUT,
+} from '../consts';
 // Self-hosted, weight axis only — no third-party request, so font-src 'self'
 // in the CSP stays as it is.
 import '@fontsource-variable/fraunces/wght.css';
@@ -10,7 +20,8 @@ interface Props {
   description?: string;
   /** Absolute or site-relative URL of a sharing image. */
   image?: string;
-  /** Alt text for the sharing image. Empty string is a deliberate 'decorative'. */
+  /** Alt text for the sharing image. Empty string means 'decorative' — the
+      og/twitter alt tags are omitted rather than emitted empty. */
   imageAlt?: string;
   imageWidth?: number;
   imageHeight?: number;
@@ -20,6 +31,14 @@ interface Props {
   updatedAt?: Date;
   /** Keep a page out of the index — used for drafts. */
   noindex?: boolean;
+  /** Drop canonical/og:url entirely — for the 404 page, which has no one
+      true URL and stays out of the index anyway. */
+  suppressUrl?: boolean;
+  /** Which JSON-LD node this page adds on top of the WebSite + Person every
+      page gets. Individual post/project entries pass 'post' / 'project';
+      the About page's ProfilePage is inferred from the URL below, since
+      about.astro isn't touched for anything beyond its rel="me" link. */
+  entryKind?: 'post' | 'project';
 }
 
 const {
@@ -33,24 +52,89 @@ const {
   publishedAt,
   updatedAt,
   noindex = false,
+  suppressUrl = false,
+  entryKind,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const socialImage = image ? new URL(image, Astro.site) : undefined;
+const isAboutPage = Astro.url.pathname === '/about/';
 
 // The home page title is already the site title; don't say it twice.
 const fullTitle = title === SITE_TITLE ? title : `${title} — ${SITE_TITLE}`;
+
+/*
+  JSON-LD via a @graph: every page gets a WebSite and a Person (a stable
+  @id so BlogPosting/TechArticle author references and the About page's
+  ProfilePage.mainEntity can point at the same node without repeating it).
+  Entries add a BlogPosting/TechArticle; About adds a ProfilePage.
+
+  This is a data block, not a script: `script-src` in the CSP is scoped to
+  "JavaScript... which can trigger script execution" (MDN, CSP `script-src`),
+  and a `<script type="application/ld+json">` element is inert to the HTML
+  parser — there's nothing for the policy to allow or block. Hash-only
+  script-src doesn't need an entry for this, and this block is deliberately
+  excluded from the "every <script> hash-pinned" build check for the same
+  reason.
+*/
+const graph: Record<string, unknown>[] = [
+  {
+    '@type': 'WebSite',
+    '@id': `${SITE_URL}/#website`,
+    name: SITE_TITLE,
+    url: `${SITE_URL}/`,
+    inLanguage: SITE_LOCALE,
+  },
+  {
+    '@type': 'Person',
+    '@id': PERSON_ID,
+    name: SITE_AUTHOR,
+    url: ABOUT_URL,
+    sameAs: [GITHUB_URL],
+    knowsAbout: PERSON_KNOWS_ABOUT,
+  },
+];
+
+if (entryKind) {
+  graph.push({
+    // Projects read as technical write-ups of how something was built
+    // rather than blog narrative, so TechArticle over BlogPosting.
+    '@type': entryKind === 'project' ? 'TechArticle' : 'BlogPosting',
+    '@id': `${canonical}#article`,
+    headline: title,
+    description,
+    datePublished: publishedAt?.toISOString(),
+    dateModified: (updatedAt ?? publishedAt)?.toISOString(),
+    author: { '@id': PERSON_ID },
+    image: socialImage?.toString(),
+    mainEntityOfPage: canonical.toString(),
+    inLanguage: SITE_LOCALE,
+  });
+}
+
+if (isAboutPage) {
+  graph.push({
+    '@type': 'ProfilePage',
+    '@id': `${canonical}#webpage`,
+    name: title,
+    description,
+    url: canonical.toString(),
+    inLanguage: SITE_LOCALE,
+    mainEntity: { '@id': PERSON_ID },
+  });
+}
+
+const jsonLd = { '@context': 'https://schema.org', '@graph': graph };
 ---
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="generator" content={Astro.generator} />
 
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 <meta name="author" content={SITE_AUTHOR} />
-<link rel="canonical" href={canonical} />
-{noindex && <meta name="robots" content="noindex, nofollow" />}
+{!suppressUrl && <link rel="canonical" href={canonical} />}
+<meta name="robots" content={noindex ? 'noindex, nofollow' : 'max-image-preview:large'} />
 
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="sitemap" href="/sitemap-index.xml" />
@@ -62,22 +146,27 @@ const fullTitle = title === SITE_TITLE ? title : `${title} — ${SITE_TITLE}`;
 />
 
 <meta property="og:type" content={type} />
-<meta property="og:title" content={fullTitle} />
+<meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
-<meta property="og:url" content={canonical} />
+{!suppressUrl && <meta property="og:url" content={canonical} />}
 <meta property="og:site_name" content={SITE_TITLE} />
 <meta property="og:locale" content={SITE_LOCALE.replace('-', '_')} />
 {socialImage && <meta property="og:image" content={socialImage} />}
 {socialImage && imageWidth && <meta property="og:image:width" content={String(imageWidth)} />}
 {socialImage && imageHeight && <meta property="og:image:height" content={String(imageHeight)} />}
-{socialImage && imageAlt !== undefined && <meta property="og:image:alt" content={imageAlt} />}
+{socialImage && imageAlt && <meta property="og:image:alt" content={imageAlt} />}
 
 <meta name="twitter:card" content={socialImage ? 'summary_large_image' : 'summary'} />
-<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
 {socialImage && <meta name="twitter:image" content={socialImage} />}
-{socialImage && imageAlt !== undefined && <meta name="twitter:image:alt" content={imageAlt} />}
+{socialImage && imageAlt && <meta name="twitter:image:alt" content={imageAlt} />}
 
+{
+  type === 'article' && (
+    <meta property="article:author" content={ABOUT_URL} />
+  )
+}
 {
   type === 'article' && publishedAt && (
     <meta property="article:published_time" content={publishedAt.toISOString()} />
@@ -88,3 +177,5 @@ const fullTitle = title === SITE_TITLE ? title : `${title} — ${SITE_TITLE}`;
     <meta property="article:modified_time" content={updatedAt.toISOString()} />
   )
 }
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />

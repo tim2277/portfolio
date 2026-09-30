@@ -1,55 +1,146 @@
 #!/bin/sh
 #
-# Refuse to push drafts/* branches to the public remote.
+# Keep draft content off the public remote.
 #
 # Tracked in the repo rather than left in .git/hooks so it survives a clone.
 # Activate with:  git config core.hooksPath .githooks
 #
 # git passes the remote name as $1 and its URL as $2, and the refs being
 # pushed on stdin as: <local ref> <local sha> <remote ref> <remote sha>
+#
+# Two independent checks, both scoped to pushes at the public remote:
+#
+#   1. Destination-name check: refuse outright if the remote ref being
+#      written is refs/heads/drafts/*, whatever is behind it.
+#
+#   2. Content check: refuse if any commit being pushed is only reachable
+#      through a local drafts/* branch (or a remote-tracking copy of one)
+#      and hasn't already reached the public remote's main. This is what
+#      catches a plain merge, a renamed branch, a tag on a draft commit, or
+#      HEAD:main pushed straight off a draft checkout - none of those carry
+#      "drafts" in the destination ref name. A squash commit is not a
+#      descendant of the draft commits it summarises, so it still passes.
+#
+# --no-verify skips both. Seatbelt, not a lock - don't use it to route
+# around this.
 
 remote_name="$1"
 remote_url="$2"
 
+# --- is this push going to the public repo? ---------------------------------
+#
+# Match on the URL, case-insensitively, tolerant of a trailing slash and of
+# .git being present or absent, https or ssh. Deliberately not matched on
+# remote name - nothing requires the public remote to be called "origin".
+# Matches the repo name exactly (as a path segment) so portfolio-drafts
+# doesn't trip this.
+
+lower_url=$(printf '%s' "$remote_url" | tr 'A-Z' 'a-z')
+case "$lower_url" in */) lower_url=${lower_url%/} ;; esac
+case "$lower_url" in *.git) lower_url=${lower_url%.git} ;; esac
+case "$lower_url" in */) lower_url=${lower_url%/} ;; esac
+
 is_public=0
-[ "$remote_name" = "origin" ] && is_public=1
-# Match the repo name exactly so portfolio-drafts doesn't trip this.
-case "$remote_url" in
-  */portfolio|*/portfolio.git) is_public=1 ;;
+case "$lower_url" in
+  */portfolio) is_public=1 ;;
 esac
 
 [ "$is_public" -eq 1 ] || exit 0
 
+# --- gather local knowledge of draft history --------------------------------
+
+tips_file=$(mktemp 2>/dev/null) || tips_file="${TMPDIR:-/tmp}/pre-push-tips.$$"
+trap 'rm -f "$tips_file"' EXIT
+
+git for-each-ref --format='%(objectname) %(refname)' \
+  'refs/heads/drafts/*' 'refs/remotes/*/drafts/*' >"$tips_file" 2>/dev/null
+
+have_tips=0
+[ -s "$tips_file" ] && have_tips=1
+
+# This push's remote is already confirmed public above, so its own
+# remote-tracking ref for main - not some other remote found by name - is
+# what "already public" means.
+public_main_ref="refs/remotes/$remote_name/main"
+have_public_main=0
+if git rev-parse --verify --quiet "$public_main_ref" >/dev/null 2>&1; then
+  have_public_main=1
+fi
+
 blocked=""
-first=""
-while read -r local_ref _ remote_ref _; do
-  case "$local_ref:$remote_ref" in
-    *refs/heads/drafts/*)
-      branch="${local_ref#refs/heads/}"
-      [ -n "$first" ] || first="$branch"
-      blocked="$blocked  $branch
+unverifiable=0
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ -n "$local_ref" ] || continue
+
+  case "$remote_ref" in
+    refs/heads/drafts/*)
+      blocked="$blocked  $remote_ref (pushing $local_ref)
 "
+      continue
       ;;
   esac
+
+  # A deletion pushes no new content - nothing to check.
+  case "$local_sha" in
+    0000000000000000000000000000000000000000) continue ;;
+  esac
+
+  [ "$have_tips" -eq 1 ] || continue
+
+  if [ "$have_public_main" -ne 1 ]; then
+    unverifiable=1
+    continue
+  fi
+
+  # An annotated tag's local sha is the tag object, not the commit it points
+  # at; peel it so merge-base has a commit to work with. Falls back to the
+  # raw sha for anything already a commit (or anything odd - merge-base will
+  # simply fail closed on it below).
+  peeled=$(git rev-parse "${local_sha}^{commit}" 2>/dev/null) || peeled="$local_sha"
+
+  while read -r tip_sha tip_ref; do
+    [ -n "$tip_sha" ] || continue
+    mb=$(git merge-base "$peeled" "$tip_sha" 2>/dev/null) || continue
+    if ! git merge-base --is-ancestor "$mb" "$public_main_ref" 2>/dev/null; then
+      blocked="$blocked  $remote_ref carries draft history from $tip_ref
+"
+    fi
+  done <"$tips_file"
 done
+
+if [ "$unverifiable" -eq 1 ]; then
+  cat >&2 <<EOF
+
+pre-push: refusing to push - can't confirm this is free of draft content.
+
+Local drafts/* history exists, but there's no '$public_main_ref' to compare
+it against. Fetch the public remote's main first:
+
+  git fetch $remote_name main
+
+then try the push again. --no-verify exists but shouldn't be used to skip
+this check.
+
+EOF
+  exit 1
+fi
 
 [ -n "$blocked" ] || exit 0
 
 cat >&2 <<EOF
 
-pre-push: refusing to push draft branches to the public remote ($remote_name):
+pre-push: refusing to push draft content to the public remote ($remote_name):
 
 $blocked
-Draft branches belong on 'private'. Either:
+Draft branches, and anything built on them, belong on 'private':
 
-  git push private $first
+  git push private <branch>
 
-or, if you genuinely mean to publish this branch as-is:
-
-  git push --no-verify $remote_name <branch>
-
-Prefer squash-merging the branch into main instead — a plain merge carries
-every intermediate draft commit into the public repo permanently.
+Squash-merge a finished draft into main instead of merging it plainly - a
+plain merge carries every intermediate draft commit into the public repo
+permanently. --no-verify skips this check but shouldn't be used to route
+around it.
 
 EOF
 exit 1

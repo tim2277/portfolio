@@ -15,6 +15,10 @@ interface Props {
   publishedAt?: Date;
   updatedAt?: Date;
   noindex?: boolean;
+  /** Drop canonical/og:url — see BaseHead. */
+  suppressUrl?: boolean;
+  /** JSON-LD entry type for posts/projects — see BaseHead. */
+  entryKind?: 'post' | 'project';
   /** 'shell' widens the content column to match the header, for pages that
       put something beside the prose. The prose itself stays at --measure. */
   width?: 'measure' | 'shell';
