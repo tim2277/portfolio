@@ -40,7 +40,7 @@ const share = await getImage({
     <p>I build things. Occasionally I write down how it went.</p>
   </Hero>
 
-  {/* Prose keeps the measure even though the page is shell-width. */}
+  {/* Prose keeps the measure even though the page is shell-width — one column narrow, two columns wide. */}
   <div class="home-intro">
     <p>
       Mechatronics and robotics first, then an MSc in AI, with .NET running through the middle of it since 2005.
@@ -79,6 +79,19 @@ const share = await getImage({
     /* Two columns only where each still gets a sane line length — below that
        they stack, which is what the single-column layout already did. */
     @media (min-width: 60rem) {
+      /* Same gap as the grid below, so the intro's columns sit over the
+         lists'. Paragraphs move whole: one split across the gutter reads as
+         a typesetting accident. */
+      .home-intro {
+        max-width: none;
+        columns: 2;
+        column-gap: 3rem;
+      }
+
+      .home-intro p {
+        break-inside: avoid;
+      }
+
       .home-columns {
         display: grid;
         grid-template-columns: 1fr 1fr;
