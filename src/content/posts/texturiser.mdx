@@ -1,5 +1,5 @@
 ---
-title: "The texturiser: a friend's memory for Claude Code"
+title: "The texturiser: a friend’s memory for Claude Code"
 description: >-
   Claude Code remembers your code, not your life. Two hooks and a headless
   Sonnet call carry the rest between sessions.
@@ -47,7 +47,7 @@ Us humans work best when we have a mental model of the object, service, pet, or 
   Common ground has a close cousin in team research: shared mental models. Different field, different experiments - theirs sat pairs in a flight simulator instead of a conversation - and the same direction of result: the more of the picture two people share, the better they work together.[^shared-mental-models]
 </Callout>
 
-Take as an example that you have a tendency to misspell certain words, or that your first language isn't English. Re-explain that to every fresh session and you're stuck repeating yourself forever (the antithesis of <abbr title="Don't repeat yourself">DRY</abbr>). So you add one line to `~/.claude/CLAUDE.md` (your user-level global config): "English isn't my first language, ask if you are unsure about my intent due to poor grammar or subject/object confusion". **Great!** Claude now knows this in every session - a static fact about you that improves communication with Claude.
+Take as an example that you have a tendency to misspell certain words, or that your first language isn't English. Re-explain that to every fresh session and you're stuck repeating yourself forever (the antithesis of <abbr title="Don’t repeat yourself">DRY</abbr>). So you add one line to `~/.claude/CLAUDE.md` (your user-level global config): "English isn't my first language, ask if you are unsure about my intent due to poor grammar or subject/object confusion". **Great!** Claude now knows this in every session - a static fact about you that improves communication with Claude.
 
 Now consider you have a new pet - let's say a kitten 🐈. It's fresh to the household, so every evening with (personal) Claude Code is harder going: you're sleep-deprived or distracted by the kitten, and suddenly you need Claude to explain things more than usual because you're tired. So no, you're not chatting to Claude Code about your life - that's what the web versions are for. It's your life leaking into a coding session anyway. Is this a static fact about your life? No - it's *temporally limited*. At some point the kitten will become a cat (or at minimum `pet is not kitten`). Write that same kitten into `CLAUDE.md` and six months later it walks over your keyboard, and Claude assumes you're still tired and explains everything verbosely - when it's only the now-grown kitten doing what cats do best: vying for attention.
 
