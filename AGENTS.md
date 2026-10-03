@@ -124,6 +124,27 @@ $env:BUILD_DRAFTS = "true"; npm run build; Remove-Item Env:\BUILD_DRAFTS
 
 Draft status controls what reaches the **site**. It does nothing about what's readable in the **repo** — see below.
 
+## Before a post goes live
+
+Between setting `draft: false` and the squash merge, two reviews run. Both are read-only, and both go to a fresh agent on purpose: by then the author and the session that helped draft can't read the piece cold. A copy pass is the opposite case and stays inline, as Voice says.
+
+**Cold read.** One pass top to bottom as a reader before analysing anything, then a report of where it stumbled: where the argument jumps or repeats, what's used before it's explained, whether each section earns its place.
+
+**Voice check.** Read against the published posts and the About page. Flag passages that sound like a different writer in either direction: flatter and more technical, or trying too hard. Go through every running gag and callback and say whether it landed, landed late, or missed, and why.
+
+One agent can do both. Its brief has to carry what it can't work out from the text:
+
+- **Who the reader is.** Name the audience for this post. The baseline is a technically aware reader, not necessarily a developer: AI power users, and developers who may or may not use AI themselves. Some posts lean more general still, and the brief says so when one does. Whichever it is, the reader is owed three things: every term expanded once in an `<abbr>`, a footnote for anything they might want to check, and prose that's fun to read, because the content is dry if you aren't in the weeds. Leave the audience out and the feedback comes back generic, advice for any reader of any post.
+- **What the post is for.** The one thing a reader should leave with, so the agent can judge whether the piece delivers it.
+- **The Voice rules, and that personality isn't a fault.** Hiberno-English is deliberate. No smoothing to neutral. Flag the problem and give at most one suggested wording, never a rewrite.
+- **No em dashes**, and not to suggest any.
+- **What's fixed and what's open.** `description` isn't up for change. Title and `lede` can get suggestions, along with any constraint on them, such as a joke later in the post that depends on a word in the title.
+- **Code blocks** are out of scope for correctness and in scope for placement and length.
+- **Factual doubts get flagged**, not verified.
+- **What to send back:** a verdict, first-read stumbles with line numbers, each joke in a line, voice drifts, title and lede, and which findings are confident and which are taste.
+
+Tim decides what to act on. A taste finding about his voice is his call, so don't apply one unasked. Then the definition of done, then the squash.
+
 ## Branches and remotes
 
 Two remotes, one working copy:

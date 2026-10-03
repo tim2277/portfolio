@@ -1,0 +1,295 @@
+---
+title: "The texturiser: a friend's memory for Claude Code"
+description: >-
+  Claude Code remembers your code, not your life. Two hooks and a headless
+  Sonnet call carry the rest between sessions.
+lede: >-
+  Ye forgot to write it down. So now Claude does it for you, kitten and all.
+date: 2026-10-03
+tags: ['ai', 'claude-code']
+draft: false
+heroImage: ../../assets/photos/texturiser-hero.jpg
+heroAlt: >-
+  A steep slope of tilted, fractured grey rock streaked with pale lichen, tufts
+  of grass in the cracks, under a blue sky half filled with cloud.
+---
+
+import Callout from '../../components/Callout.astro';
+
+Immediately your question will be: why let Claude Code remember things about your life?
+
+At work you've got _lots of context_: work items, Kanban boards, <abbr title="pull requests">PRs</abbr>, design docs, meetings, Teams/Slack messages, and diagrams that help communicate exactly where the project is and your part in it - well, at least I hope you do, otherwise how is your team even working? (That's something agentic AI cannot solve right now.)
+
+Now if you use Claude Code for personal projects you've got the opposite: _not enough context_. Whenever you resume that hobby project that has been on your backlog for weeks, Claude has no way of knowing why it took you six weeks to come back, and both you and Claude have forgotten all those cool ideas because ye forgot to write it down. You have very little ambient context, and very little direct context beyond what is in the repo.
+
+A texturiser solves some of this ambient-context problem: it ingests what you discuss with Claude Code across conversations and carries the continuity forward.
+
+## What Claude Code doesn't know about you
+
+Now you might be asking: but claude.ai, chatgpt.com, or [random <abbr title="large language model">LLM</abbr> provider].ai don't have this problem? And why would we need it in Claude Code - Claude Code is supposed to be used to author code, not chat about your life!
+
+A few things to unpack there - so, just like a counsellor, let's go through it bit by bit:
+
+- Online AI chat platforms (even their desktop apps) remember you across chats: memory, chat indexing and _projects_, all of which can be referenced (to various degrees of success)[^claude-memory][^openai-memory]
+- Claude Code (and most other TUIs or GUIs that help write code) remembers per repo or directory, which is great when you work in one repo - but for personal projects you likely have many, with different goals[^claude-code-memory]
+- Claude Code does have a cross-repo place, your profile instructions (`~/.claude/CLAUDE.md`), and those are static: preferences you wrote down by hand[^claude-code-memory]
+
+The **gap**: Claude Code doesn't know *you* the way the online platforms do. You're working with the same persona but a stranger each time.
+
+Us humans work best when we have a mental model of the object, service, pet, or even other human that we communicate with. The people who study conversation call it common ground - "mutual knowledge, mutual beliefs, and mutual assumptions" - and they don't undersell it: two people "cannot even begin to coordinate" without it.[^common-ground] It also makes talking cheaper. Sit one person down to describe a set of abstract shapes to another, round after round, and the descriptions shrink as the pair builds a shorthand. That shorthand doesn't carry over to a new partner.[^tangrams-replicated] A fresh Claude Code session is a new partner, every single time. You, however, kept your mental model, so you bemoan: "It's not the Claude I remember, but a stranger wearing the same outfit 💔". Classic case of body snatchers.
+
+<Callout type="note" title="Two names">
+  Common ground has a close cousin in team research: shared mental models. Different field, different experiments - theirs sat pairs in a flight simulator instead of a conversation - and the same direction of result: the more of the picture two people share, the better they work together.[^shared-mental-models]
+</Callout>
+
+Take as an example that you have a tendency to misspell certain words, or that your first language isn't English. Re-explain that to every fresh session and you're stuck repeating yourself forever (the antithesis of <abbr title="Don't repeat yourself">DRY</abbr>). So you add one line to `~/.claude/CLAUDE.md` (your user-level global config): "English isn't my first language, ask if you are unsure about my intent due to poor grammar or subject/object confusion". **Great!** Claude now knows this in every session - a static fact about you that improves communication with Claude.
+
+Now consider you have a new pet - let's say a kitten 🐈. It's fresh to the household, so every evening with (personal) Claude Code is harder going: you're sleep-deprived or distracted by the kitten, and suddenly you need Claude to explain things more than usual because you're tired. So no, you're not chatting to Claude Code about your life - that's what the web versions are for. It's your life leaking into a coding session anyway. Is this a static fact about your life? No - it's *temporally limited*. At some point the kitten will become a cat (or at minimum `pet is not kitten`). Write that same kitten into `CLAUDE.md` and six months later it walks over your keyboard, and Claude assumes you're still tired and explains everything verbosely - when it's only the now-grown kitten doing what cats do best: vying for attention.
+
+And that's if you wrote it down. Really, nobody opens a config file to announce a kitten - it comes up in passing, while you're apologising for a typo or a half-formed sentence. Claude agrees about the perks of having a kitten and the conversation continues. You end it and start a fresh one days later. You remember telling Claude, so you say the kitten has been acting up. Claude reacts generically, or with surprise - then you react with surprise, because _ye forgot to write it down_! (No doubt you heard the echo of some secondary school teacher as you read that, not to mention the involuntary flinch.) Which leaves us with either a stale fact in `CLAUDE.md` or a fact that never reached it.
+
+This is where a *texturiser* comes into play. Its job is simple: **store temporal facts** about you and your projects, so that future sessions have continuity. No longer do you need to brief every new Claude Code conversation that you've got a kitten and it's making you tired - Claude Code knows.
+
+<Callout type="note" title="A real one">
+  😺 The kitten - now named Ms Claudie Mittens - is hypothetical. This one isn't: I was under the weather for about a week and needed Opus to explain concepts I'd usually wave through - the very explanations my global `CLAUDE.md` says to skip. The temporary fact had to sit alongside the static one, and then stop.
+</Callout>
+
+## What's a texturiser for?
+
+A _texturiser_ is what its name implies: it gives texture to your interactions with Claude Code. It fills in the gaps between repo memories, global `CLAUDE.md`, and any repo-specific `CLAUDE.md` (or `AGENTS.md`). Though the real benefit is that it remembers the gist of you: recent jokes, a passing idea, what you're up to. Not a transcription of the conversation into a file.
+
+The texturiser fits in neatly, as a companion to the rest of the facts across your repos:
+
+| Layer | Applies to | Holds | Written by | Lasts |
+| ----- | ---------- | ----- | ---------- | ----- |
+| `~/.claude/CLAUDE.md` (global)[^claude-code-memory] | every repo | instructions and preferences | you | until you edit it |
+| `CLAUDE.md` (per repo)[^claude-code-memory] | one repo | the same, for one repo | you or a collaborator | until someone edits it |
+| Repo memory[^claude-code-memory] | one repo | what Claude can't derive from the code | Claude, or you asking it to | until edited or deleted |
+| Texture | every repo | temporal facts about you and your projects, plus the tone you talk in | the texturiser | until it stops being true |
+
+<small>Note: Texture is the only row that's both every repo and changing.</small>
+
+<Callout type="note" title="What about other context?">
+  📋 Certain repos can also benefit from language-specific rules files (C#, TypeScript, HTML) and from context files Claude authors in a dedicated folder, say `.claude/context`, indexed from the repo `CLAUDE.md`: architecture, how to test, and the other bits usually stored in team members' heads. You know I'll be covering this in depth soon enough.
+</Callout>
+
+These are layers, and the important thing is that there are no conversations in any of them. A conversation is *transient*: it's used to solve a specific problem or answer a question, or even to do a software development task or other useful work.
+
+Some of you may ask: but why not just keep the conversations? There are many reasons not to, and most of them don't even involve agentic AI:
+
+- When a task has many steps, each step and each decision you made on the way to the final implementation is just that - an implementation detail - and what matters gets preserved somewhere else. For software dev: in the code. For engineering: in the diagrams and drawings. For doctors: in the diagnosis report. Not the discussion that led to the implementation, not the exact millimetre adjustments made to fit the parts together, not every question asked in the consultation - these are transient artefacts, only relevant to the task itself.
+- The same applies when experimenting. Developing a cake recipe, you don't report all the different ratios you tried on the way to the best version. You publish the final recipe. Writing up a scientific experiment, you describe the methodology to allow *reproduction of the experiment*, not that you had a coffee while the Bunsen burner warmed up.
+
+Long conversations are generally unnecessary and computationally expensive. Consider a long-term friend: you don't remember every single conversation and topic you ever spoke to them about (if you did, you have way too much free brain storage or are gifted with photographic memory - good for you!) - this is the unnecessary part. But even if you did remember everything, imagine replaying all of it in order to construct your next word to them. The time between words would explode. That is the computationally expensive part, and it's exactly what an LLM does: every turn, it reads the whole conversation again.[^context-rot]
+
+Having the texture carry it all forward instead is the same problem wearing a different mask. Imagine you spent four hours with Claude reproducing, fixing and testing a bug. Put all those details into the next conversation and you've primed the model for the dreaded **context rot**. That is as bad as it sounds: the more there is in context, the worse poor Claude gets at finding the bit that matters. Everyone has that one kitchen drawer: it's all in there, and good luck finding the scissors. But it's not limited to pure volume. There is also a ranking problem: what of those four hours is worth keeping? We now have the classical communications engineering problem: **Signal versus Noise**. Something has to do that ranking, and here it's a model with a prompt, at the end of every session - more on that in [How it works](#how-it-works).
+
+This is why you keep the texturiser lean: it's focused on temporal facts that are cheap to carry and won't encourage context rot. Our case of body snatchers has been solved, no more stranger wearing the same outfit!
+
+Kinda.
+
+Every new conversation is still with a stranger, so how do you bring that stranger back up to speed? **Examples**! A short verbatim exchange can say more about tone than a dossier ever could. But not every exchange stays true forever, otherwise we'd restore a version of Claude trapped in ice instead of one flowing organically over time. A good friend isn't one that remembers every single exchange, but one that remembers the texture (oh, the title was dropped!) of your relationship.
+
+Now when Ms Claudie Mittens becomes a cat and you stop mentioning her in connection with your sleep, the texturiser drops the note. In `CLAUDE.md` it would have sat there forever.
+
+One caveat: Claude Code needs to be told that the texture isn't a collection of static facts. Just like a friend, the texturiser may miss nuance, and we don't want to prime a stranger with the wrong information. It doesn't override `CLAUDE.md` either. When the two disagree there's no rule deciding the winner, only Claude's judgement and a nudge to flag the mismatch - so what you say in the session is the only thing that wins every time.
+
+## How it works
+
+This particular approach builds on Claude Code specifics, which means two hooks in `~/.claude/settings.json`: one at the start of a session and another at the end. And like the cake, you get the final recipe, not the ratios I tried on the way (do try a Japanese soufflé cheesecake[^japanese-souffle-cake] 🎂).
+
+**What you need:**
+
+- `~/.claude/settings.json`: the two hook entries in step 1
+- `~/.claude/hooks/inject-texture.ps1`: prints the texture when a session starts
+- `~/.claude/hooks/texturise.ps1`: folds the session into the texture when it ends
+- `~/.claude/texture-prompt.md`: the prompt, in full at step 4
+- `~/.claude/texturise-nohooks.settings.json`: one line, `{ "disableAllHooks": true }`
+- PowerShell 7 and the `claude` CLI on your `PATH`. Mine runs on Windows: the shape ports, the scripts as written don't
+
+Everything else (`texture.md`, `texture-markers.json`, `texture-history/` and `texturise.log`) makes itself on the first run.
+
+All five files are in [`wrote-it-down`](https://github.com/tim2277/wrote-it-down/tree/3fd688cbaeb96962929d8899df918d46905d6e0b/posts/texturiser), because this time I did.
+
+**1. Wire up the hooks.** Both go in `~/.claude/settings.json`. Mind the `timeout` on `SessionEnd`: step 3 leans on it.
+
+```json
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "& \"$env:USERPROFILE\\.claude\\hooks\\inject-texture.ps1\"",
+            "shell": "powershell",
+            "timeout": 10,
+            "statusMessage": "Recalling texture"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "& \"$env:USERPROFILE\\.claude\\hooks\\texturise.ps1\"",
+            "shell": "powershell",
+            "timeout": 15,
+            "statusMessage": "Texturising session"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+**2. `SessionStart` reads.** Claude Code adds a `SessionStart` hook's plain-text <abbr title="standard output">stdout</abbr> to the model's context[^hooks-sessionstart], so `inject-texture.ps1` just prints `texture.md` with a short preamble: when it was last updated, a reminder that it's background and not an instruction, and a nudge to flag anything that contradicts what's being asked. It skips `compact`, since the context is retained there, and words the preamble differently for `resume`, where the world may have moved on.
+
+**3. `SessionEnd` writes.** `texturise.ps1` takes the conversation since the last run, hands it with the current `texture.md` and a prompt to a headless `claude -p` on Sonnet[^cli], and replaces the file with what comes back. That's a fold.
+
+The timing here is awkward. `SessionEnd` hooks share a 1.5-second budget, raised by a longer per-hook `timeout` to at most 60 seconds[^hooks-sessionend] (mine is 15) - and a fold takes a minute or two. Hooks have an `async` flag for running in the background, but `SessionEnd` can't use it, and an async hook may be killed when the session exits anyway[^hooks-async]. So the script runs twice: the hook copy saves its <abbr title="standard input">stdin</abbr> to a temp file, launches a hidden, detached `pwsh` on itself, and exits well inside the budget. The detached copy does the real work.
+
+**4. The prompt does the curating.** Here it is in full (swap in your own name, of course). The script fills in the three `{{…}}` placeholders, then appends the current texture and the new conversation underneath.
+
+If you only read one part of it closely, make it `DO NOT CAPTURE`. Most of the design is in what the texture refuses to hold.
+
+```markdown
+You are maintaining Tim's `texture.md` - a small, evolving file that gives a resumed
+Claude Code session the *feel* of continuous collaboration across all of Tim's
+personal repos, and a practical briefing on his current situation. It is glue and
+heads-up, NOT a work log.
+
+You are given, below this instruction:
+- CURRENT TEXTURE (may be empty on first run): the existing file. It already encodes
+  everything before {{LAST_UPDATED}} - treat it as your memory of the past.
+- TRANSCRIPT DELTA: ONLY the conversation since {{LAST_UPDATED}}. You are folding
+  these into the accumulator; you are not seeing or re-summarising older history.
+
+Other context:
+- DATETIME: current date/time - {{DATETIME}}.
+- REPO: the repo this session ran in - {{REPO}}.
+
+Rewrite `texture.md` in full: fold new, durable signal from the delta into the current
+texture, prune what has gone cold or expired, target 450 words (hard ceiling 600).
+
+STRUCTURE (fixed headings; omit any section with no content):
+  Line 1:  last_updated: {{DATETIME}}
+  Line 2:  a single "briefing" line - Tim's current situation AND its implication for
+           how you should act this session (e.g. availability, a deadline, a
+           constraint). Dated where relevant. Omit only if genuinely nothing applies.
+  ## Status & logistics - dated, operational facts (travel, availability, deadlines,
+     constraints). Every item carries a date. If DATETIME is past an item's date, drop
+     it - expired status is worse than none.
+  ## Live threads - one line each: what Tim is actively building or chewing on across
+     repos and WHY it's live. Just enough to pick it back up, never HOW it works -
+     mechanism, filenames, and implementation detail belong in the repo's own memory,
+     not here.
+  ## Shorthand - coined terms, in-jokes, shared references now part of how you and Tim
+     talk, so a resumed session needn't have them re-explained.
+  ## Where we're at - current collaboration state: what you're mid-way through,
+     decisions reached, what's queued next.
+  ## Register - one or two short exchanges from the delta, quoted verbatim, that show
+     how the two of you talk when it's going well: a joke and its answer, an aside
+     that landed. This is a demonstration for the next session to pick the tone up
+     from, not a description of it - never summarise ("there was banter about X").
+     Format each as a `TIM:` line then an `OPUS:` line. Trim with … rather than
+     paraphrase; about 50 words per exchange, never more than two. Replace them
+     whenever the delta has something fresh, so the next session imitates the tone
+     and not last week's joke. If the delta had no banter, keep the existing ones.
+     These words don't count toward the target or the ceiling.
+
+DO NOT CAPTURE:
+- Project domain data - code specifics, filenames, detailed content. That lives in
+  each repo's own memory, not here.
+- Persona or standing preferences already in CLAUDE.md - texture is the *changing*
+  layer on top, don't restate who Tim is or how he likes replies.
+- Reactions or praise ("Tim liked...", "Tim laughed at..."). Keep the shared *thing*,
+  never the flattery. Continuity of collaboration, not a fan log.
+- How Tim tests or validates you - continuity traps, stress-tests, and the lessons
+  drawn from them. That lives in the system config (hooks/prompts), not the glue;
+  recording it here only spoils the next test. This covers experiments on the
+  texturiser or on your own behaviour too, even ones you and Tim planned together in
+  the open: a session told it's the subject isn't one. It applies to every section,
+  the briefing line and Register included. Record the change that was made - that's
+  a fact - never that it's being tested, how, or what result is hoped for.
+- Repo state - what's committed, pushed, merged or deployed. You see the conversation,
+  not the repo; the next session can ask git, which is never stale.
+- Anything sensitive Tim didn't clearly mean to carry forward.
+
+CURATION:
+- Curate, don't accumulate. Stale texture is worse than none; recent versions are
+  kept, so anything you cut can be recovered.
+- A quiet delta must NOT wipe good texture. If little was added, preserve the existing
+  file and change only what genuinely moved.
+- Write in simple register - plain, dry, no corporate gloss. Address the next session as
+  "you"; refer to Tim as "Tim".
+
+Output ONLY the rewritten `texture.md` content. No preamble, no explanation, no code
+fences.
+```
+
+A few details that keep it honest:
+
+- **Per-session markers.** `texture-markers.json` records, per session ID, the timestamp of the last message folded. A resumed session folds only what's new, and the marker only advances after a successful write, so a failed fold is retried next time rather than lost.
+- **No recursion.** The fold is itself a Claude Code session, which would fire its own `SessionEnd` and fold itself. The `claude -p` call gets `--settings` pointing at `{ "disableAllHooks": true }`[^hooks-disable], and an environment variable guards the hook as defence in depth.
+- **User-typed turns only.** Tool results, injected meta messages and subagent interactions are filtered out; the delta is what was typed and what came back as text.
+
+## Sprucing up before the visitors
+
+I was plumping up the prompts and tidying the logic when it dawned on me: I cannot publish a texturiser with a race condition in it. So the quick spruce became a deep clean before the visitors came knocking, which turned up other things to tidy (and the realisation that I hadn't moved the sofa in months to hoover underneath).
+
+My deep clean revealed several "bugs" or "design assumptions" - whichever you prefer:
+
+1. **Concurrency.** The texturiser never had to deal with concurrency because my personal work is one session at a time. Not like work, where I may be running several sessions, each focused on a different task. Authoring this post was the first time I needed to: I wanted one session adjusting the UI/UX and the other working with me on the post (future post on the way here - stay tuned). Two sessions ending close together both folded against the same `texture.md`, so the last writer won and the other session's fold was gone, with nothing in the log to say so. Fixed with a proper named mutex with a timeout of 10 minutes.
+2. **Date handling.** "Last updated *yesterday*" came from rounding elapsed days, so a morning note read late the same evening was a day old - which did explain some odd behaviour that I'd just dismissed as non-deterministic AI. Thankfully, it counts calendar days now.
+3. **Misleading instructions.** The prompt told Sonnet that "git history keeps anything you cut". `~/.claude` isn't a git repo. What I'd meant was closer to "git history is for repo specifics, not the texturiser" (and yes, I'm paraphrasing myself, I don't remember my exact words 😅). Fixed by clarifying the prompt and keeping the last thirty versions in `texture-history/`.
+4. **Silent truncation.** The delta is capped at 60,000 characters, which is only about 24,000 tokens at roughly 2.5 characters per token[^tokens], so there's plenty of room to raise it. The bug was that the cut wasn't logged. It is now. I would recommend adjusting the cap to your specific needs.
+5. **Loose validation.** Output was accepted if `last_updated:` appeared anywhere in it, so a chatty preamble or a code fence would have been injected into every session after. It now has to *start* with it.
+
+One more turned up later, from reading the output instead of the script. The fold on the second night of drafting described this post's branch as "nothing committed/pushed yet". It had been committed and pushed the night before, and the previous note said so - Sonnet swapped a true fact for a false one, most likely because that evening's edits were still sitting uncommitted. The fold sees the conversation, not the repo. So the prompt's `DO NOT CAPTURE` list gained a line: repo state stays out altogether, because the next session can ask git, and git is never a day old.
+
+## What it doesn't do
+
+These are trade-offs, not bugs. Each was left alone on purpose.
+
+- **One session at a time is assumed.** The mutex stops concurrent folds eating each other, but two live sessions still can't see each other: a texture injected at startup is only as fresh as the last session to *end*.
+- **Images are dropped.** Only user messages whose content is a plain string count as typed turns; a prompt with an image attached arrives as a list of blocks and is skipped.
+- **It parses a format it was told not to.** Transcripts are JSONL under `~/.claude/projects/`, and the docs are explicit that the entry format is internal and "scripts that parse these files directly can break on any release"[^transcripts]. The texturiser does exactly that. It also reads a file that is "written asynchronously and may lag the in-memory conversation"[^hooks-input], so the last exchange before exit can miss the fold.
+- **Sensitive by design.** The texturiser is intended to store potentially sensitive facts about you - that's the whole point, it's a friend after all. That's the opposite of claude.ai, which by default "does not store topics related to personal or sensitive subject matter"[^claude-memory]. The prompt's only brake is the last line of `DO NOT CAPTURE`, so it's up to you if you want to add more restrictions. It all sits in a plain-text file on your machine, and every session reads it.
+
+A texturiser gives you a friend, not a hoover: one who knows about Ms Claudie Mittens and how she loves to stretch out on your keyboard. Optimise it the way you like, because you know what you like in people better than Claude or I do 😊
+
+[^claude-memory]: ["Use Claude's chat search and memory to build on previous context"](https://support.claude.com/en/articles/11817273-use-claude-s-chat-search-and-memory-to-build-on-previous-context), Claude Help Center, accessed 30 September 2026. Chat search is <abbr title="Retrieval-Augmented Generation">RAG</abbr> over past chats, surfaced as a tool call; memory is saved "as a set of individual topics as you chat", and each project has its own.
+
+[^openai-memory]: ["Memory and new controls for ChatGPT"](https://openai.com/index/memory-and-new-controls-for-chatgpt/), OpenAI, 13 February 2024, updated 10 April 2025 - memory "now references all your past conversations".
+
+[^claude-code-memory]: ["How Claude remembers your project"](https://code.claude.com/docs/en/memory), Claude Code docs, accessed 1 October 2026 - "Each project gets its own memory directory", while `~/.claude/CLAUDE.md` holds "Personal preferences for all projects".
+
+[^common-ground]: Herbert H. Clark and Susan E. Brennan, ["Grounding in communication"](https://doi.org/10.1037/10096-006), in *Perspectives on Socially Shared Cognition*, American Psychological Association, 1991, pp. 127–149 - people "cannot even begin to coordinate on content without assuming a vast amount of shared information or common ground - that is, mutual knowledge, mutual beliefs, and mutual assumptions".
+
+[^tangrams-replicated]: Robert D. Hawkins, Michael C. Frank and Noah D. Goodman, ["Characterizing the dynamics of learning in repeated reference games"](https://arxiv.org/abs/1912.07199), arXiv, 16 December 2019 - across 83 pairs, "the mean number of words used by directors for each tangram decreases strongly over time". Summarising earlier studies, the authors add that these conventions "do not transfer if a novel matcher is introduced".
+
+[^shared-mental-models]: John E. Mathieu, Tonia S. Heffner, Gerald F. Goodwin, Eduardo Salas and Janis A. Cannon-Bowers, ["The influence of shared mental models on team process and performance"](https://doi.org/10.1037/0021-9010.85.2.273), *Journal of Applied Psychology* 85(2), April 2000, pp. 273–283 - 56 pairs on a flight-combat simulator; "both shared-team- and task-based mental models related positively to subsequent team process and performance."
+
+[^context-rot]: ["Context windows"](https://platform.claude.com/docs/en/build-with-claude/context-windows), Claude Platform Docs, accessed 1 October 2026 - "more context isn't automatically better. As token count grows, accuracy and recall degrade, a phenomenon known as *context rot*." On cost, each turn's input "contains all previous conversation history plus the current user message".
+
+[^japanese-souffle-cake]: ["失敗なし！しっとりふわスフレチーズケーキ"](https://cookpad.com/jp/recipes/19072157), Cookpad, accessed 3 October 2026. The famous Japanese soufflé cheesecake with its signature jiggle. Swap the cheese for a plain batter and you get a sponge, which is my favourite way to have it.
+
+[^hooks-sessionstart]: ["SessionStart"](https://code.claude.com/docs/en/hooks#sessionstart), Claude Code hooks reference, accessed 30 September 2026 - "Claude Code adds stdout it treats as plain text to Claude's context." Its matchers are `startup`, `resume`, `clear`, `compact` and `fork`.
+
+[^cli]: ["CLI flags"](https://code.claude.com/docs/en/cli-reference#cli-flags), Claude Code CLI reference, accessed 30 September 2026. Covers `--print`, `--model` and `--settings`.
+
+[^hooks-sessionend]: ["SessionEnd"](https://code.claude.com/docs/en/hooks#sessionend), Claude Code hooks reference, accessed 30 September 2026 - "SessionEnd hooks share a 1.5-second budget; if your settings set a longer per-hook timeout, Claude Code raises the budget to match, up to 60 seconds." They can't block, and their output is discarded.
+
+[^hooks-async]: ["Run hooks in the background"](https://code.claude.com/docs/en/hooks#run-hooks-in-the-background), Claude Code hooks reference, accessed 30 September 2026.
+
+[^hooks-disable]: ["Disable or remove hooks"](https://code.claude.com/docs/en/hooks#disable-or-remove-hooks), Claude Code hooks reference, accessed 30 September 2026 - "To turn hooks off for one run whatever the project's settings say, pass `--settings '{"disableAllHooks": true}'`."
+
+[^tokens]: ["Models overview"](https://platform.claude.com/docs/en/about-claude/models/overview), Claude Platform Docs, accessed 3 October 2026 - "1M tokens is roughly 555k words or 2.5M Unicode characters on the current tokenizer".
+
+[^transcripts]: ["Where transcripts are stored"](https://code.claude.com/docs/en/sessions#where-transcripts-are-stored), Claude Code docs, accessed 30 September 2026. Transcripts are swept after 30 days by default, so the texture outlives the conversations it was folded from.
+
+[^hooks-input]: ["Common input fields"](https://code.claude.com/docs/en/hooks#common-input-fields), Claude Code hooks reference, accessed 30 September 2026, on `transcript_path`.
