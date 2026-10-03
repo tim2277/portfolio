@@ -547,6 +547,18 @@ td {
   color: var(--text-muted);
 }
 
+/* Reads as part of the copyright line until it's pointed at; the underline
+   comes back on hover and focus so it still announces itself as a link. */
+.site-footer .made-in {
+  color: inherit;
+  text-decoration: none;
+}
+
+.site-footer .made-in:is(:hover, :focus-visible) {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
 .site-footer .wrap {
   max-width: var(--shell);
   display: flex;
