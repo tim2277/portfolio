@@ -2,13 +2,14 @@
 import { getImage } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
-import EntryList from '../components/EntryList.astro';
+import EntryCards from '../components/EntryCards.astro';
 import { getPosts, getProjects } from '../lib/content';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import heroImage from '../assets/photos/home-hero.jpg';
 
-const posts = (await getPosts()).slice(0, 5);
-const projects = (await getProjects()).slice(0, 3);
+// Even counts: the cards sit two to a row, and an odd one out leaves a hole.
+const posts = (await getPosts()).slice(0, 4);
+const projects = (await getProjects()).slice(0, 4);
 
 // Same 1200x630 jpeg treatment the entry pages get — see EntryLayout.
 const share = await getImage({
@@ -43,33 +44,29 @@ const share = await getImage({
   {/* Prose keeps the measure even though the page is shell-width — one column narrow, two columns wide. */}
   <div class="home-intro">
     <p>
-      Mechatronics and robotics first, then an MSc in AI, with .NET running through the middle of it since 2005.
-      My day job is distributed Blazor applications; my attention keeps drifting to the seam between engineering practice and tooling - and to where AI agents genuinely earn their keep in a delivery workflow, rather than just making a mess faster.
+      Mechatronics and robotics first, then an MSc in AI, and .NET running through the middle of it all since 2005.
+      The day job is distributed Blazor applications.
+      The bit I can’t leave alone is where AI agents earn their keep in a team’s delivery process, and where they just make a mess faster.
     </p>
     <p>
-      This is where that gets written down. Architecture notes, agent workflows in the SDLC, and the occasional post-mortem on something that didn’t work.
-      Concepts and write-ups only - nothing here is employer code.
+      This is where it gets written down (for once).
+      What worked, what didn’t, and whatever I built at home because it annoyed me enough.
+      Concepts and write-ups only - no work code here.
+      Code that is mine, I’ve finally <a href="https://github.com/tim2277/wrote-it-down" target="_blank">wrote-it-down</a>.
     </p>
   </div>
 
-  <div class="home-columns">
-    <section>
-      <h2>Latest posts</h2>
-      <EntryList entries={posts} base="/posts" emptyMessage="No posts published yet." headingLevel={3} />
-      <p><a href="/posts/">All posts →</a></p>
-    </section>
+  <section class="home-section">
+    <h2>Latest posts</h2>
+    <EntryCards entries={posts} base="/posts" emptyMessage="No posts published yet." />
+    <p><a href="/posts/">All posts →</a></p>
+  </section>
 
-    <section>
-      <h2>Projects</h2>
-      <EntryList
-        entries={projects}
-        base="/projects"
-        emptyMessage="No projects published yet."
-        headingLevel={3}
-      />
-      <p><a href="/projects/">All projects →</a></p>
-    </section>
-  </div>
+  <section class="home-section">
+    <h2>Projects</h2>
+    <EntryCards entries={projects} base="/projects" emptyMessage="No projects published yet." />
+    <p><a href="/projects/">All projects →</a></p>
+  </section>
 
   <style>
     .home-intro {
@@ -79,9 +76,8 @@ const share = await getImage({
     /* Two columns only where each still gets a sane line length — below that
        they stack, which is what the single-column layout already did. */
     @media (min-width: 60rem) {
-      /* Same gap as the grid below, so the intro's columns sit over the
-         lists'. Paragraphs move whole: one split across the gutter reads as
-         a typesetting accident. */
+      /* Paragraphs move whole: one split across the gutter reads as a
+         typesetting accident. */
       .home-intro {
         max-width: none;
         columns: 2;
@@ -91,16 +87,14 @@ const share = await getImage({
       .home-intro p {
         break-inside: avoid;
       }
-
-      .home-columns {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem 3rem;
-      }
     }
 
-    .home-columns h2 {
+    .home-section h2 {
       margin-block-start: 2.5rem;
+    }
+
+    .home-section > p {
+      margin-block-start: 1.25rem;
     }
   </style>
 </BaseLayout>

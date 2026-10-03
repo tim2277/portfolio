@@ -382,26 +382,10 @@ td {
   vertical-align: middle;
 }
 
-/* ---------- entry lists ---------- */
+/* ---------- entry cards ---------- */
 
-/* Hairlines rather than gaps — the rhythm reads as an index, and the rules
-   give the page something between the header and footer borders. */
-.entry-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.entry-list > li {
-  padding-block: 1.6rem;
-  border-block-start: 1px solid var(--border);
-}
-
-.entry-list > li:first-child {
-  border-block-start: 0;
-  padding-block-start: 0.4rem;
-}
-
+/* The card box itself is scoped to EntryCards; these are the text styles
+   inside it. */
 .entry-title {
   font-family: var(--font-heading);
   margin: 0 0 0.35rem;

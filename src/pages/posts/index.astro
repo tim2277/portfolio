@@ -2,7 +2,7 @@
 import { getImage } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Hero from '../../components/Hero.astro';
-import EntryList from '../../components/EntryList.astro';
+import EntryCards from '../../components/EntryCards.astro';
 import { getPosts } from '../../lib/content';
 import heroImage from '../../assets/photos/posts-hero.jpg';
 
@@ -38,14 +38,11 @@ const share = await getImage({
     </p>
   </Hero>
 
-  {/* The page is shell-width for the hero; the list keeps the measure. */}
-  <div class="entry-column">
-    <EntryList entries={posts} base="/posts" emptyMessage="No posts published yet. Watch this space." />
-  </div>
+  <EntryCards
+    entries={posts}
+    base="/posts"
+    emptyMessage="No posts published yet. Watch this space."
+    headingLevel={2}
+    columns={1}
+  />
 </BaseLayout>
-
-<style>
-  .entry-column {
-    max-width: var(--measure);
-  }
-</style>

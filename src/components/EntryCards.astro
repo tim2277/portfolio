@@ -1,0 +1,175 @@
+---
+import { getImage } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import FormattedDate from './FormattedDate.astro';
+
+interface Props {
+  entries: (CollectionEntry<'posts'> | CollectionEntry<'projects'>)[];
+  /** Collection route prefix, e.g. '/posts'. */
+  base: string;
+  emptyMessage?: string;
+  /** Heading level for each card title: 3 under a section h2, 2 otherwise. */
+  headingLevel?: 2 | 3;
+  /** Cards per row on a wide viewport. Narrow ones always get one. */
+  columns?: 1 | 2;
+}
+
+const {
+  entries,
+  base,
+  emptyMessage = 'Nothing published here yet.',
+  headingLevel = 3,
+  columns = 2,
+} = Astro.props;
+
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
+
+/*
+  Cropped at build time rather than by the browser: a card shows the hero at
+  a few hundred pixels, and sending the article-sized file to do that would
+  cost more than the rest of the page. Plain <img> with a 2x candidate, since
+  <Picture> can't be told to crop.
+*/
+const thumb = async (src: ImageMetadata) => {
+  const [one, two] = await Promise.all(
+    [1, 2].map((density) =>
+      getImage({ src, width: 352 * density, height: 264 * density, fit: 'cover', format: 'webp' })
+    )
+  );
+  return { src: one!.src, srcset: `${one!.src} 1x, ${two!.src} 2x` };
+};
+
+const cards = await Promise.all(
+  entries.map(async (entry) => ({
+    entry,
+    image: entry.data.heroImage ? await thumb(entry.data.heroImage) : undefined,
+  }))
+);
+---
+
+{
+  cards.length === 0 ? (
+    <p class="muted">{emptyMessage}</p>
+  ) : (
+    <ul class:list={['cards', columns === 2 && 'cards-two']}>
+      {cards.map(({ entry, image }) => (
+        <li class:list={['card', !image && 'card-plain']}>
+          {image && (
+            <div class="card-media">
+              {/* Decorative here: the title beside it is the link text, and
+                  the entry page carries the real alt. */}
+              <img
+                src={image.src}
+                srcset={image.srcset}
+                width="352"
+                height="264"
+                alt=""
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          )}
+          <div class="card-body">
+            <p class="entry-meta">
+              <FormattedDate date={entry.data.date} />
+              {'status' in entry.data && <span>· {entry.data.status}</span>}
+              {entry.data.draft && <span class="badge-draft">draft</span>}
+            </p>
+            <Heading class="entry-title">
+              <a class="card-link" href={`${base}/${entry.id}/`}>
+                {entry.data.title}
+              </a>
+            </Heading>
+            <p class="entry-desc">{entry.data.lede ?? entry.data.description}</p>
+            {entry.data.tags.length > 0 && (
+              <ul class="tags">
+                {entry.data.tags.map((tag) => (
+                  <li class="tag">{tag}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+<style>
+  .cards {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 60rem) {
+    .cards-two {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .card {
+    position: relative;
+    display: grid;
+    grid-template-columns: clamp(6.5rem, 32%, 11rem) 1fr;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg-subtle);
+    overflow: hidden;
+  }
+
+  .card-plain {
+    grid-template-columns: 1fr;
+  }
+
+  .card:hover,
+  .card:focus-within {
+    border-color: var(--accent);
+  }
+
+  /* The picture takes its height from the text beside it, not the other way
+     round, so a long lede grows the card instead of leaving a gap under a
+     fixed-height image. */
+  .card-media {
+    position: relative;
+    min-height: 8rem;
+  }
+
+  .card-media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .card-body {
+    min-width: 0;
+    padding: 1rem 1.1rem;
+  }
+
+  .card-body > :last-child {
+    margin-block-end: 0;
+  }
+
+  /* One link per card, stretched over the whole of it: the card is the click
+     target, and a keyboard or screen reader still meets a single link named
+     by the title. */
+  .card-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  /* The ring goes on the card, since the stretched link is what's focused. */
+  .card-link:focus-visible {
+    outline: none;
+  }
+
+  .card:has(.card-link:focus-visible) {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+</style>

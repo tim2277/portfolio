@@ -117,7 +117,7 @@ src/
   content/{posts,projects}/  MDX
   assets/photos/             Heroes and in-article images
   lib/content.ts             Draft filtering, sorting, contents-list rules
-  components/                Head, header, footer, hero, entry list, and the
+  components/                Head, header, footer, hero, entry cards, and the
                              bits MDX uses: Callout, Summary
   layouts/                   BaseLayout (chrome), EntryLayout (post/project)
   pages/                     Routes, plus rss.xml.ts and robots.txt.ts
