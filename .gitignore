@@ -24,6 +24,9 @@ pnpm-debug.log*
 *.heic
 *.HEIC
 
+# Playwright MCP screenshots and traces
+.playwright-mcp/
+
 # macOS-specific files
 .DS_Store
 

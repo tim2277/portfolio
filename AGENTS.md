@@ -54,6 +54,8 @@ Paste the result into `script-src` in `public/staticwebapp.config.json`.
 
 **SWA config fails in both directions.** Some mistakes are silent: `navigationFallback` serves every unknown URL with a 200, and `trailingSlash: "always"` 301s every *file*, not just pages. Others fail the deploy: a route rule can't combine `rewrite` with `statusCode`. Check a change against the [configuration reference](https://learn.microsoft.com/azure/static-web-apps/configuration), then against the live site with `Invoke-WebRequest -MaximumRedirection 0`.
 
+**The XML routes carry their own CSP.** Chromium draws its XML tree view with an inline stylesheet and `data:` icons, inside a document that inherits the page's policy. Under the site-wide `style-src 'self'` the feed and the sitemap open in Edge or Chrome as a wall of run-together text, which looks like a broken feed and isn't one. `/rss.xml` and `/sitemap*.xml` override the header with a policy that allows exactly those two things. A new XML route needs the same override. Separately, a `Content-Type` in a route's `headers` is ignored: the feed is served as `text/xml` whatever the rule says.
+
 **`staticwebapp.config.json` must live in `public/`.** Only `dist/` is uploaded, and Astro copies `public/` into it. At the repo root the file is ignored outright: no headers, no 404 handling, no error.
 
 **HTML comments render.** Astro passes `<!-- -->` straight through into the served page. Notes and TODOs go in the `---` frontmatter fence as `//` comments, never in the template. In MDX the frontmatter is YAML, so it's `#` there, and `{/* … */}` in the body renders nothing. This is a portfolio site; the page source is part of it.
@@ -115,6 +117,8 @@ The posts are Tim writing, not a house style. An edit that leaves the prose corr
 Two collections, `posts` and `projects`, schemas in `src/content.config.ts`. Invalid frontmatter fails the build by design.
 
 **`description` and `lede` do different jobs.** `description` is the pitch that search results, link previews, the feed and JSON-LD show. It says why someone should read the piece, not what it's called, and it stays under 160 characters, roughly where Google truncates. The schema enforces the limit. `lede` is what the site itself shows on the entry card and as the subtitle, and it's where the joke goes. It's optional and falls back to `description`.
+
+**`date` is when it was published; `updated` is optional and set by hand.** Setting it adds "updated" to the entry's byline and feeds `dateModified` in JSON-LD, `article:modified_time`, the sitemap's `lastmod` and the feed's `lastBuildDate`. Bump it when the substance changes, not for a typo: it tells readers and crawlers the piece is worth another look.
 
 `draft: true` entries render in `astro dev`, are excluded from a production build, and are `noindex`'d if built anyway. To exercise the templates against a real build:
 
