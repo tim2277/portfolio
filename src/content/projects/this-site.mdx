@@ -20,6 +20,11 @@ heroAlt: >-
 ---
 
 import Callout from '../../components/Callout.astro';
+import Summary from '../../components/Summary.astro';
+
+<Summary>
+  A static Astro site on Azure Static Web Apps: one Bicep file, a pipeline that builds the site itself and uploads only `dist`, and exactly one script, which the security headers pin by hash. Most of this page is about the things that fail without telling you, and the confessions a security review got out of me.
+</Summary>
 
 ## The stack, briefly
 

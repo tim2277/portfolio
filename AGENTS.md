@@ -120,6 +120,8 @@ Two collections, `posts` and `projects`, schemas in `src/content.config.ts`. Inv
 
 **`date` is when it was published; `updated` is optional and set by hand.** Setting it adds "updated" to the entry's byline and feeds `dateModified` in JSON-LD, `article:modified_time`, the sitemap's `lastmod` and the feed's `lastBuildDate`. Bump it when the substance changes, not for a typo: it tells readers and crawlers the piece is worth another look.
 
+**Every entry opens with a `<Summary>`.** It's a native `<details>`, closed by default, sitting first in the MDX body: what the piece was about, for the reader coming back to it or deciding whether to start. Two to four sentences in Tim's voice, not a table of contents. It comes before the post's first `<abbr>`, so keep abbreviations out of it. Adding or rewording one is not a reason to bump `updated`.
+
 `draft: true` entries render in `astro dev`, are excluded from a production build, and are `noindex`'d if built anyway. To exercise the templates against a real build:
 
 ```powershell
