@@ -5,7 +5,7 @@ description: >-
   framework runtime, and the silent failures to know about before you build one.
 lede: >-
   Astro, static, on Azure Static Web Apps. No server, no adapter, and exactly
-  one script — which started as zero, and the story of how it got to one is
+  one script - which started as zero, and the story of how it got to one is
   most of this page.
 date: 2026-09-29
 updated: 2026-09-30
@@ -35,7 +35,7 @@ import Callout from '../../components/Callout.astro';
 
 ## Content is typed, not trusted
 
-Both collections — `posts` and `projects` — share a Zod schema for title, description, date, tags and draft status, with projects adding a status enum and optional repo/live links. A typo in front matter means I won't accidentally post a half-completed thought or, worse, a syntax error _gasp_.
+Both collections - `posts` and `projects` - share a Zod schema for title, description, date, tags and draft status, with projects adding a status enum and optional repo/live links. A typo in front matter means I won't accidentally post a half-completed thought or, worse, a syntax error _gasp_.
 
 Drafts are visible in `astro dev` and excluded from a production build.
 
@@ -43,7 +43,7 @@ Drafts are visible in `astro dev` and excluded from a production build.
 
 This site started with a guideline (Claude says it was a rule): no client-side JavaScript on a content page. Dark mode followed `prefers-color-scheme` and that was the end of it. The rule held until the first person asked for a theme toggle. That person was me, after looking at the boring UI I had just built.
 
-So there is exactly one script. It sets a `data-theme` attribute before `<body>` parses, reads and writes one `localStorage` key, and falls back to `prefers-color-scheme` when it doesn't run. About thirty lines, no dependencies, no framework — the type of efficiency that software dev promises but rarely achieves.
+So there is exactly one script. It sets a `data-theme` attribute before `<body>` parses, reads and writes one `localStorage` key, and falls back to `prefers-color-scheme` when it doesn't run. About thirty lines, no dependencies, no framework - the type of efficiency that software dev promises but rarely achieves.
 
 It wasn't free, and the bill is the interesting part:
 
@@ -52,19 +52,19 @@ It wasn't free, and the bill is the interesting part:
 
 ## Infrastructure
 
-It's always great to design the best and coolest thingy, but if no one can see it or read it or touch it — then it's really just décor. So I made it easy: **one Bicep file** (keep it KISS and DRY!). The pipeline owns the deployment; Bicep owns the resource.
+It's always great to design the best and coolest thingy, but if no one can see it or read it or touch it - then it's really just décor. So I made it easy: **one Bicep file** (keep it KISS and DRY!). The pipeline owns the deployment; Bicep owns the resource.
 
 ## The pipeline, and the Oryx detour
 
 The default Static Web Apps workflow hands your repository to Oryx, Azure's build engine (so thoughtful!), and lets it work out how to build the site. That's convenient right up until you want any customisation, or to run something completely different like Astro or Docusaurus.
 
-"Sometimes the absence of something is all you need". GitHub Actions checks out, installs on a pinned Node, runs `astro check`, runs `astro build`, and then the deploy action runs with `skip_app_build: true` — it uploads `dist` and nothing else.
+"Sometimes the absence of something is all you need". GitHub Actions checks out, installs on a pinned Node, runs `astro check`, runs `astro build`, and then the deploy action runs with `skip_app_build: true` - it uploads `dist` and nothing else.
 
 <Callout type="tip" title="The gotcha">
-  With `skip_app_build`, `app_location` stops meaning "where the source is" and starts meaning "where the built output is". And because only `dist` gets uploaded, `staticwebapp.config.json` has to be inside it — so it lives in `public/` and Astro copies it across. Leave it at the repository root and it's silently ignored: no error, no headers, just a site that scores badly on a security scan for no visible reason.
+  With `skip_app_build`, `app_location` stops meaning "where the source is" and starts meaning "where the built output is". And because only `dist` gets uploaded, `staticwebapp.config.json` has to be inside it - so it lives in `public/` and Astro copies it across. Leave it at the repository root and it's silently ignored: no error, no headers, just a site that scores badly on a security scan for no visible reason.
 </Callout>
 
-Preview before publishing to GA — not doing that is like forgetting to put pants on, and that just isn't comfortable for anyone. Pull requests used to get their own preview environment, torn down again when the PR closed. Then a security review pointed out two things: I'd never opened a single pull request, and that preview job was the only reason a stranger's fork could run anything on my runners. So it went. Previews happen in `astro dev` now, and `main` is the only thing that deploys.
+Preview before publishing to GA - not doing that is like forgetting to put pants on, and that just isn't comfortable for anyone. Pull requests used to get their own preview environment, torn down again when the PR closed. Then a security review pointed out two things: I'd never opened a single pull request, and that preview job was the only reason a stranger's fork could run anything on my runners. So it went. Previews happen in `astro dev` now, and `main` is the only thing that deploys.
 
 The rest of the pipeline got the same treatment. Every action is pinned to a commit SHA rather than a tag someone else can move, and the deploy token lives in a `production` environment that only `main` can reach.
 
@@ -80,11 +80,11 @@ Now the confession, or there was one. The first version of this page admitted th
 
 Then a security review found a third culprit I hadn't: the hero image's crop, passed in as a `style` attribute. Three was enough. Stylesheets now always ship as files (one line of config), the hero takes its crop from data attributes, and syntax highlighting runs on Prism instead of Shiki: it classes tokens rather than inlining a colour per span, so the CSP didn't have to move. `style-src` is `'self'`, no exceptions.
 
-So go ahead and View Source, which — let's be honest — you were going to do anyway. This time there's nothing to find.
+So go ahead and View Source, which - let's be honest - you were going to do anyway. This time there's nothing to find.
 
 ## What's deliberately missing
 
 - No analytics.
 - No comments (we've got enough of those elsewhere).
 - No third-party requests. KISS!
-- No interactive islands, yet! That's very much a _"let's build it when it's needed"_ — a completely valid engineering decision.
+- No interactive islands, yet! That's very much a _"let's build it when it's needed"_ - a completely valid engineering decision.

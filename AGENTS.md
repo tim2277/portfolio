@@ -98,13 +98,13 @@ The posts are Tim writing, not a house style. An edit that leaves the prose corr
 
 **Keep, always.** The running gag, the aside in brackets, the one-word paragraph used as a drum hit. Hogwash. `27001, looking at you`. A joke that survives the edit is worth more than a sentence that reads smoothly. Never explain one — if it needs a gloss, cut it instead.
 
-**Rhythm over uniformity.** A long, winding sentence and then a short one. Fragments are fine deliberately. Em dashes carry asides; semicolons rarely do. Read it aloud — if you run out of breath, split it.
+**Rhythm over uniformity.** A long, winding sentence and then a short one. Fragments are fine deliberately. A spaced hyphen (` - `) carries an aside; semicolons rarely do. Never an em dash in anything a reader sees: posts, page copy, titles, descriptions, footnotes. Readers take one as the mark of machine-written prose and stop reading. Read it aloud — if you run out of breath, split it.
 
 **Cut, don't pad.** Throat-clearing ("Arguably you may ask…"), hedges, and stacked qualifiers all go. Say it once, in the active voice. History goes in the past tense and stays there; the drift into present tense is the most common thing to fix.
 
 **Fix facts, don't soften them.** A wrong claim gets corrected and cited, not vagued up — "the world's first paid LLM product" became "one of the first a working developer paid for out of their own pocket" because the original was simply untrue. Anything dated, priced or attributed gets a footnote, and the source is *fetched* before citing. Don't write a plausible URL.
 
-**Footnotes are GFM** — `[^slug]` inline, `[^slug]: …` at the foot. Named, not numbered, so inserting one doesn't renumber the rest. remark-gfm handles them; no plugin. Each definition reads as a citation: `["Title"](url), Publisher, date` — the title quoted as the link text, a publication in italics, the date the page carries or "accessed 30 September 2026" when it carries none. Then an em dash and the quote that supports the claim, or a sentence of context. `hello-world` is the worked example.
+**Footnotes are GFM** — `[^slug]` inline, `[^slug]: …` at the foot. Named, not numbered, so inserting one doesn't renumber the rest. remark-gfm handles them; no plugin. Each definition reads as a citation: `["Title"](url), Publisher, date` — the title quoted as the link text, a publication in italics, the date the page carries or "accessed 30 September 2026" when it carries none. Then a spaced hyphen and the quote that supports the claim, or a sentence of context. `hello-world` is the worked example.
 
 **Terms get expanded once**, on first use, via `<abbr title="…">`.
 

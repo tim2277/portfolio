@@ -51,7 +51,7 @@ const { width = 'measure', ...props } = Astro.props;
         const current = () => root.dataset.theme || (mq.matches ? 'dark' : 'light');
 
         // Shows the theme you'd get by clicking, not the one you're in.
-        // Escaped codepoints keep this file ASCII — the CSP hashes its bytes.
+        // Escaped codepoints keep this file ASCII - the CSP hashes its bytes.
         const label = (btn) => {
           const next = current() === 'dark' ? 'light' : 'dark';
           const icon = btn.querySelector('.theme-icon');

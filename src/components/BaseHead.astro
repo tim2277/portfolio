@@ -62,7 +62,7 @@ const socialImage = image ? new URL(image, Astro.site) : undefined;
 const isAboutPage = Astro.url.pathname === '/about/';
 
 // The home page title is already the site title; don't say it twice.
-const fullTitle = title === SITE_TITLE ? title : `${title} — ${SITE_TITLE}`;
+const fullTitle = title === SITE_TITLE ? title : `${title} - ${SITE_TITLE}`;
 
 /*
   JSON-LD via a @graph: every page gets a WebSite and a Person (a stable
@@ -142,7 +142,7 @@ const jsonLd = { '@context': 'https://schema.org', '@graph': graph };
 <link
   rel="alternate"
   type="application/rss+xml"
-  title={`${SITE_TITLE} — posts`}
+  title={`${SITE_TITLE} - posts`}
   href={new URL('rss.xml', Astro.site)}
 />
 
