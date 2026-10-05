@@ -189,6 +189,12 @@ Use background mode, and manage it with `astro dev stop`, `astro dev status`, `a
 astro dev --background
 ```
 
+## Looking at a page
+
+Use the Playwright MCP server in `.mcp.json`, which drives the installed Edge. That goes for the dev server, a preview of `dist/`, and the live site. It can click, resize, wait for an image to load and read the console, which is what a visual check needs: open the `<details>`, toggle the theme, look at a phone width.
+
+The server loads at session start, after Tim approves it. If its tools aren't there, ask for a restart before a round of visual work.
+
 ## Docs
 
 - [Routing](https://docs.astro.build/en/guides/routing/)
