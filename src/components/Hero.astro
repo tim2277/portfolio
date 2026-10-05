@@ -66,7 +66,7 @@ const { title, eyebrow, image, imageAlt, imagePosition, ratio } = Astro.props;
         <div class="hero-lede"><slot /></div>
       </div>
 
-      {/* Stands in for a photo. Same chevron language as the favicon. */}
+      {/* Stands in for a photo. The favicon's identity matrix, with room for 3×3. */}
       {
         !image && (
           <svg class="hero-motif" viewBox="0 0 130 120" aria-hidden="true">
@@ -77,9 +77,21 @@ const { title, eyebrow, image, imageAlt, imagePosition, ratio } = Astro.props;
               stroke-linecap="round"
               stroke-linejoin="round"
             >
-              <path d="M20 22 52 60 20 98" opacity="0.9" />
-              <path d="M55 22 87 60 55 98" opacity="0.5" />
-              <path d="M90 22 122 60 90 98" opacity="0.22" />
+              <path d="M24 12H10v96h14" />
+              <path d="M106 12h14v96h-14" />
+              <g fill="currentColor" stroke="none">
+                <circle cx="39" cy="34" r="8" />
+                <circle cx="65" cy="60" r="8" />
+                <circle cx="91" cy="86" r="8" />
+              </g>
+              <g stroke-width="3" opacity="0.45">
+                <circle cx="65" cy="34" r="6" />
+                <circle cx="91" cy="34" r="6" />
+                <circle cx="39" cy="60" r="6" />
+                <circle cx="91" cy="60" r="6" />
+                <circle cx="39" cy="86" r="6" />
+                <circle cx="65" cy="86" r="6" />
+              </g>
             </g>
           </svg>
         )
