@@ -1,0 +1,109 @@
+---
+interface Props {
+  /** Match the page's content column, so the motif stops where the content starts. */
+  clear?: 'measure' | 'shell';
+}
+
+const { clear = 'measure' } = Astro.props;
+---
+
+<div class:list={['margins', `margins-${clear}`]} aria-hidden="true">
+  <div class="margins-layer margins-far"></div>
+  <div class="margins-layer margins-mid"></div>
+  <div class="margins-layer margins-near"></div>
+</div>
+
+<style>
+  /* Decoration for the empty margins of a wide display. Fixed behind
+     everything and masked out across the content column, so nothing ever
+     sits under text. The tiles come from src/pages/motif-[layer].svg.ts. */
+  .margins {
+    display: none;
+  }
+
+  @media (min-width: 64rem) {
+    .margins {
+      --clear: var(--measure);
+      --edge: calc(var(--clear) / 2 + var(--gutter));
+      display: block;
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+      mask-image: linear-gradient(
+        to right,
+        #000 0,
+        #000 calc(50% - var(--edge) - 3rem),
+        transparent calc(50% - var(--edge)),
+        transparent calc(50% + var(--edge)),
+        #000 calc(50% + var(--edge) + 3rem),
+        #000 100%
+      );
+    }
+
+    .margins-shell {
+      --clear: var(--shell);
+    }
+  }
+
+  /* Taller than the viewport by its own drift, so sliding it up never
+     uncovers a bare strip at the foot. The tile is a mask over a block of
+     accent colour: the file carries the shapes, the page carries the colour. */
+  .margins-layer {
+    position: absolute;
+    inset: 0 0 calc(-1 * var(--drift));
+    background: var(--accent);
+    mask-repeat: repeat;
+  }
+
+  .margins-far {
+    --drift: 6rem;
+    opacity: 0.13;
+    mask-image: url('/motif-far.svg');
+  }
+
+  .margins-mid {
+    --drift: 14rem;
+    opacity: 0.2;
+    mask-image: url('/motif-mid.svg');
+  }
+
+  .margins-near {
+    --drift: 26rem;
+    opacity: 0.3;
+    mask-image: url('/motif-near.svg');
+  }
+
+  /* The nearer the layer, the further it travels as the page scrolls. Without
+     scroll-driven animations, or with reduced motion, it stands still. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: scroll()) {
+      .margins-layer {
+        animation: margins-drift linear both;
+      }
+
+      /* A rule of its own on purpose. Beside the shorthand, the minifier folds
+         the timeline into it, browsers reject the result, and the layers stand
+         still with nothing to say why. */
+      .margins .margins-layer {
+        animation-timeline: scroll(root);
+      }
+
+      @keyframes margins-drift {
+        from {
+          transform: translateY(0);
+        }
+        to {
+          transform: translateY(calc(-1 * var(--drift)));
+        }
+      }
+    }
+  }
+
+  @media print {
+    .margins {
+      display: none;
+    }
+  }
+</style>

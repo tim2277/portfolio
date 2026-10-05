@@ -423,6 +423,13 @@ td {
 
 /* ---------- header / footer ---------- */
 
+/* Both are painted, not left see-through: the margin motif sits behind the
+   whole page, and without a background it shows through the chrome. */
+.site-header,
+.site-footer {
+  background: var(--bg);
+}
+
 .site-header {
   border-bottom: 1px solid var(--border);
   padding-block: 1rem;
