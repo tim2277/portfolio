@@ -6,11 +6,11 @@ interface Props {
 
 const { clear = 'measure' } = Astro.props;
 
-// The drift is scripted, not a CSS scroll-driven animation, on purpose. With
-// `animation-timeline: scroll(root)` on these layers, swiping repeatedly past
-// the end of the page on a touchpad made Edge stop drawing the page for a
-// second or more at a time. Like the theme script, this one is `is:inline` and
-// pinned by hash in the CSP: edit it and recompute, or it stops running.
+// `animation-timeline: scroll(root)` would do this without a script, and did.
+// Swiping repeatedly past the end of the page on a touchpad then made Edge stop
+// drawing the page for a second or more at a time, with nothing busy and no
+// error. The script's bytes are pinned by hash in the CSP: edit it and
+// recompute, or it stops running.
 ---
 
 <div class:list={['margins', `margins-${clear}`]} aria-hidden="true">
@@ -100,9 +100,8 @@ const { clear = 'measure' } = Astro.props;
     mask-image: url('/motif-near.svg');
   }
 
-  /* The nearer the layer, the further it travels as the page scrolls. The
-     script below reports how far down the page is as --scrolled, from 0 to 1.
-     Without it, or with reduced motion, the layers stand still. */
+  /* The fallback of 0 is the no-script case: without --scrolled, or with
+     reduced motion, the layers stand still where they were drawn. */
   @media (prefers-reduced-motion: no-preference) {
     .margins-layer {
       transform: translateY(calc(var(--scrolled, 0) * -1 * var(--drift)));

@@ -43,10 +43,10 @@ const share = data.heroImage
     })
   : undefined;
 
-// The hero below is a plain <img> in one format, not a <Picture>, on purpose.
-// Edge's Immersive Reader keeps a <picture>'s <source> tags but leaves their
-// root-relative URLs alone, resolves them against its own read:// address, and
-// shows a broken image. It rewrites <img> URLs correctly.
+// A <Picture> for the hero breaks in Edge's Immersive Reader. It keeps the
+// <source> tags but resolves their root-relative URLs against its own read://
+// address, so the image never loads. Only <img> URLs get rewritten, which
+// leaves room for one format.
 ---
 
 <BaseLayout
