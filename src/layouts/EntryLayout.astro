@@ -1,5 +1,5 @@
 ---
-import { Picture, getImage } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import type { MarkdownHeading } from 'astro';
 import BaseLayout from './BaseLayout.astro';
@@ -42,6 +42,11 @@ const share = data.heroImage
       format: 'jpeg',
     })
   : undefined;
+
+// The hero below is a plain <img> in one format, not a <Picture>, on purpose.
+// Edge's Immersive Reader keeps a <picture>'s <source> tags but leaves their
+// root-relative URLs alone, resolves them against its own read:// address, and
+// shows a broken image. It rewrites <img> URLs correctly.
 ---
 
 <BaseLayout
@@ -83,12 +88,12 @@ const share = data.heroImage
         }
         {
           data.heroImage && (
-            <Picture
+            <Image
               src={data.heroImage}
               alt={data.heroAlt ?? ''}
               widths={[480, 800, 1200]}
               sizes="(min-width: 74ch) 74ch, 100vw"
-              formats={['avif', 'webp']}
+              format="avif"
               loading="eager"
               fetchpriority="high"
               class="hero"
