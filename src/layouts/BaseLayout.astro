@@ -27,7 +27,7 @@ interface Props {
 
 const { width = 'measure', ...props } = Astro.props;
 
-// The only client-side JavaScript on the site. It runs before <body> parses so
+// The theme script. It runs before <body> parses so
 // an explicit theme choice is applied before first paint — deferring it would
 // flash the OS theme first. `is:inline` keeps Astro from bundling it, which
 // also keeps the bytes stable: the CSP in public/staticwebapp.config.json

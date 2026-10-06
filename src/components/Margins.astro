@@ -5,6 +5,12 @@ interface Props {
 }
 
 const { clear = 'measure' } = Astro.props;
+
+// The drift is scripted, not a CSS scroll-driven animation, on purpose. With
+// `animation-timeline: scroll(root)` on these layers, swiping repeatedly past
+// the end of the page on a touchpad made Edge stop drawing the page for a
+// second or more at a time. Like the theme script, this one is `is:inline` and
+// pinned by hash in the CSP: edit it and recompute, or it stops running.
 ---
 
 <div class:list={['margins', `margins-${clear}`]} aria-hidden="true">
@@ -12,6 +18,25 @@ const { clear = 'measure' } = Astro.props;
   <div class="margins-layer margins-mid"></div>
   <div class="margins-layer margins-near"></div>
 </div>
+
+<script is:inline>
+  (() => {
+    const margins = document.querySelector('.margins');
+    const root = document.documentElement;
+
+    // Clamped: a browser that rubber-bands reports a scroll position outside
+    // the page, and the layers are only tall enough to cover their own drift.
+    const update = () => {
+      const max = root.scrollHeight - root.clientHeight;
+      const scrolled = max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0;
+      margins.style.setProperty('--scrolled', String(scrolled));
+    };
+
+    addEventListener('scroll', update, { passive: true });
+    addEventListener('resize', update);
+    update();
+  })();
+</script>
 
 <style>
   /* Decoration for the empty margins of a wide display. Fixed behind
@@ -75,29 +100,12 @@ const { clear = 'measure' } = Astro.props;
     mask-image: url('/motif-near.svg');
   }
 
-  /* The nearer the layer, the further it travels as the page scrolls. Without
-     scroll-driven animations, or with reduced motion, it stands still. */
+  /* The nearer the layer, the further it travels as the page scrolls. The
+     script below reports how far down the page is as --scrolled, from 0 to 1.
+     Without it, or with reduced motion, the layers stand still. */
   @media (prefers-reduced-motion: no-preference) {
-    @supports (animation-timeline: scroll()) {
-      .margins-layer {
-        animation: margins-drift linear both;
-      }
-
-      /* A rule of its own on purpose. Beside the shorthand, the minifier folds
-         the timeline into it, browsers reject the result, and the layers stand
-         still with nothing to say why. */
-      .margins .margins-layer {
-        animation-timeline: scroll(root);
-      }
-
-      @keyframes margins-drift {
-        from {
-          transform: translateY(0);
-        }
-        to {
-          transform: translateY(calc(-1 * var(--drift)));
-        }
-      }
+    .margins-layer {
+      transform: translateY(calc(var(--scrolled, 0) * -1 * var(--drift)));
     }
   }
 

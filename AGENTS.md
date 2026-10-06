@@ -43,12 +43,14 @@ Each of these fails silently. None produce an error.
 
 ```powershell
 $html = Get-Content dist\index.html -Raw
-$body = [regex]::Match($html, '(?s)<script>(.*?)</script>').Groups[1].Value
-$bytes = [System.Text.Encoding]::UTF8.GetBytes($body)
-"sha256-$([Convert]::ToBase64String([System.Security.Cryptography.SHA256]::Create().ComputeHash($bytes)))"
+$sha = [System.Security.Cryptography.SHA256]::Create()
+[regex]::Matches($html, '(?s)<script>(.*?)</script>') | ForEach-Object {
+  $bytes = [System.Text.Encoding]::UTF8.GetBytes($_.Groups[1].Value)
+  "sha256-$([Convert]::ToBase64String($sha.ComputeHash($bytes)))"
+}
 ```
 
-Paste the result into `script-src` in `public/staticwebapp.config.json`.
+It prints one hash per script, in page order: the theme script in `BaseLayout.astro`, then the margin drift in `Margins.astro`. Each goes in `script-src` in `public/staticwebapp.config.json`, quoted and separated by a space.
 
 **An inline style is dropped in silence too.** `style-src` has no `'unsafe-inline'`, and `build.inlineStylesheets` is `'never'` so Astro ships every stylesheet as a file. Any `style="…"` attribute or `<style>` element in the output is ignored by the browser — the build stays green and the page renders wrong. `Hero` passes its crop through data attributes for this reason. Syntax highlighting is Prism for the same reason: it classes tokens where Shiki styles them inline. The theme in `src/styles/prism.css` is One Light/Dark from prism-themes, with the colours that failed AA against `--code-bg` darkened or lightened; the header lists each one.
 
