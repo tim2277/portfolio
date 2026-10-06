@@ -1,5 +1,5 @@
 ---
-import { Picture } from 'astro:assets';
+import { Image } from 'astro:assets';
 
 /*
   The crop can't be passed through as an inline style: the CSP has no
@@ -35,6 +35,9 @@ type Props = BaseProps &
   ({ image?: undefined; imageAlt?: never } | { image: ImageMetadata; imageAlt: string });
 
 const { title, eyebrow, image, imageAlt, imagePosition, ratio } = Astro.props;
+
+// One format, no <Picture>: Edge's Immersive Reader can't load a <source>.
+// EntryLayout has the detail.
 ---
 
 <div class="hero-outer">
@@ -46,12 +49,12 @@ const { title, eyebrow, image, imageAlt, imagePosition, ratio } = Astro.props;
           data-hero-ratio={ratio}
           data-hero-position={imagePosition}
         >
-          <Picture
+          <Image
             src={image}
             alt={imageAlt}
             widths={[640, 960, 1280, 1600, 2000]}
             sizes="(max-width: 82rem) 100vw, 82rem"
-            formats={['avif', 'webp']}
+            format="avif"
             loading="eager"
             fetchpriority="high"
           />
