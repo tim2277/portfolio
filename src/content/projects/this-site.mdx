@@ -5,10 +5,10 @@ description: >-
   framework runtime, and the silent failures to know about before you build one.
 lede: >-
   Astro, static, on Azure Static Web Apps. No server, no adapter, and exactly
-  one script - which started as zero, and the story of how it got to one is
+  two scripts - which started as zero, and the story of how it got to two is
   most of this page.
 date: 2026-09-29
-updated: 2026-09-30
+updated: 2026-10-06
 tags: ['astro', 'azure', 'bicep', 'csp']
 status: active
 repo: https://github.com/tim2277/portfolio
@@ -23,7 +23,7 @@ import Callout from '../../components/Callout.astro';
 import Summary from '../../components/Summary.astro';
 
 <Summary>
-  A static Astro site on Azure Static Web Apps: one Bicep file, a pipeline that builds the site itself and uploads only `dist`, and exactly one script, which the security headers pin by hash. Most of this page is about the things that fail without telling you, and the confessions a security review got out of me.
+  A static Astro site on Azure Static Web Apps: one Bicep file, a pipeline that builds the site itself and uploads only `dist`, and exactly two scripts, each pinned by hash in the security headers. Most of this page is about the things that fail without telling you, and the confessions a security review got out of me.
 </Summary>
 
 ## The stack, briefly
@@ -44,16 +44,20 @@ Both collections - `posts` and `projects` - share a Zod schema for title, descri
 
 Drafts are visible in `astro dev` and excluded from a production build.
 
-## One script, and what it cost
+## Two scripts, and what they cost
 
 This site started with a guideline (Claude says it was a rule): no client-side JavaScript on a content page. Dark mode followed `prefers-color-scheme` and that was the end of it. The rule held until the first person asked for a theme toggle. That person was me, after looking at the boring UI I had just built.
 
-So there is exactly one script. It sets a `data-theme` attribute before `<body>` parses, reads and writes one `localStorage` key, and falls back to `prefers-color-scheme` when it doesn't run. About thirty lines, no dependencies, no framework - the type of efficiency that software dev promises but rarely achieves.
+So there was exactly one script. It sets a `data-theme` attribute before `<body>` parses, reads and writes one `localStorage` key, and falls back to `prefers-color-scheme` when it doesn't run. About thirty lines, no dependencies, no framework - the type of efficiency that software dev promises but rarely achieves.
 
 It wasn't free, and the bill is the interesting part:
 
 - **The <abbr title="Content Security Policy">CSP</abbr> pins it by hash.** Having co-authored a few internal docs on ISO standards over the years, this was the first thing to set my cyber senses tingling. The boring technical bit: `script-src` carries a sha256 of that exact script rather than `'self'`, so nothing else can execute (cybersecurity win!).
 - **Every themed rule now has two routes.** The OS preference when the reader hasn't chosen (dark for those L337 hackers and light for everyone else), `[data-theme]` when they have.
+
+Then there were two, and this page spent an evening being wrong about it. After launch I decided the site was too plain and filled the wide-screen margins with a drifting pattern of matrices and maths symbols. It moved as you scrolled, all in CSS: no script, rule intact. It worked right up until you swiped past the end of a page a few times on a touchpad, at which point Edge stopped drawing the page for a second or more. Nothing was busy, nothing errored, and no amount of tuning the CSS changed it. Moving the same pattern from a dozen lines of script did.
+
+So the second script exists to work around a browser. It gets its own hash in the CSP, and with scripts blocked the pattern simply stands still. Ye on a phone never see it at all: it only shows on a wide screen.
 
 ## Infrastructure
 
