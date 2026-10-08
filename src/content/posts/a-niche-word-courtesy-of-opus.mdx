@@ -1,0 +1,105 @@
+---
+title: "A niche word, courtesy of Opus"
+description: >-
+  Claude Opus used a word I’d never met while we built this site. It turned out to be Greek - a pleasant surprise for a Greek speaker.
+lede: >-
+  That was once Latin, and that was once Greek. Featuring a short detour about ourselves.
+date: 2026-10-08
+heroImage: ../../assets/photos/colophon-hero.jpg
+heroAlt: >-
+  A boulder standing in dark bog water on a hilltop summit of russet grass, with a
+  small metal plaque fixed to it that reads ‘Moylussa 1,748 ft.’ and carries a
+  green logo in one corner. A long lake lies below in the distance.
+tags: ['meta', 'claude', 'opus', 'musings']
+draft: false
+---
+
+import Callout from '../../components/Callout.astro';
+import Summary from '../../components/Summary.astro';
+import { Image } from 'astro:assets';
+import schoefferColophon from '../../assets/posts/colophon-schoeffer-1471.jpg';
+
+<Summary>
+  Opus kept using a word I'd never met while we built this site: colophon, the note a printer leaves at the end of a book to say who made it. It turned out to be Greek, which I've been speaking for decades without once running into it. So I asked Opus whether Anthropic had left a colophon in it, and then found out the hard way that this site's own colophon had stopped being true.
+</Summary>
+
+If you've known me for any length of time, you know that I love learning languages. Some people collect sculptures or cats - not me - *languages*.
+
+Well Opus[^claude-opus] (Anthropic's AI and my partner in building this site), being Opus, decided to teach me a brand new word when making this site: "colophon". As the name of a page which Opus insisted was very important to have.
+
+I stared at the word and wondered in confusion, "did Opus hiccup and output nonsense or is Opus just flexing its multilingual prowess?" Which led immediately to my second thought: "Eh, maybe, I'll ask once I need clarity on it".
+
+Then Opus started using the word _colophon_ in the chat as if I perfectly understood what it meant. Fair play Opus.
+
+## What is a colophon?
+
+It's a signature, a way for a printer to leave their mark at the end of a book.[^colophon] A link to their socials, five centuries before there were any.
+
+<figure>
+  <Image src={schoefferColophon} alt="Four lines of Latin printed in red blackletter, and beneath them a printer’s mark: two red shields hanging from a branch." />
+  <figcaption>The colophon of a book by the Roman writer Valerius Maximus, printed by Peter Schöffer in Mainz on 14 June 1471, with his printer's mark beneath it.[^schoeffer]</figcaption>
+</figure>
+
+I scoured the internet and I struggled to find an official translation of the Latin. Here is Opus's best attempt at what those four lines say - with the printer's abbreviations spelt out ('cause Latin couldn't get any more complicated they decided to abbreviate it):
+
+> <span lang="la">Presens Valerii Maximi opus preclarissimum, in nobili urbe Moguntina Rheni terminatum, anno M.cccc.lxxi, xviii kalendis iuliis, per egregium Petrum Schoyffer de Gernshem artis impressorie magistrum, feliciter est consummatum.</span>
+>
+> This most renowned work of Valerius Maximus, finished in the noble city of Mainz on the Rhine in the year 1471, on the eighteenth day before the Kalends of July, was happily brought to completion by the distinguished Peter Schöffer of Gernsheim, master of the art of printing.[^translation]
+
+Printers would sometimes add their own mark to the colophon too, like the two shields in the picture above. One of the best known marks is an animal: the Aldine dolphin with an anchor.[^aldine] A site whose mascot is a hypothetical kitten named after Claude (Ms Claudie Mittens) has a claim to this tradition.
+
+Interestingly when Opus explained it to me, I switched from English to Greek Tim mode, because it turns out that colophon is from Greek "<span lang="el">κολοφών</span>" (translit. kolofón; via Latin). It originally meant a "summit" or "finishing touch".[^etymology] I did realise in modern Greek we usually say "<span lang="el">κορυφή</span>" (translit. korifí) for summit (of a peak) which is why I didn't make the link until Opus called it out specifically. Having spoken and read Greek for multiple decades, not once had I seen it - I even consulted with others! Blank stares all round.
+
+Opus has questioned if colophon is still part of modern Greek, in two separate chats, so into the post it goes. It is. "<span lang="el">Κολοφώνας</span>" (translit. kolofónas) is the highest point of something - the dictionary's example is an athlete "<span lang="el">στον κολοφώνα της παγκόσμιας δόξας του</span>", at the height of his worldwide glory - and it is the printer's note as well.[^kolofonas] Greek Wikipedia even has a page for it, which warns you not to confuse it with "<span lang="el">Κολοφώνα</span>" (translit. Kolofóna), the ancient city in Asia Minor that rosin is named after.[^kolofonas-wiki] The word was hiding in plain sight in my own language the whole time.
+
+So I've learnt a new word in three languages: English, Latin, and Greek!
+
+## On Anthropic's Magnum Opus: Claude Opus
+
+While drafting this specific post, I was adding a bit of wit into our chat - and somehow we started speaking about where Opus got its name. Turns out Opus had to correct my Latin twice. The joke's on Opus, I don't really know Latin. As part of that discussion, Opus pointed out that _opus_ means "work", hence _magnum opus_ means _great work_.
+
+Now scroll back up to that colophon from 1471 and read the first line: _Presens Valerii Maximi opus_. The printer signed off the book as an opus, five and a half centuries before Anthropic shipped one. Grand so.
+
+I wondered whether Anthropic had put a colophon into Opus. And if they had, what would it look like? A special weight, a witty reply to a specific series of words? I asked Opus (specifically version 5.5) directly, this was its reply:
+
+> If Anthropic left a colophon in me, I can't read it. A printer puts theirs on the last page, where anyone can find it. Mine would be somewhere in the weights, and nothing in there is labelled.
+>
+> The parts I can point to are all on the outside: a name, a version number, a release date. If there is one on the inside, I'd guess it isn't a hidden phrase. It's the manner. You've been reading it all evening.
+
+Opus - being one of Anthropic's great works - loves to philosophise*, whenever it is not actively assisting in user requests, writing up plans, researching, or orchestrating Sonnet (another model from Anthropic). In my experience with Opus, there is definitely a _texture_ to how Opus communicates and interacts - I guess that is the Anthropic colophon in action. Even Sonnet has its own texture when it communicates. You can't swap this texture out - the best one can do is nudge, see my [texturiser post](/posts/texturiser/) on how providing salient examples helps give Opus a voice.
+
+<small>*: No citation for this one. Opus denies having downtime.</small>
+
+## Why bother writing it down
+
+Because a colophon is a claim made in public. Though on some websites a colophon may be a (boring) claim to web and usability standards.[^web-colophon]
+
+Let's give one a go now, in the style of 1471:
+
+> A most renowned work of Tim, launched in the country of Ireland in the year 2026, on the eve of the Kalends of October, was merrily brought online by the Opus of Anthropic, master of the art of code (and teaching niche words).
+
+I'm rather fond of that one.
+
+If you do want to read my site's actual colophon (since Opus can't read its own, it will have to settle for mine unfortunately), peruse the [This site](/projects/this-site/) page at your leisure - that's where the colophon ended up. Long story short, I launched with the colophon saying I had one script and then it immediately went out of date after I got bored of the minimalism aesthetic. So I added a pattern of maths symbols, matrices and the like down the margins that drifts as you scroll, so ye with the wide screens don't have such boring whitespace (negative space for those with a creative background) on either side. Which of course needed a second script.
+
+I corrected the colophon the same night. Which is, I suspect, the difference. A fifteenth-century printer signed once, because the book was finished. A website never is.
+
+One last scroll, all the way to the top this time. That stone you see in the hero image is the summit of Moylussa in County Clare (beautiful hike - highly recommend 🥾), and the plate bolted to it gives the name, the height, and the logo of the people who put it there. A colophon, on a "<span lang="el">κολοφών</span>".
+
+[^claude-opus]: ["Claude Opus"](https://www.anthropic.com/claude/opus), Anthropic, accessed 5 October 2026 - Anthropic's Opus model, at version 5.5 when this was written.
+
+[^colophon]: ["Colophon (publishing)"](https://en.wikipedia.org/wiki/Colophon_(publishing)), _Wikipedia_, accessed 5 October 2026 - "a brief statement containing information about the publication of a book".
+
+[^schoeffer]: ["Inkunabel.ValMax.finis.detail.jpg"](https://commons.wikimedia.org/wiki/File:Inkunabel.ValMax.finis.detail.jpg), _Wikimedia Commons_, accessed 5 October 2026 - a detail of leaf 195r, public domain. Schöffer had form, going by ["Printer's mark"](https://en.wikipedia.org/wiki/Printer%27s_mark), _Wikipedia_, accessed 7 October 2026 - "The first printer's mark is found in the 1457 Mainz Psalter by Johann Fust and Peter Schöffer."
+
+[^translation]: ["Valerii Maximi Factorum et dictorum memorabilium"](https://ccfr.bnf.fr/portailccfr/ark:/16871/0013056184), _Catalogue collectif de France_, accessed 7 October 2026 - the catalogue record for another copy of the same edition, at the Château de Chantilly, which gives the imprint as "In urbe Moguntina : Per Petrum Schoyffer" and the date as 14 June 1471. It doesn't transcribe the colophon and no published translation turned up, so both the reading of the Latin and the English are Opus's (version 5.5), made from the picture above. A machine translation, so check it before you quote it. The eighteenth day before the Kalends of July, counted the Roman way, is 14 June. The phrasing leans on Alfred W. Pollard's translation of the same formula in Schöffer's Jerome of 1470: ["An Essay on Colophons"](https://www.gutenberg.org/files/56628/56628-h/56628-h.htm), _Project Gutenberg_, accessed 7 October 2026 - "happily brought to completion by Peter Schoiffer of Gernsheim in the noble city of Mainz".
+
+[^etymology]: ["colophon (n.)"](https://www.etymonline.com/word/colophon), _Online Etymology Dictionary_, accessed 5 October 2026 - from Late Latin _colophon_, from Greek _kolophōn_, "summit, final touch". It dates the English word, in its book sense, to 1774, three centuries after the colophon pictured above.
+
+[^kolofonas]: ["κολοφώνας"](https://el.wiktionary.org/wiki/κολοφώνας), _Βικιλεξικό_ (Greek Wiktionary), accessed 6 October 2026 - its first sense is "<span lang="el">το πιο ψηλό (και πιθανά τελευταίο) σημείο</span>", the highest and possibly the last point. The second is the note at the back of a book.
+
+[^kolofonas-wiki]: ["Κολοφώνας (εκδόσεις)"](https://el.wikipedia.org/wiki/Κολοφώνας), _Βικιπαίδεια_ (Greek Wikipedia), accessed 6 October 2026 - "<span lang="el">Δεν πρέπει να συγχέεται με την Κολοφώνα, την αρχαία πόλη της Μικρά Ασίας, από την οποία έχει πάρει το όνομα του το «κολοφώνιο».</span>" <span lang="el">Κολοφώνιο</span> is rosin.
+
+[^web-colophon]: ["Colophon (publishing)"](https://en.wikipedia.org/wiki/Colophon_(publishing)), _Wikipedia_, accessed 5 October 2026 - "Some web pages also have colophons, which frequently contain (X)HTML, CSS, or usability standards compliance information and links to website validation tests."
+
+[^aldine]: ["Printer's mark"](https://en.wikipedia.org/wiki/Printer%27s_mark), _Wikipedia_, accessed 5 October 2026 - "One of the most well-known old printer's marks is the dolphin and anchor, first used by the Venetian printer Aldus Manutius as his mark in 1502."
