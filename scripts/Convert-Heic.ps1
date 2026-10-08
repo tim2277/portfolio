@@ -34,6 +34,16 @@ param(
   [ValidateRange(1, 100)][int]$Quality = 82,
   [switch]$Force,
 
+  <#
+    A post hero is shown whole, so a portrait photograph would run the height
+    of the screen. This cuts the frame to a width:height ratio before it is
+    scaled: 1.5 for 3:2. 0 leaves the frame alone.
+  #>
+  [ValidateRange(0, 10)][double]$CropRatio = 0,
+  # Where the kept slice sits along the edge being trimmed, as a percentage:
+  # 0 is the top (or left), 100 the bottom (or right).
+  [ValidateRange(0, 100)][double]$CropPosition = 50,
+
   # Burnt-in credit. Applies to every file in the call, so run per-photo when
   # the location differs.
   [string]$Location,
@@ -222,6 +232,21 @@ foreach ($src in $sources) {
       $rotate = [System.Windows.Media.Imaging.TransformedBitmap]::new(
         $image, [System.Windows.Media.RotateTransform]::new($angle))
       $image = $rotate
+    }
+
+    # Before the scale, so MaxEdge caps the picture that's kept and not the
+    # part thrown away.
+    if ($CropRatio -gt 0) {
+      $cropW = $image.PixelWidth
+      $cropH = [int][Math]::Round($cropW / $CropRatio)
+      if ($cropH -gt $image.PixelHeight) {
+        $cropH = $image.PixelHeight
+        $cropW = [int][Math]::Round($cropH * $CropRatio)
+      }
+      $left = [int][Math]::Round(($image.PixelWidth - $cropW) * ($CropPosition / 100))
+      $top = [int][Math]::Round(($image.PixelHeight - $cropH) * ($CropPosition / 100))
+      $image = [System.Windows.Media.Imaging.CroppedBitmap]::new(
+        $image, [System.Windows.Int32Rect]::new($left, $top, $cropW, $cropH))
     }
 
     # Longest edge, not width — capping width alone leaves a portrait shot

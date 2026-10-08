@@ -92,7 +92,7 @@ It strips metadata, caps the longest edge at 2400px, honours EXIF orientation, a
 | `-SafeRatio` | `ratio` | Band shape, default 4.5:1 above 64rem |
 | `-SafePosition` | Y of `imagePosition` | Which slice of the source is kept |
 
-Get either wrong and the credit sits outside the visible band — present in the downloaded file, invisible on the page, which is backwards. Omit both for in-article images: those render uncropped, so the mark goes in the true corner. Changing a hero's `ratio` or `imagePosition` later means re-running the converter, not just editing the template. Both props take a fixed list of values, so a new one also needs an entry in the type in `Hero.astro` and a matching rule in its stylesheet — `astro check` rejects a value that isn't listed.
+Get either wrong and the credit sits outside the visible band — present in the downloaded file, invisible on the page, which is backwards. Omit both for in-article images: those render uncropped, so the mark goes in the true corner. A post hero renders uncropped as well, so a portrait photograph would run the height of the screen: cut it to a landscape frame at conversion with `-CropRatio` (1.5 for 3:2) and `-CropPosition`, the percentage down the frame where the kept slice sits. Changing a hero's `ratio` or `imagePosition` later means re-running the converter, not just editing the template. Both props take a fixed list of values, so a new one also needs an entry in the type in `Hero.astro` and a matching rule in its stylesheet — `astro check` rejects a value that isn't listed.
 
 ## Code comments
 
