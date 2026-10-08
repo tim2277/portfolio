@@ -28,6 +28,10 @@ updates:
     schedule:
       interval: 'weekly'
     open-pull-requests-limit: 5
+    # The deploy action is pinned to the tip of its v1 branch. Its only
+    # release tag is an older commit, and Dependabot offers that as an update.
+    ignore:
+      - dependency-name: 'Azure/static-web-apps-deploy'
     groups:
       actions:
         patterns:
