@@ -61,10 +61,13 @@ az group create `
 az deployment group create `
   --resource-group rg-portfolio-prod `
   --template-file infra/main.bicep `
-  --parameters infra/main.bicepparam
+  --parameters infra/main.bicepparam `
+  --parameters audioUploaderPrincipalId=$(az ad signed-in-user show --query id -o tsv)
 ```
 
 Add `--what-if` to see the change before it happens.
+
+The second `--parameters` grants your own account upload rights on the audio storage account, which has key access switched off. Leave it out on a later run and the existing grant stays as it is. The account name in `main.bicepparam` is the hostname in every audio URL and has to be globally unique: `az storage account check-name --name <name>` says whether yours is free. `infra/audio.bicep` also deploys on its own, taking the same values as parameters, when the storage is all that changed.
 
 ### 2. Get the deployment token
 
@@ -104,7 +107,8 @@ Then repeat step 3.
 ## Layout
 
 ```
-infra/                       Bicep: one Static Web App, Free tier
+infra/                       Bicep: one Static Web App, Free tier, and the
+                             storage account that serves narration audio
 .github/workflows/           Build and deploy on push to main
 .githooks/pre-push           Refuses drafts/* on its way to the public remote
 scripts/Convert-Heic.ps1     Strips metadata from a photo and burns in the credit

@@ -15,6 +15,12 @@ param tags object = {
   managedBy: 'bicep'
 }
 
+@description('Storage account that serves narration audio. See audio.bicep.')
+param audioAccountName string
+
+@description('Object ID of the user who uploads audio. Passed on the command line, not kept in the parameter file.')
+param audioUploaderPrincipalId string = ''
+
 resource site 'Microsoft.Web/staticSites@2025-03-01' = {
   name: name
   location: location
@@ -36,6 +42,17 @@ resource site 'Microsoft.Web/staticSites@2025-03-01' = {
   }
 }
 
+module audio './audio.bicep' = {
+  name: 'audio'
+  params: {
+    accountName: audioAccountName
+    location: location
+    tags: tags
+    uploaderPrincipalId: audioUploaderPrincipalId
+  }
+}
+
 output staticSiteName string = site.name
 output defaultHostname string = site.properties.defaultHostname
 output resourceId string = site.id
+output audioEndpoint string = audio.outputs.endpoint
