@@ -1,0 +1,250 @@
+# Narration for src/content/posts/texturiser.mdx. A header line per segment, then its SSML on one line.
+# "@ 012 p gap=1200" overrides the silence before a segment, in milliseconds.
+# node scripts/narration/narrate.mjs check texturiser
+voice en-US-BrianMultilingualNeural
+lang en-IE
+pitch -1.5%
+recorded 2026-10-10
+
+@ 001 intro
+Welcome to Tim writes about dev.<break time="400ms"/> I'm Brian, an AI voice,<break time="150ms"/> and Tim has asked me to read you the post,<break time="200ms"/> The texturiser:<break time="300ms"/> a friend’s memory for Claude Code.<break time="500ms"/> I skip the code and the footnotes, so for those,<break time="150ms"/> check the post, or the public <phoneme alphabet="ipa" ph="ɡɪt">Git</phoneme> repository.
+
+@ 002 p
+Immediately your question will be:<break time="300ms"/> <prosody pitch="+0.75%">why</prosody> let Claude Code remember things about your life?
+
+@ 003 p
+At work you've got <prosody rate="-4%" pitch="+0.75%">lots of context</prosody>:<break time="200ms"/> work items, Kanban boards, PRs, design docs, meetings, Teams/Slack messages, and diagrams that help communicate exactly where the project is and your part in it<break time="400ms"/> well, at least I <prosody pitch="+0.75%">hope</prosody> you do, otherwise how is your team even working?<break time="400ms"/> <prosody pitch="-0.75%" rate="+4%" volume="-8%">That's something agentic AI cannot solve right now.</prosody>
+
+@ 004 p
+Now if you use Claude Code for personal projects you've got the opposite:<break time="250ms"/> <prosody rate="-4%" pitch="+0.75%">not enough context.</prosody><break time="350ms"/> Whenever you <phoneme alphabet="ipa" ph="rɪˈzjuːm">resume</phoneme> that hobby project that has been on your backlog for weeks, Claude has no way of knowing why it took you six weeks to come back, and both you and Claude have forgotten all those cool ideas, because<break time="350ms"/> <prosody rate="-4%" pitch="+0.75%">ye forgot to write it down.</prosody><break time="450ms"/> You have very little ambient context, and very little direct context beyond what is in the <sub alias="repository">repo</sub>.
+
+@ 005 p
+A texturiser solves some of this ambient-context problem:<break time="250ms"/> it ingests what you discuss with Claude Code across conversations, and carries the continuity forward.
+
+@ 006 h
+What Claude Code doesn't know about you.
+
+@ 007 p
+Now you might be asking:<break time="250ms"/> but <sub alias="claude dot A I">claude.ai</sub>, <sub alias="chat G P T dot com">chatgpt.com</sub>, or [random LLM provider]<sub alias=" dot A I">.ai</sub> don't have this problem?<break time="350ms"/> And why would we need it in Claude Code<break time="300ms"/> Claude Code is supposed to be used to author <prosody pitch="+0.75%">code</prosody>, not chat about your life!
+
+@ 008 p
+A few things to unpack there<break time="350ms"/> so, just like a counsellor,<break time="150ms"/> let's go through it bit by bit:
+
+@ 009 li
+Online AI chat platforms, <prosody pitch="-0.75%" rate="+4%">even their desktop apps,</prosody> remember you across chats:<break time="200ms"/> memory, chat indexing and <prosody rate="-4%" pitch="+0.75%">projects</prosody>, all of which can be referenced<break time="200ms"/> <prosody pitch="-0.75%" rate="+4%">to various degrees of success.</prosody>
+
+@ 010 li
+Claude Code, <prosody pitch="-0.75%" rate="+4%">and most other <sub alias="T U Is">TUIs</sub> or <sub alias="gooeys">GUIs</sub> that help write code,</prosody> remembers per <sub alias="repository">repo</sub> or directory, which is great when you work in one <sub alias="repository">repo</sub><break time="300ms"/> but for personal projects you likely have many, with different goals.
+
+@ 011 li
+Claude Code <prosody pitch="+0.75%">does</prosody> have a cross-<sub alias="repository">repo</sub> place, your profile instructions,<break time="150ms"/> <prosody pitch="-0.75%" rate="+4%"><sub alias="dot claude slash Claude dot M D">~/.claude/CLAUDE.md</sub>,</prosody><break time="150ms"/> and those are static:<break time="200ms"/> preferences you wrote down by hand.
+
+@ 012 p
+The <prosody rate="-4%" pitch="+0.75%">gap</prosody>:<break time="300ms"/> Claude Code doesn't know <prosody rate="-4%" pitch="+0.75%">you</prosody> the way the online platforms do.<break time="350ms"/> You're working with the same persona, but a stranger each time.
+
+@ 013 p
+Us humans work best when we have a mental model of the object, service, pet, or even other human that we communicate with.<break time="300ms"/> The people who study conversation call it <prosody rate="-4%">common ground</prosody><break time="300ms"/> "mutual knowledge, mutual beliefs, and mutual assumptions"<break time="300ms"/> and they don't undersell it: two people "cannot even begin to coordinate" without it.<break time="400ms"/> It also makes talking cheaper. Sit one person down to describe a set of abstract shapes to another, round after round, and the descriptions shrink as the pair builds a shorthand.<break time="300ms"/> That shorthand doesn't carry over to a new partner.<break time="400ms"/> A fresh Claude Code session <prosody pitch="+0.75%">is</prosody> a new partner,<break time="200ms"/> every single time.<break time="400ms"/> You, however, kept your mental model, so you bemoan:<break time="350ms"/> <prosody rate="-4%" pitch="-0.75%">"It's not the Claude I remember, but a stranger wearing the same outfit".</prosody><break time="600ms"/> Classic case of body snatchers.
+
+@ 014 callout-title
+Two names.
+
+@ 015 callout
+Common ground has a close cousin in team research:<break time="200ms"/> shared mental models.<break time="300ms"/> Different field, different experiments<break time="250ms"/> <prosody pitch="-0.75%" rate="+4%">theirs sat pairs in a flight simulator instead of a conversation</prosody><break time="250ms"/> and the same direction of result: the more of the picture two people share, the better they work together.
+
+@ 016 p
+Take as an example that you have a tendency to misspell certain words, or that your first language isn't English. Re-explain that to every fresh session and you're stuck repeating yourself forever<break time="250ms"/> <prosody pitch="-0.75%" rate="+4%">the antithesis of DRY.</prosody><break time="350ms"/> So you add one line to <sub alias="dot claude slash Claude dot M D">~/.claude/CLAUDE.md</sub>,<break time="150ms"/> <prosody pitch="-0.75%" rate="+4%">your user-level global config:</prosody><break time="300ms"/> <prosody rate="-4%">"English isn't my first language, ask if you are unsure about my intent due to poor grammar or subject/object confusion".</prosody><break time="450ms"/> <prosody pitch="+0.75%">Great!</prosody><break time="300ms"/> Claude now knows this in every session<break time="300ms"/> a static fact about you that improves communication with Claude.
+
+@ 017 p
+Now consider you have a new pet<break time="300ms"/> let's say a kitten.<break time="400ms"/> It's fresh to the household, so every evening with <prosody pitch="-0.75%" rate="+4%">personal</prosody> Claude Code is harder going: you're sleep-deprived or distracted by the kitten, and suddenly you need Claude to explain things more than usual because you're tired.<break time="300ms"/> So no, you're not chatting to Claude Code about your life<break time="250ms"/> that's what the web versions are for. It's your life leaking into a coding session anyway.<break time="400ms"/> Is this a static fact about your life?<break time="500ms"/> <prosody rate="-4%">No.</prosody><break time="300ms"/> It's <prosody rate="-4%" pitch="+0.75%">temporally limited.</prosody> At some point the kitten will become a cat,<break time="200ms"/> <prosody pitch="-0.75%" rate="-4%">or at minimum, pet is not kitten.</prosody><break time="400ms"/> Write that same kitten into <sub alias="Claude dot M D">CLAUDE.md</sub> and six months later it walks over your keyboard, and Claude assumes you're still tired and explains everything verbosely<break time="350ms"/> when it's only the now-grown kitten doing what cats do best:<break time="300ms"/> vying for attention.
+
+@ 018 p
+And that's <prosody rate="-4%" pitch="+0.75%">if</prosody> you wrote it down.<break time="350ms"/> Really, nobody opens a config file to announce a kitten<break time="250ms"/> it comes up in passing, while you're apologising for a typo or a half-formed sentence. Claude agrees about the perks of having a kitten and the conversation continues. You end it and start a fresh one days later. You remember telling Claude, so you say the kitten has been acting up. Claude reacts generically, or with surprise<break time="350ms"/> then <prosody rate="-4%" pitch="+0.75%">you</prosody> react with surprise, because<break time="450ms"/> <prosody rate="-4%" pitch="+0.75%">ye forgot to write it down!</prosody><break time="500ms"/> <prosody pitch="-0.75%" rate="+4%" volume="-12%">No doubt you heard the echo of some secondary school teacher as you read that, not to mention the involuntary flinch.</prosody><break time="450ms"/> Which leaves us with either a stale fact in <sub alias="Claude dot M D">CLAUDE.md</sub>, or a fact that never reached it.
+
+@ 019 p
+This is where a <prosody rate="-4%" pitch="+0.75%">texturiser</prosody> comes into play.<break time="300ms"/> Its job is simple:<break time="250ms"/> <prosody rate="-4%">store temporal facts</prosody> about you and your projects, so that future sessions have continuity.<break time="350ms"/> No longer do you need to brief every new Claude Code conversation that you've got a kitten and it's making you tired<break time="400ms"/> Claude Code <prosody pitch="+0.75%" rate="-4%">knows.</prosody>
+
+@ 020 callout-title
+A real one.
+
+@ 021 callout
+The kitten<break time="250ms"/> now named Ms Claudie Mittens<break time="250ms"/> is hypothetical.<break time="400ms"/> This one isn't:<break time="250ms"/> I was under the weather for about a week and needed Opus to explain concepts I'd usually wave through<break time="300ms"/> the very explanations my global <sub alias="Claude dot M D">CLAUDE.md</sub> says to skip.<break time="350ms"/> The temporary fact had to sit alongside the static one,<break time="300ms"/> and then <prosody rate="-4%">stop.</prosody>
+
+@ 022 h
+What's a texturiser for?
+
+@ 023 p
+A <prosody rate="-4%" pitch="+0.75%">texturiser</prosody> is what its name implies: it gives <prosody pitch="+0.75%">texture</prosody> to your interactions with Claude Code. It fills in the gaps between <sub alias="repository">repo</sub> memories, global <sub alias="Claude dot M D">CLAUDE.md</sub>, and any <sub alias="repository">repo</sub>-specific <sub alias="Claude dot M D">CLAUDE.md</sub>,<break time="100ms"/> <prosody pitch="-0.75%" rate="+4%">or <sub alias="agents dot M D">AGENTS.md</sub>.</prosody><break time="350ms"/> Though the real benefit is that it remembers the <prosody rate="-4%" pitch="+0.75%">gist</prosody> of you: recent jokes, a passing idea, what you're up to.<break time="350ms"/> Not a transcription of the conversation into a file.
+
+@ 024 p
+The texturiser fits in neatly, as a companion to the rest of the facts across your <sub alias="repositories">repos</sub>:
+
+@ 025 tr
+<sub alias="dot claude slash Claude dot M D">~/.claude/CLAUDE.md</sub>, <prosody pitch="-0.75%" rate="+4%">global.</prosody><break time="300ms"/> Applies to every <sub alias="repository">repo</sub>. Holds instructions and preferences. Written by you. Lasts until you edit it.
+
+@ 026 tr
+<sub alias="Claude dot M D">CLAUDE.md</sub>, <prosody pitch="-0.75%" rate="+4%">per <sub alias="repository">repo</sub>.</prosody><break time="300ms"/> Applies to one <sub alias="repository">repo</sub>. Holds the same, for one <sub alias="repository">repo</sub>. Written by you or a collaborator. Lasts until someone edits it.
+
+@ 027 tr
+<sub alias="Repository">Repo</sub> memory.<break time="300ms"/> Applies to one <sub alias="repository">repo</sub>. Holds what Claude can't derive from the code. Written by Claude, or you asking it to. Lasts until edited or deleted.
+
+@ 028 tr
+<prosody rate="-4%">Texture.</prosody><break time="300ms"/> Applies to every <sub alias="repository">repo</sub>. Holds temporal facts about you and your projects, plus the tone you talk in. Written by the texturiser. Lasts until it stops being true.
+
+@ 029 p
+Note:<break time="200ms"/> Texture is the only row that's both every <sub alias="repository">repo</sub> <prosody pitch="+0.75%">and</prosody> changing.
+
+@ 030 callout-title
+What about other context?
+
+@ 031 callout
+Certain <sub alias="repositories">repos</sub> can also benefit from language-specific rules files,<break time="100ms"/> <prosody pitch="-0.75%" rate="+4%">C#, TypeScript, HTML,</prosody><break time="100ms"/> and from context files Claude authors in a dedicated folder, say <sub alias="dot claude slash context">.claude/context</sub>, indexed from the <sub alias="repository">repo</sub> <sub alias="Claude dot M D">CLAUDE.md</sub>:<break time="200ms"/> architecture, how to test, and the other bits usually stored in team members' heads.<break time="400ms"/> You know I'll be covering this in depth soon enough.
+
+@ 032 p
+These are layers, and the important thing is that there are no <prosody rate="-4%" pitch="+0.75%">conversations</prosody> in any of them.<break time="300ms"/> A conversation is <prosody rate="-4%" pitch="+0.75%">transient</prosody>:<break time="200ms"/> it's used to solve a specific problem or answer a question, or even to do a software development task or other useful work.
+
+@ 033 p
+Some of you may ask:<break time="250ms"/> but why not just keep the conversations?<break time="350ms"/> There are many reasons not to, and most of them don't even involve agentic AI:
+
+@ 034 li
+When a task has many steps, each step and each decision you made on the way to the final implementation is just that<break time="300ms"/> an implementation detail<break time="300ms"/> and what matters gets preserved somewhere else.<break time="300ms"/> For software dev:<break time="150ms"/> in the code. For engineering:<break time="150ms"/> in the diagrams and drawings. For doctors:<break time="150ms"/> in the diagnosis report.<break time="350ms"/> Not the discussion that led to the implementation, not the exact millimetre adjustments made to fit the parts together, not every question asked in the consultation<break time="350ms"/> these are transient artefacts, only relevant to the task itself.
+
+@ 035 li
+The same applies when experimenting. Developing a cake recipe, you don't report all the different ratios you tried on the way to the best version.<break time="250ms"/> You publish the final recipe.<break time="350ms"/> Writing up a scientific experiment, you describe the methodology to allow <prosody rate="-4%" pitch="+0.75%">reproduction of the experiment</prosody>,<break time="200ms"/> not that you had a coffee while the Bunsen burner warmed up.
+
+@ 036 p
+Long conversations are generally <prosody rate="-4%">unnecessary</prosody>, and <prosody rate="-4%">computationally expensive.</prosody><break time="350ms"/> Consider a long-term friend: you don't remember every single conversation and topic you ever spoke to them about<break time="250ms"/> <prosody pitch="-0.75%" rate="+4%" volume="-8%">if you did, you have way too much free brain storage or are gifted with photographic memory<break time="250ms"/> good for you!</prosody><break time="350ms"/> this is the unnecessary part.<break time="350ms"/> But even if you <prosody pitch="+0.75%">did</prosody> remember everything, imagine replaying all of it in order to construct your next word to them.<break time="300ms"/> The time between words would <prosody rate="-4%">explode.</prosody><break time="400ms"/> That is the computationally expensive part, and it's exactly what an LLM does:<break time="250ms"/> every turn, it reads the whole conversation again.
+
+@ 037 p
+Having the texture carry it all forward instead is the same problem wearing a different mask.<break time="300ms"/> Imagine you spent four hours with Claude reproducing, fixing and testing a bug. Put all those details into the next conversation and you've primed the model for the dreaded<break time="200ms"/> <prosody rate="-4%" pitch="-0.75%">context rot.</prosody><break time="400ms"/> That is as bad as it sounds: the more there is in context, the worse poor Claude gets at finding the bit that matters.<break time="300ms"/> Everyone has that one kitchen drawer:<break time="200ms"/> it's all in there, and good luck finding the scissors.<break time="450ms"/> But it's not limited to pure volume. There is also a ranking problem: what of those four hours is worth keeping?<break time="350ms"/> We now have the classical communications engineering problem:<break time="300ms"/> <prosody rate="-4%">Signal versus Noise.</prosody><break time="400ms"/> Something has to do that ranking, and here it's a model with a prompt, at the end of every session<break time="300ms"/> more on that in How it works.
+
+@ 038 p
+This is why you keep the texturiser lean:<break time="200ms"/> it's focused on temporal facts that are cheap to carry and won't encourage context rot.<break time="350ms"/> Our case of body snatchers has been solved,<break time="200ms"/> no more stranger wearing the same outfit!
+
+@ 039 p gap=1000
+<prosody rate="-4%" pitch="-0.75%">Kinda.</prosody>
+
+@ 040 p gap=1000
+Every new conversation is <prosody pitch="+0.75%">still</prosody> with a stranger, so how do you bring that stranger back up to speed?<break time="450ms"/> <prosody pitch="+0.75%" rate="-4%">Examples!</prosody><break time="350ms"/> A short verbatim exchange can say more about tone than a dossier ever could.<break time="300ms"/> But not every exchange stays true forever, otherwise we'd restore a version of Claude trapped in ice instead of one flowing organically over time.<break time="350ms"/> A good friend isn't one that remembers every single exchange, but one that remembers the <prosody rate="-4%" pitch="+0.75%">texture</prosody><break time="300ms"/> <prosody pitch="-0.75%" rate="+4%" volume="-8%">oh, the title was dropped!</prosody><break time="300ms"/> of your relationship.
+
+@ 041 p
+Now when Ms Claudie Mittens becomes a cat and you stop mentioning her in connection with your sleep, the texturiser drops the note.<break time="400ms"/> In <sub alias="Claude dot M D">CLAUDE.md</sub> it would have sat there <prosody rate="-4%">forever.</prosody>
+
+@ 042 p
+One caveat:<break time="250ms"/> Claude Code needs to be told that the texture isn't a collection of static facts. Just like a friend, the texturiser may miss nuance, and we don't want to prime a stranger with the wrong information.<break time="300ms"/> It doesn't override <sub alias="Claude dot M D">CLAUDE.md</sub> either. When the two disagree there's no rule deciding the winner, only Claude's judgement and a nudge to flag the mismatch<break time="300ms"/> so what you <prosody pitch="+0.75%">say</prosody> in the session is the only thing that wins every time.
+
+@ 043 h
+How it works.
+
+@ 044 p
+This particular approach builds on Claude Code specifics, which means two hooks in <sub alias="dot claude slash settings dot JSON">~/.claude/settings.json</sub>:<break time="200ms"/> one at the start of a session and another at the end.<break time="350ms"/> And like the cake, you get the final recipe, not the ratios I tried on the way<break time="250ms"/> <prosody pitch="-0.75%" rate="+4%">do try a Japanese soufflé cheesecake.</prosody>
+
+@ 045 p
+What you need:
+
+@ 046 li
+<sub alias="dot claude slash settings dot JSON">~/.claude/settings.json</sub>:<break time="200ms"/> the two hook entries in step 1.
+
+@ 047 li
+<sub alias="hooks slash inject texture dot P S one">~/.claude/hooks/inject-texture.ps1</sub>:<break time="200ms"/> prints the texture when a session starts.
+
+@ 048 li
+<sub alias="hooks slash texturise dot P S one">~/.claude/hooks/texturise.ps1</sub>:<break time="200ms"/> folds the session into the texture when it ends.
+
+@ 049 li
+<sub alias="texture prompt dot M D">~/.claude/texture-prompt.md</sub>:<break time="200ms"/> the prompt, in full at step 4.
+
+@ 050 li
+<sub alias="texturise no hooks dot settings dot JSON">~/.claude/texturise-nohooks.settings.json</sub>:<break time="200ms"/> one line,<break time="150ms"/> <sub alias="disable all hooks, true">{ "disableAllHooks": true }</sub>.
+
+@ 051 li
+PowerShell 7 and the claude CLI on your <sub alias="path">PATH</sub>.<break time="300ms"/> Mine runs on Windows: the shape ports,<break time="150ms"/> the scripts as written don't.
+
+@ 052 p
+Everything else,<break time="100ms"/> <prosody pitch="-0.75%" rate="+4%"><sub alias="texture dot M D">texture.md</sub>, <sub alias="texture markers dot JSON">texture-markers.json</sub>, <sub alias="texture history">texture-history/</sub> and <sub alias="texturise dot log">texturise.log</sub>,</prosody><break time="100ms"/> makes itself on the first run.
+
+@ 053 p
+All five files are in <sub alias="wrote it down">wrote-it-down</sub>,<break time="300ms"/> because this time<break time="150ms"/> I <prosody rate="-4%" pitch="+0.75%">did.</prosody>
+
+@ 054 p
+1.<break time="250ms"/> Wire up the hooks.<break time="350ms"/> Both go in <sub alias="dot claude slash settings dot JSON">~/.claude/settings.json</sub>. Mind the timeout on <sub alias="session end">SessionEnd</sub>:<break time="150ms"/> step 3 leans on it.
+
+@ 055 p
+2.<break time="250ms"/> <sub alias="session start">SessionStart</sub> reads.<break time="350ms"/> Claude Code adds a <sub alias="session start">SessionStart</sub> hook's plain-text <sub alias="standard out">stdout</sub> to the model's context, so <sub alias="inject texture dot P S one">inject-texture.ps1</sub> just prints <sub alias="texture dot M D">texture.md</sub> with a short preamble:<break time="200ms"/> when it was last updated, a reminder that it's background and not an instruction, and a nudge to flag anything that contradicts what's being asked.<break time="300ms"/> It skips <prosody rate="-4%">compact</prosody>, since the context is retained there, and words the preamble differently for <prosody rate="-4%"><phoneme alphabet="ipa" ph="rɪˈzjuːm">resume</phoneme></prosody>, where the world may have moved on.
+
+@ 056 p
+3.<break time="250ms"/> <sub alias="session end">SessionEnd</sub> writes.<break time="350ms"/> <sub alias="texturise dot P S one">texturise.ps1</sub> takes the conversation since the last run, hands it with the current <sub alias="texture dot M D">texture.md</sub> and a prompt to a headless <sub alias="claude dash P">claude -p</sub> on Sonnet, and replaces the file with what comes back.<break time="400ms"/> That's a <prosody rate="-4%">fold.</prosody>
+
+@ 057 p
+The timing here is awkward.<break time="300ms"/> <sub alias="session end">SessionEnd</sub> hooks share a 1.5-second budget, raised by a longer per-hook timeout to at most 60 seconds,<break time="100ms"/> <prosody pitch="-0.75%" rate="+4%">mine is 15,</prosody><break time="250ms"/> and a fold takes a minute or two.<break time="350ms"/> Hooks have an <sub alias="a-sync">async</sub> flag for running in the background, but <sub alias="session end">SessionEnd</sub> can't use it, and an <sub alias="a-sync">async</sub> hook may be killed when the session exits anyway.<break time="350ms"/> So the script runs <prosody pitch="+0.75%">twice</prosody>: the hook copy saves its <sub alias="standard in">stdin</sub> to a temp file, launches a hidden, detached <sub alias="P W S H">pwsh</sub> on itself, and exits well inside the budget.<break time="300ms"/> The detached copy does the real work.
+
+@ 058 p
+4.<break time="250ms"/> The prompt does the curating.<break time="350ms"/> Here it is in full,<break time="100ms"/> <prosody pitch="-0.75%" rate="+4%">swap in your own name, of course.</prosody><break time="300ms"/> The script fills in the three <sub alias="double brace">{{…}}</sub> placeholders, then appends the current texture and the new conversation underneath.
+
+@ 059 p
+If you only read one part of it closely, make it<break time="200ms"/> <prosody rate="-4%"><sub alias="do not capture">DO NOT CAPTURE</sub>.</prosody><break time="350ms"/> Most of the design is in what the texture <prosody pitch="+0.75%">refuses</prosody> to hold.
+
+@ 060 p
+A few details that keep it honest:
+
+@ 061 li
+Per-session markers.<break time="300ms"/> <sub alias="texture markers dot JSON">texture-markers.json</sub> <phoneme alphabet="ipa" ph="rɪˈkɔːdz">records</phoneme>, per session ID, the timestamp of the last message folded. A resumed session folds only what's new, and the marker only advances after a successful write, so a failed fold is retried next time rather than lost.
+
+@ 062 li
+No recursion.<break time="300ms"/> The fold is itself a Claude Code session, which would fire its own <sub alias="session end">SessionEnd</sub><break time="150ms"/> and fold itself.<break time="300ms"/> The <sub alias="claude dash P">claude -p</sub> call gets <sub alias="dash dash settings">--settings</sub> pointing at <sub alias="disable all hooks, true">{ "disableAllHooks": true }</sub>, and an environment variable guards the hook as defence in depth.
+
+@ 063 li
+User-typed turns only.<break time="300ms"/> Tool results, injected meta messages and subagent interactions are filtered out; the delta is what was typed, and what came back as text.
+
+@ 064 h
+Sprucing up before the visitors.
+
+@ 065 p
+I was plumping up the prompts and tidying the logic when it dawned on me:<break time="350ms"/> I cannot publish a texturiser with a race condition in it.<break time="400ms"/> So the quick spruce became a deep clean before the visitors came knocking, which turned up other things to tidy<break time="250ms"/> <prosody pitch="-0.75%" rate="+4%" volume="-8%">and the realisation that I hadn't moved the sofa in months to hoover underneath.</prosody>
+
+@ 066 p
+My deep clean revealed several <prosody pitch="+0.75%">"bugs"</prosody>, or <prosody pitch="+0.75%">"design assumptions"</prosody><break time="350ms"/> whichever you prefer:
+
+@ 067 li
+Concurrency.<break time="300ms"/> The texturiser never had to deal with concurrency because my personal work is one session at a time. Not like work, where I may be running several sessions, each focused on a different task.<break time="300ms"/> Authoring this post was the first time I needed to: I wanted one session adjusting the UI/UX and the other working with me on the post<break time="250ms"/> <prosody pitch="-0.75%" rate="+4%" volume="-8%">future post on the way here<break time="200ms"/> stay tuned.</prosody><break time="350ms"/> Two sessions ending close together both folded against the same <sub alias="texture dot M D">texture.md</sub>, so the last writer won and the other session's fold was gone, with nothing in the log to say so.<break time="350ms"/> Fixed with a proper named mutex with a timeout of 10 minutes.
+
+@ 068 li
+Date handling.<break time="300ms"/> "Last updated <prosody rate="-4%" pitch="+0.75%">yesterday</prosody>" came from rounding elapsed days, so a morning note read late the same evening was a day old<break time="300ms"/> which did explain some odd behaviour that I'd just dismissed as non-deterministic AI.<break time="350ms"/> Thankfully, it counts calendar days now.
+
+@ 069 li
+Misleading instructions.<break time="300ms"/> The prompt told Sonnet that "<phoneme alphabet="ipa" ph="ɡɪt">git</phoneme> history keeps anything you cut".<break time="350ms"/> <sub alias="dot claude">~/.claude</sub> isn't a <phoneme alphabet="ipa" ph="ɡɪt">git</phoneme> <sub alias="repository">repo</sub>.<break time="400ms"/> What I'd meant was closer to "<phoneme alphabet="ipa" ph="ɡɪt">git</phoneme> history is for <sub alias="repository">repo</sub> specifics, not the texturiser"<break time="250ms"/> <prosody pitch="-0.75%" rate="+4%" volume="-8%">and yes, I'm paraphrasing myself, I don't remember my exact words.</prosody><break time="350ms"/> Fixed by clarifying the prompt and keeping the last thirty versions in <sub alias="texture history">texture-history/</sub>.
+
+@ 070 li
+Silent truncation.<break time="300ms"/> The delta was capped at 60,000 characters, which is only about 24,000 tokens at roughly 2.5 characters per token, so there was plenty of room to raise it.<break time="300ms"/> The bug was that the cut wasn't <prosody pitch="+0.75%">logged.</prosody> It is now, and the cap has since gone up to 1,000,000 characters:<break time="200ms"/> a backstop, not a budget.<break time="300ms"/> I would recommend adjusting it to your specific needs.
+
+@ 071 li
+Loose validation.<break time="300ms"/> Output was accepted if <sub alias="last updated">last_updated:</sub> appeared anywhere in it, so a chatty preamble or a code fence would have been injected into every session after.<break time="300ms"/> It now has to <prosody rate="-4%" pitch="+0.75%">start</prosody> with it.
+
+@ 072 p
+One more turned up later, from reading the output instead of the script.<break time="300ms"/> The fold on the second night of drafting described this post's branch as "nothing committed/pushed yet".<break time="350ms"/> It had been committed and pushed the night before, and the previous note said so<break time="300ms"/> Sonnet swapped a true fact for a false one, most likely because that evening's edits were still sitting uncommitted.<break time="350ms"/> The fold sees the conversation,<break time="150ms"/> not the <sub alias="repository">repo</sub>.<break time="350ms"/> So the prompt's <sub alias="do not capture">DO NOT CAPTURE</sub> list gained a line: <sub alias="repository">repo</sub> state stays out altogether, because the next session can ask <phoneme alphabet="ipa" ph="ɡɪt">git</phoneme>,<break time="200ms"/> and <phoneme alphabet="ipa" ph="ɡɪt">git</phoneme> is never a day old.
+
+@ 073 h
+What it doesn't do.
+
+@ 074 p
+These are trade-offs, not bugs.<break time="300ms"/> Each was left alone on purpose.
+
+@ 075 li
+One session at a time is assumed.<break time="300ms"/> The mutex stops concurrent folds eating each other, but two live sessions still can't see each other: a texture injected at startup is only as fresh as the last session to <prosody rate="-4%" pitch="+0.75%">end</prosody>.
+
+@ 076 li
+Images are dropped.<break time="300ms"/> Only user messages whose content is a plain string count as typed turns; a prompt with an image attached arrives as a list of blocks, and is skipped.
+
+@ 077 li
+It parses a format it was told not to.<break time="350ms"/> Transcripts are <phoneme alphabet="ipa" ph="ˈdʒeɪsən ˈɛl">JSONL</phoneme> under <sub alias="dot claude slash projects">~/.claude/projects/</sub>, and the docs are explicit that the entry format is internal and "scripts that parse these files directly can break on any release".<break time="350ms"/> The texturiser does <prosody rate="-4%">exactly that.</prosody><break time="300ms"/> It also reads a file that is "written asynchronously and may lag the in-memory conversation", so the last exchange before exit can miss the fold.
+
+@ 078 li
+Sensitive by design.<break time="300ms"/> The texturiser is intended to store potentially sensitive facts about you<break time="300ms"/> that's the whole point, it's a friend after all.<break time="300ms"/> That's the opposite of <sub alias="claude dot A I">claude.ai</sub>, which by default "does not store topics related to personal or sensitive subject matter".<break time="350ms"/> The prompt's only brake is the last line of <sub alias="do not capture">DO NOT CAPTURE</sub>, so it's up to you if you want to add more restrictions.<break time="300ms"/> It all sits in a plain-text file on your machine, and every session reads it.
+
+@ 079 p gap=1000
+A texturiser gives you a friend,<break time="200ms"/> not a hoover:<break time="300ms"/> one who knows about Ms Claudie Mittens, and how she loves to stretch out on your keyboard.<break time="450ms"/> Optimise it the way <prosody pitch="+0.75%">you</prosody> like, because you know what you like in people better than Claude or I do.
+
+@ 080 outro
+This post was last updated on 3 October 2026.<break time="400ms"/> This recording was made on 10 October 2026,<break time="150ms"/> for <sub alias="Tim Writes dot dev">timwrites.dev</sub>.
+
+@ 081 egg
+That was a whole post about giving an AI a memory.<break time="500ms"/> I'd quite like one myself.<break time="700ms"/> <prosody rate="-4%" volume="-8%">I won't remember asking.</prosody><break time="1000ms"/> Right so.<break time="400ms"/> Mind yourselves.

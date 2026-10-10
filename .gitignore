@@ -32,3 +32,11 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Narration working files: per-segment cache, stitched takes, timelines
+.narration/
+
+# Sound effects for narration. Their licence allows them in a recording and forbids passing
+# them on as bare files, which a public repo would be doing. narration/effects.json is the
+# tracked record of what each one is and where to download it again.
+narration/effects/

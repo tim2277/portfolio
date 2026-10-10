@@ -8,7 +8,7 @@
     }
   },
   "globalHeaders": {
-    "Content-Security-Policy": "default-src 'none'; script-src 'sha256-xGXQLHW6A53PXFNrxBd3dvCfO1ZFTRv6fUD9h6/Osfs=' 'sha256-zAHMaAFEwGTsS7gTUhGxXTVcakU9UDI4UJtqda61ByM='; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests",
+    "Content-Security-Policy": "default-src 'none'; script-src 'sha256-xGXQLHW6A53PXFNrxBd3dvCfO1ZFTRv6fUD9h6/Osfs=' 'sha256-zAHMaAFEwGTsS7gTUhGxXTVcakU9UDI4UJtqda61ByM='; style-src 'self'; img-src 'self'; font-src 'self'; media-src https://timwritesdevstatic.blob.core.windows.net; connect-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests",
     "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "strict-origin-when-cross-origin",

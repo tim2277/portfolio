@@ -1,0 +1,18 @@
+{
+  "key-press": {
+    "file": "key-press.mp3",
+    "title": "Single Key Press",
+    "by": "DRAGON-STUDIO",
+    "source": "https://pixabay.com/sound-effects/film-special-effects-single-key-press-393908/",
+    "licence": "Pixabay Content License",
+    "sha256": "4c7cd1a6cf4045dcefa3ae3d2bcc38f63c535a426c30f3557a728863fa1f0655"
+  },
+  "page-flip": {
+    "file": "page-flip.mp3",
+    "title": "Page flip2",
+    "by": "OxidVideos",
+    "source": "https://pixabay.com/sound-effects/film-special-effects-page-flip2-178323/",
+    "licence": "Pixabay Content License",
+    "sha256": "126e661c13992e1a3af82dc5619d1f11d8c7465479e385f95d2d19ed91bc4a6e"
+  }
+}

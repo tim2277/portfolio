@@ -175,6 +175,15 @@ One agent can do both. Its brief has to carry what it can't work out from the te
 
 Tim decides what to act on. A taste finding about his voice is his call, so don't apply one unasked. Then the definition of done, then the squash.
 
+## Narration
+
+A post can carry a recording of itself, read aloud by an AI voice called Brian and played by a native `<audio controls>` with no script. The audio is made on Tim's machine and served from Azure Blob Storage; a post has a player when `narration/manifest.json` lists it. Read [`narration/README.md`](narration/README.md) before touching a recording, the pipeline in `scripts/narration/`, the sound effects, or Brian's lines.
+
+Two parts of it reach work that has nothing to do with audio:
+
+- **Editing a narrated post fails `npm run check`**, and with it the deploy, until the post is recorded again or taken out of the manifest. The page would otherwise offer a reading of words it no longer says.
+- **The storage host is written twice**, as `AUDIO_URL` in `src/consts.ts` and as `media-src` in `public/staticwebapp.config.json`. Change one alone and every player goes silent on a green build.
+
 ## Branches and remotes
 
 Two remotes, one working copy:

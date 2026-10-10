@@ -1,0 +1,64 @@
+---
+import manifest from '../../narration/manifest.json';
+import { AUDIO_URL } from '../consts';
+
+interface Props {
+  /** The post's slug. A post with no recording renders nothing. */
+  slug: string;
+}
+
+interface Recording {
+  file: string;
+  seconds: number;
+  voice: string;
+}
+
+const recording = (manifest as Record<string, Recording>)[Astro.props.slug];
+const src = recording && `${AUDIO_URL}/${recording.file}`;
+// preload="none" keeps the reader's browser off the storage account until they
+// press play, which also means the player can't show a length. So the page says it.
+const minutes = recording && Math.round(recording.seconds / 60);
+---
+
+{
+  recording && (
+    <div class="narration" role="group" aria-labelledby="narration-label">
+      <p class="narration-label">
+        <span id="narration-label">Listen to this post</span>{' '}
+        <span class="narration-note">
+          · {minutes} minutes, read by {recording.voice}, an AI voice
+        </span>
+      </p>
+      <audio controls preload="none" src={src}>
+        <a href={src}>Download the recording</a>
+      </audio>
+    </div>
+  )
+}
+
+<style>
+  /* No box of its own: it sits in the header with the byline and the tags, and
+     a second bordered panel above the Summary's made the page open with furniture. */
+  .narration {
+    margin-block: 1.5rem 0;
+  }
+
+  .narration-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin-block: 0 0.4rem;
+  }
+
+  .narration-note {
+    color: var(--text-muted);
+  }
+
+  audio {
+    display: block;
+    inline-size: 100%;
+    block-size: 2.5rem;
+  }
+</style>

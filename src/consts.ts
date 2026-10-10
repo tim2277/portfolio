@@ -4,6 +4,12 @@
 // just point somewhere useless. Apex, no `www`, no trailing slash.
 export const SITE_URL = 'https://timwrites.dev';
 
+/** Where narration audio is served from: the public container of the storage
+    account in infra/audio.bicep. The CSP can't read this, so `media-src` in
+    public/staticwebapp.config.json names the same host by hand. Change one
+    without the other and every player goes silent, with a green build. */
+export const AUDIO_URL = 'https://timwritesdevstatic.blob.core.windows.net/audio';
+
 /**
  * The site brand — matches the masthead wordmark exactly. Single source for
  * the `<title>` suffix, `og:site_name`, the RSS feed title and JSON-LD
