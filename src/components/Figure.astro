@@ -1,0 +1,237 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image, getImage } from 'astro:assets';
+import aiLabel from '../assets/icons/ai-label.svg';
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  /** For an image generative AI had a hand in. Puts the EU's "AI" mark on
+      it, in the article and enlarged, with the kind spelt out on hover and to
+      a screen reader. `generated` is a model's output as it came; `composite`
+      is generated art arranged or finished by hand. Use the same value the
+      file was converted with: Convert-Heic.ps1 -Ai. */
+  ai?: 'generated' | 'composite';
+  /** For a strip far wider than it is tall: enlarged, it fills the screen's
+      height and scrolls sideways rather than shrinking to fit. */
+  wide?: boolean;
+  /** Only needed when the same image appears twice on one page. */
+  id?: string;
+}
+
+const { src, alt, wide = false, ai } = Astro.props;
+
+const aiLabels = {
+  generated: 'AI-generated',
+  composite: 'AI composite: generated art, arranged and finished by hand',
+} as const;
+const aiText = ai && aiLabels[ai];
+
+const full = await getImage({ src, width: src.width });
+
+// The popover and its buttons find each other by id, and Astro has no
+// per-instance id to offer, so it comes from the file name.
+const name = src.src.split('/').pop()!.split(/[.?]/)[0]!;
+const id = Astro.props.id ?? `figure-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+
+const widths = [480, 800, 1200].filter((width) => width < src.width);
+
+const caption = Astro.slots.has('default') ? await Astro.slots.render('default') : '';
+
+// A footnote marker copied into the overlay would repeat its id on the page,
+// and following it would scroll the article behind the backdrop.
+const overlayCaption = caption.replace(/<sup><a [^>]*data-footnote-ref.*?<\/a><\/sup>/gs, '');
+---
+
+<figure class:list={['figure', wide && 'figure-wide', caption && 'figure-captioned']}>
+  <div class="figure-frame">
+    <Image
+      src={src}
+      alt={alt}
+      widths={[...widths, src.width]}
+      sizes="(min-width: 74ch) 74ch, 100vw"
+    />
+    <a class="figure-link" href={full.src} aria-label="Open the full-size image"></a>
+    <button
+      class="figure-open"
+      type="button"
+      popovertarget={id}
+      aria-label="View the image at full size"></button>
+    {aiText && <img class="figure-ai" src={aiLabel.src} alt={aiText} title={aiText} width="20" height="20" />}
+    <div class="figure-full" id={id} popover>
+      <img
+        src={full.src}
+        alt={alt}
+        width={full.attributes.width}
+        height={full.attributes.height}
+        loading="lazy"
+        decoding="async"
+      />
+      {aiText && <img class="figure-ai" src={aiLabel.src} alt={aiText} title={aiText} width="20" height="20" />}
+      {caption && <div class="figure-caption" set:html={overlayCaption} />}
+      <button class="figure-close" type="button" popovertarget={id} popovertargetaction="hide">
+        Close
+      </button>
+    </div>
+  </div>
+  {caption && <figcaption set:html={caption} />}
+</figure>
+
+<style>
+  .figure-frame {
+    position: relative;
+  }
+
+  .figure-frame > :global(img) {
+    display: block;
+  }
+
+  /* Laid over the picture, not beside the caption: the label has to be seen
+     with the image, and a caption is optional. It comes after the button in
+     the markup so it sits on top, where hovering it shows what kind of AI
+     image this is. */
+  .figure-ai,
+  .figure-full .figure-ai {
+    position: absolute;
+    inset-block-start: 0.4rem;
+    inset-inline-start: 0.4rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    max-width: none;
+    max-height: none;
+    cursor: help;
+  }
+
+  .figure-link,
+  .figure-open {
+    position: absolute;
+    inset: 0;
+    cursor: zoom-in;
+  }
+
+  .figure-open {
+    display: none;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+
+  .figure-link:focus-visible,
+  .figure-open:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* A browser that doesn't know the popover attribute would draw this in the
+     page, under the image it enlarges. */
+  .figure-full {
+    display: none;
+  }
+
+  /* The button only exists where it can open something. Everywhere else the
+     link stays, and the image opens as a file. */
+  @supports selector(:popover-open) {
+    .figure-link {
+      display: none;
+    }
+
+    .figure-open {
+      display: block;
+    }
+
+    /* Sized to the image, not the screen: a popover that fills the viewport
+       leaves no backdrop to click, and clicking outside is how it closes. */
+    .figure-full:popover-open {
+      display: block;
+      max-width: calc(100vw - 2rem);
+      max-height: calc(100dvh - 2rem);
+      padding: 0;
+      border: 0;
+      background: none;
+      overflow: auto;
+    }
+
+    .figure-full::backdrop {
+      background: rgb(0 0 0 / 0.85);
+    }
+  }
+
+  .figure {
+    --caption-room: 0rem;
+  }
+
+  .figure-captioned {
+    --caption-room: 5rem;
+  }
+
+  /* The sideways scrollbar takes its height out of the overlay. Without the
+     allowance the strip overflows by that much and a second scrollbar joins it. */
+  .figure-wide {
+    --caption-room: 1.25rem;
+  }
+
+  .figure-wide.figure-captioned {
+    --caption-room: 6.25rem;
+  }
+
+  .figure-full img {
+    display: block;
+    width: auto;
+    max-width: calc(100vw - 2rem);
+    max-height: calc(100dvh - 2rem - var(--caption-room));
+  }
+
+  .figure-wide .figure-full img {
+    max-width: none;
+  }
+
+  /* Zero width, then stretched: left to size itself, a long caption would
+     push the overlay wider than the image it sits under. */
+  .figure-caption {
+    width: 0;
+    min-width: 100%;
+    padding-block-start: 0.6rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #f4f4f1;
+  }
+
+  /* A strip scrolls sideways under a caption that stays put. */
+  .figure-wide .figure-caption {
+    position: sticky;
+    inset-inline-start: 0;
+    width: calc(100vw - 2rem);
+    min-width: 0;
+  }
+
+  .figure-caption :global(p) {
+    margin-block: 0;
+  }
+
+  .figure-caption :global(a) {
+    color: inherit;
+  }
+
+  .figure-close {
+    position: fixed;
+    inset-block-start: 0.75rem;
+    inset-inline-end: 0.75rem;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+  }
+
+  .figure > :global(figcaption p) {
+    margin-block: 0;
+  }
+</style>

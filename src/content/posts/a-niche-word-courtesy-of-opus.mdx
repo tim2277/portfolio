@@ -16,7 +16,7 @@ draft: false
 
 import Callout from '../../components/Callout.astro';
 import Summary from '../../components/Summary.astro';
-import { Image } from 'astro:assets';
+import Figure from '../../components/Figure.astro';
 import schoefferColophon from '../../assets/posts/colophon-schoeffer-1471.jpg';
 
 <Summary>
@@ -35,10 +35,7 @@ Then Opus started using the word _colophon_ in the chat as if I perfectly unders
 
 It's a signature, a way for a printer to leave their mark at the end of a book.[^colophon] A link to their socials, five centuries before there were any.
 
-<figure>
-  <Image src={schoefferColophon} alt="Four lines of Latin printed in red blackletter, and beneath them a printer’s mark: two red shields hanging from a branch." />
-  <figcaption>The colophon of a book by the Roman writer Valerius Maximus, printed by Peter Schöffer in Mainz on 14 June 1471, with his printer's mark beneath it.[^schoeffer]</figcaption>
-</figure>
+<Figure src={schoefferColophon} alt="Four lines of Latin printed in red blackletter, and beneath them a printer’s mark: two red shields hanging from a branch.">The colophon of a book by the Roman writer Valerius Maximus, printed by Peter Schöffer in Mainz on 14 June 1471, with his printer's mark beneath it.[^schoeffer]</Figure>
 
 I scoured the internet and I struggled to find an official translation of the Latin. Here is Opus's best attempt at what those four lines say - with the printer's abbreviations spelt out ('cause Latin couldn't get any more complicated they decided to abbreviate it):
 
