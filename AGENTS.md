@@ -168,7 +168,7 @@ Two remotes, one working copy:
 
 Unfinished writing lives on a `drafts/<topic>` branch pushed only to `private`, so it isn't readable on the public repo while it's still half-formed. Rules:
 
-- **Always push with a bare `git push`.** Branches have explicit upstreams, so it goes to the right remote. `git push origin` names a remote and would send the current branch there — that's the leak.
+- **Always push with a bare `git push`.** Branches have explicit upstreams, so it goes to the right remote: `main` to `origin`, every `drafts/*` branch to `private`. A draft pushed to `private` lands in a private repo and publishes nothing. `git push origin` names a remote and would send the current branch there — that's the leak.
 - **Never `git push --all` or `--mirror`.** `.githooks/pre-push` refuses `drafts/*` → `origin`. It's tracked in the repo and wired up with `git config core.hooksPath .githooks`, so a fresh clone needs that one command to arm it. `--no-verify` skips it. Seatbelt, not a lock.
 - **Squash when merging a draft branch into `main`.** A normal merge carries every intermediate draft commit into the public repo permanently. Squashing publishes the finished state and nothing else. This is the point of the whole arrangement — getting it wrong here undoes it.
 - **The private repo holds no secrets and has Actions disabled.** It shares history with `main`, so a workflow there could otherwise deploy draft content to the live site.
