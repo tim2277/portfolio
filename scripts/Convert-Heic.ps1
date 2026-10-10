@@ -23,6 +23,10 @@
 
 .EXAMPLE
   ./scripts/Convert-Heic.ps1 -Path ~/Downloads/HomeHero.heic -MaxEdge 3000
+
+.EXAMPLE
+  ./scripts/Convert-Heic.ps1 -Path ~/Downloads/sheet.png -Destination src/assets/generated `
+    -Name majors-sheet -MaxEdge 4000 -Ai composite
 #>
 [CmdletBinding()]
 param(
@@ -50,6 +54,15 @@ param(
   [string]$Credit = "© $((Get-Date).Year) Tim · All rights reserved",
   [switch]$NoWatermark,
   <#
+    For an image generative AI had a hand in. 'generated' is a model's output
+    as it came; 'composite' is generated art arranged or finished by hand. The
+    burnt-in credit becomes that label, which is what a reader sees, and the
+    file gains the matching IPTC digital source type, which is what a machine
+    reads. One parameter for both so neither can be forgotten; it can't be
+    combined with -NoWatermark. Pass the same value to Figure's `ai` prop.
+  #>
+  [ValidateSet('generated', 'composite')][string]$Ai,
+  <#
     Keeps the mark inside the crop a hero band will take. The band is a
     centred horizontal slice, so a corner mark on a landscape photo is cut off
     the rendered page and survives only in the downloaded file. Pass the
@@ -75,6 +88,63 @@ $sources = if (Test-Path $Path -PathType Container) {
 }
 
 if (-not $sources) { throw "No HEIC files matched '$Path'." }
+
+if ($Ai -and $NoWatermark) {
+  throw '-Ai burns in the label a reader sees; it cannot be combined with -NoWatermark.'
+}
+
+# Label for the reader, IPTC digital source type for the machine.
+$aiKinds = @{
+  generated = @{ Label = 'AI-generated'; SourceType = 'trainedAlgorithmicMedia' }
+  composite = @{ Label = 'AI composite'; SourceType = 'compositeSynthetic' }
+}
+$aiKind = if ($Ai) { $aiKinds[$Ai] }
+
+if ($Ai -and -not $PSBoundParameters.ContainsKey('Credit')) {
+  # src/consts.ts is the only place the domain is written, so it's read from
+  # there and not repeated here.
+  $consts = Get-Content (Join-Path $PSScriptRoot '../src/consts.ts') -Raw
+  $siteHost = [regex]::Match($consts, "SITE_URL\s*=\s*'https?://([^'/]+)").Groups[1].Value
+  if (-not $siteHost) { throw 'Could not read SITE_URL from src/consts.ts for the AI label.' }
+  $Credit = "$($aiKind.Label) · $siteHost"
+}
+
+<#
+  The one piece of metadata this script ever writes. IPTC's digital source
+  type is the field image tools and platforms read to tell that a picture came
+  out of a generative model. The packet is fixed text with nothing about the
+  machine, the tool or the time in it, and Test-JpegClean accepts an XMP
+  packet only when it is these exact bytes.
+#>
+$aiXmp = (
+  '<?xpacket begin="{0}" id="W5M0MpCehiHzreSzNTczkc9d"?>' +
+  '<x:xmpmeta xmlns:x="adobe:ns:meta/">' +
+  '<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">' +
+  '<rdf:Description rdf:about="" xmlns:Iptc4xmpExt="http://iptc.org/std/Iptc4xmpExt/2008-02-29/" ' +
+  'Iptc4xmpExt:DigitalSourceType="http://cv.iptc.org/newscodes/digitalsourcetype/{1}"/>' +
+  '</rdf:RDF></x:xmpmeta><?xpacket end="r"?>') -f [char]0xFEFF, $aiKind.SourceType
+$script:AiXmpPacket = [System.Text.Encoding]::UTF8.GetBytes($aiXmp)
+$script:XmpHeader = [System.Text.Encoding]::ASCII.GetBytes("http://ns.adobe.com/xap/1.0/`0")
+
+# JFIF requires its APP0 segment to come straight after SOI, so the packet
+# goes in behind it when there is one.
+function Add-AiXmp([string]$Path) {
+  $bytes = [System.IO.File]::ReadAllBytes($Path)
+  $at = 2
+  if ($bytes[2] -eq 0xFF -and $bytes[3] -eq 0xE0) {
+    $at = 4 + (([int]$bytes[4] -shl 8) -bor [int]$bytes[5])
+  }
+  $len = 2 + $script:XmpHeader.Length + $script:AiXmpPacket.Length
+  # Assembled in memory and written in one go: a failure part-way through a
+  # direct write would leave a truncated file where the image was.
+  $out = [System.IO.MemoryStream]::new($bytes.Length + $len + 2)
+  $out.Write($bytes, 0, $at)
+  $out.Write([byte[]](0xFF, 0xE1, ($len -shr 8), ($len -band 0xFF)), 0, 4)
+  $out.Write($script:XmpHeader, 0, $script:XmpHeader.Length)
+  $out.Write($script:AiXmpPacket, 0, $script:AiXmpPacket.Length)
+  $out.Write($bytes, $at, $bytes.Length - $at)
+  [System.IO.File]::WriteAllBytes($Path, $out.ToArray())
+}
 
 # Two-arg overload: resolves a relative path against the working directory and
 # leaves an absolute one alone. Join-Path would concatenate both.
@@ -139,8 +209,9 @@ function Get-ExifIssues {
 # because the encoders here can add tags an API wrapper might not surface.
 # Flags anything beyond the System.Drawing boilerplate: any other EXIF tag,
 # any GPS IFD, an XMP packet, or bytes left after the real EOI marker.
+# -AllowAiXmp lets through one XMP packet, and only the one Add-AiXmp writes.
 function Test-JpegClean {
-  param([Parameter(Mandatory)][string]$Path)
+  param([Parameter(Mandatory)][string]$Path, [switch]$AllowAiXmp)
   try {
     $bytes = [System.IO.File]::ReadAllBytes($Path)
     if ($bytes.Length -lt 4 -or $bytes[0] -ne 0xFF -or $bytes[1] -ne 0xD8) {
@@ -172,7 +243,10 @@ function Test-JpegClean {
           $ifd0Off = $tiffOffset + (Get-U32 $bytes ($tiffOffset + 4) $little)
           $issues += Get-ExifIssues -Bytes $bytes -TiffOffset $tiffOffset -IfdOffset $ifd0Off -Little $little -Label 'IFD0'
         } elseif ($len -ge 31 -and [System.Text.Encoding]::ASCII.GetString($bytes, $segStart, 29) -eq 'http://ns.adobe.com/xap/1.0/') {
-          $issues += 'XMP packet present'
+          $packet = [byte[]]$bytes[($segStart + 29)..($segEnd - 1)]
+          $expected = $AllowAiXmp -and
+            [System.Linq.Enumerable]::SequenceEqual($packet, $script:AiXmpPacket)
+          if (-not $expected) { $issues += 'XMP packet present' }
         }
       }
 
@@ -296,9 +370,13 @@ foreach ($src in $sources) {
       $g.SmoothingMode = 'AntiAlias'
       $g.TextRenderingHint = 'ClearTypeGridFit'
 
-      $pad = [float]($bmp.Width * 0.014)
+      # Scaled from the width, but never from more than twice the height: on a
+      # strip several times wider than it is tall, a mark sized by width alone
+      # grows tall enough to cover the picture's bottom corner.
+      $basis = [Math]::Min($bmp.Width, $bmp.Height * 2)
+      $pad = [float]($basis * 0.014)
       $font = [System.Drawing.Font]::new(
-        'Segoe UI', [float]($bmp.Width / 105), [System.Drawing.FontStyle]::Regular,
+        'Segoe UI', [float]($basis / 105), [System.Drawing.FontStyle]::Regular,
         [System.Drawing.GraphicsUnit]::Pixel)
       $size = $g.MeasureString($caption, $font)
 
@@ -353,7 +431,20 @@ foreach ($src in $sources) {
     # used to build it. Any tag outside the boilerplate set, any GPS IFD, any
     # XMP, or anything after the EOI marker deletes the output and fails the
     # run rather than publishing it.
-    $cleanIssues = Test-JpegClean -Path $outPath
+    $cleanIssues = @()
+    if ($Ai) {
+      # An error here must not leave an unlabelled file behind as if it were
+      # finished, so it joins the findings that delete the output.
+      try { Add-AiXmp $outPath } catch { $cleanIssues += "writing the AI source type failed: $($_.Exception.Message)" }
+    }
+
+    $cleanIssues += @(Test-JpegClean -Path $outPath -AllowAiXmp:([bool]$Ai))
+    if ($Ai -and -not $cleanIssues) {
+      $written = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes($outPath))
+      if ($written -notmatch "digitalsourcetype/$($aiKind.SourceType)") {
+        $cleanIssues = @('the AI digital source type is missing from the output')
+      }
+    }
     if ($cleanIssues) {
       Remove-Item -LiteralPath $outPath -Force
       throw "Convert-Heic: '$outPath' failed metadata verification and was deleted:`n  $($cleanIssues -join "`n  ")"
@@ -368,6 +459,7 @@ foreach ($src in $sources) {
       # Unconditional because Test-JpegClean has already thrown on any GPS.
       GpsStripped = $true
       Watermark   = if ($watermarked) { $caption } else { '' }
+      AiTagged    = if ($Ai) { $aiKind.SourceType } else { '' }
     }
   } finally {
     $stream.Close()
