@@ -138,11 +138,12 @@ Found something? `SECURITY.md` says how to tell me.
 
 ## Licence
 
-A three-way split, on purpose. See `LICENSE`:
+Three licences across four kinds of content, on purpose. See `LICENSE`:
 
 - **Code** is MIT: components, layouts, styles, config, the pipeline. Help yourself.
 - **Writing** is CC BY-NC 4.0: the posts and project write-ups in `src/content/`, and the page copy in `src/pages/`. Share and adapt it non-commercially, with credit and a link.
 - **Photographs** under `src/assets/photos/` are all rights reserved. Quote a low-res copy with credit and a link, and ask before anything more.
+- **AI images** under `src/assets/generated/`, whether generated outright or composites finished by hand, are CC BY-NC 4.0, as far as copyright exists in them at all. Each carries an "AI-generated" or "AI composite" label; keep it on.
 
 ---
 

@@ -1,7 +1,7 @@
-This repository carries three licences, one per kind of content. Which one
+This repository carries three licences across four kinds of content. Which one
 applies is decided by path, not by file type:
 
-1. SOURCE CODE — everything except the two carve-outs below: components,
+1. SOURCE CODE — everything except the three carve-outs below: components,
    layouts, styles, configuration, build pipeline, scripts, and the prose of
    this file itself. Licensed MIT. Full text below.
 
@@ -16,6 +16,12 @@ applies is decided by path, not by file type:
    derivative Astro generates from them at build time (resized, re-encoded,
    or otherwise transformed versions served from the built site). All rights
    reserved. Notice below.
+
+4. AI IMAGES — the image files under `src/assets/generated/`, and any copy or
+   derivative Astro generates from them at build time. Some are a model's
+   output as it came; most are composites, generated art arranged and
+   finished by hand. Each one carries a visible label saying which. Licensed
+   CC BY-NC 4.0, to the extent any copyright subsists in them. Notice below.
 
 If a future file doesn't obviously fall under one of these paths, treat it as
 source code unless it's clearly someone's photograph or someone's prose.
@@ -74,3 +80,29 @@ You may view and link to them as published on the site, and quote a low-
 resolution copy for commentary or review with credit and a link back. Any
 other use — republishing, redistributing the image file itself, or any
 commercial use — needs permission first.
+
+---
+
+## 4. AI images, generated and composite — CC BY-NC 4.0
+
+The images under `src/assets/generated/` were made with generative AI models.
+Those labelled "AI-generated" are a model's output as it came. Those labelled
+"AI composite" are generated art that Tim selected, retouched and arranged,
+often alongside elements drawn or laid out by hand. Whether copyright
+subsists in either kind, and how far, differs between jurisdictions. To the
+extent it does, it is Copyright (c) 2026 Tim, and the images are licensed
+under the Creative Commons Attribution-NonCommercial 4.0 International
+License (CC BY-NC 4.0), on the same terms as the written content in section 2:
+
+- give appropriate credit to Tim, with a link back to the piece the image
+  appears in;
+- indicate if changes were made, and keep the "AI-generated" or
+  "AI composite" label; and
+- do not use them for commercial purposes.
+
+The post an image appears in names the model that produced it. Some of those
+models are released for non-commercial use only, which is a second reason
+these images are not offered for commercial use.
+
+No warranty is given. Full legal text:
+<https://creativecommons.org/licenses/by-nc/4.0/>
