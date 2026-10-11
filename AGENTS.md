@@ -11,7 +11,7 @@ Breaking any of these is a bug, not a style choice. If a change requires breakin
 - **Self-hosted fonts only.** No Google Fonts, no CDN, nothing that makes the reader's browser talk to a third party — that's the part of the old no-web-fonts rule worth keeping. Fraunces ships from `_astro/` via `@fontsource-variable/fraunces`, weight axis only, headings alone. Body and code stay on locally installed stacks. Adding a second family is a dependency decision, not a styling one.
 - **Every inline script is pinned in the CSP by hash.** `script-src` in `public/staticwebapp.config.json` lists a sha256 per script. Edit one without recomputing it and the browser silently refuses to run it — the feature dies, the build stays green, and nothing says why. See the traps below.
 - **Static output only.** No adapter, no SSR, no server islands.
-- **British English** in all prose, UI copy, and content. Hiberno-English is welcome where it's Tim's actual voice ("ye", "grand") — it isn't an error to be corrected. See Voice below.
+- **Hiberno-English** in all prose, UI copy, and content: Irish English, which spells as British English does (`colour`, `-ise`) and has its own idiom. "Ye" and "grand" are Tim's actual voice — not errors to be corrected. See Voice in `.claude/rules/writing.md`.
 - **No employer code and no client names.** Content is concepts, patterns and write-ups. Generalise anything drawn from paid work.
 - **Ask before adding a dependency** that isn't an official Astro integration.
 
@@ -72,10 +72,6 @@ It prints one hash per script, in page order: the theme script in `BaseLayout.as
 
 **MDX has no autolinks.** `<https://example.com>` is valid Markdown and a syntax error in MDX — `<` starts a JSX tag, so the build fails outright with `Unexpected character after \`<\``. Always `[text](url)`. This one at least fails loudly.
 
-**remark-gfm emits its own `Footnotes` heading**, `<h2 id="footnote-label">`. It lands in the `headings` array from `render()`, so left alone it appears in the contents list *and* counts toward the three-heading threshold — a post with two real sections grows a sidebar listing "Footnotes". `tocHeadings()` in `src/lib/content.ts` strips it, and both `EntryLayout` and `TableOfContents` go through it so they can't disagree. GFM also tags that heading `sr-only`, a class this site doesn't define; `global.css` styles the block instead.
-
-**`Callout` takes `type` from a fixed union.** `note`, `warning`, `tip` — and nothing else. Pass anything else and `labels[type]` is `undefined`, so the label renders empty against an unstyled class. For a custom label use `title="…"` and leave `type` alone. `astro check` does not catch this in MDX.
-
 **A photograph dropped straight into `src/assets/` publishes its EXIF.** Phone images carry GPS coordinates, camera make and model, and a capture timestamp. The copies Astro re-encodes come out without metadata, but an image imported into a post is also shipped to `_astro/` byte for byte as committed, and the repo is public either way, so the coordinates of wherever the picture was taken reach the world. Nothing warns you. Every photograph goes through the converter first:
 
 ```powershell
@@ -85,99 +81,14 @@ It prints one hash per script, in page order: the theme script in `BaseLayout.as
 
 It strips metadata, caps the longest edge at 2400px, honours EXIF orientation, and burns in the location and copyright line. It then re-reads its own output and deletes it, failing, if anything beyond the encoder's five boilerplate tags survived — GPS, XMP, or bytes after the end of the image. Decoding needs `Microsoft.HEIFImageExtension` from the Store; without it `BitmapDecoder` fails on HEIC. Despite the name it takes a PNG or a JPEG as well. A sheet that needs every pixel gets a higher `-MaxEdge`.
 
-**The watermark arguments have to match the `Hero` props.** The credit is burnt into the pixels, so it's placed at conversion time against a crop the script can only be told about:
-
-| Script | `Hero` prop | Meaning |
-| --- | --- | --- |
-| `-SafeRatio` | `ratio` | Band shape, default 4.5:1 above 64rem |
-| `-SafePosition` | Y of `imagePosition` | Which slice of the source is kept |
-
-Get either wrong and the credit sits outside the visible band — present in the downloaded file, invisible on the page, which is backwards. Omit both for in-article images: those render uncropped, so the mark goes in the true corner. A post hero renders uncropped as well, so a portrait photograph would run the height of the screen: cut it to a landscape frame at conversion with `-CropRatio` (1.5 for 3:2) and `-CropPosition`, the percentage down the frame where the kept slice sits. Changing a hero's `ratio` or `imagePosition` later means re-running the converter, not just editing the template. Both props take a fixed list of values, so a new one also needs an entry in the type in `Hero.astro` and a matching rule in its stylesheet — `astro check` rejects a value that isn't listed. The mark scales with the image's width, but from no more than twice its height, so a long strip gets a mark sized for its height.
-
-**An image in a post is a `Figure`.** `<Figure src={…} alt="…">Caption.[^note]</Figure>`, from `src/components/Figure.astro`. Clicking it opens the full-size image in a popover, which is plain HTML: no script and no CSP hash. A browser without popovers gets a link to the full-size file. Three things go wrong quietly:
-
-- The same image twice on one page needs an `id` on the second. The popover's id comes from the file name, so without one both open the first.
-- A strip several times wider than it is tall needs `wide`. Without it the enlarged copy shrinks to the screen's width and is no bigger than it was in the article.
-- The caption is rendered twice, once in the overlay with its footnote marker stripped. A marker there would repeat an id and scroll the page behind the backdrop.
-
-**A Markdown table is a `Table`.** The entry routes map `src/components/Table.astro` onto every GFM table, so a post writes a plain one. With four or more columns, on a screen under 44rem, it's cut off at the edge and scrolls sideways, and a button opens it in a popover: plain HTML again, no script and no CSP hash. Its footnote markers are stripped from the overlay copy for the same reason as a `Figure` caption's.
-
-**A pipeline diagram is a `Pipeline` of `Step`s.** `<Pipeline label="…" caption="…">` around `<Step title="…" by="…" human loop="…">`, with the description as the body. It's an ordered list styled as cards and arrows, so it follows the theme and reads as a list anywhere the stylesheet doesn't reach. More than three steps never wrap: they run off the article's edge in one row and open full size in a popover. Below 48rem it's a single column. It draws a sequence and nothing else. A step that repeats says so with `loop`; a diagram that forks or merges needs another tool, and that decision hasn't been made.
-
-**An AI image carries its label in three places, set by two arguments that have to agree.** Anything generative AI had a hand in is converted with `-Ai`, lives in `src/assets/generated/`, and is shown with the matching `ai` prop:
-
-```powershell
-./scripts/Convert-Heic.ps1 -Path ~/Downloads/sheet.png -Destination src/assets/generated `
-  -Name majors-sheet -MaxEdge 4000 -Ai composite
-```
-
-| Value | Meaning | Burnt-in label | IPTC source type |
-| --- | --- | --- | --- |
-| `generated` | A model's output as it came | AI-generated | `trainedAlgorithmicMedia` |
-| `composite` | Generated art arranged or finished by hand | AI composite | `compositeSynthetic` |
-
-The converter burns the label into the pixels and writes the source type into the file; `<Figure ai="composite">` lays the EU's "AI" mark over the image, with the kind as its hover and screen-reader text. Nothing checks that the prop matches the file, or that an image in that folder was converted with `-Ai` at all. The folder also decides the licence: `LICENSE` scope 4, CC BY-NC. The source type is in the committed file only. Astro drops it from every copy it re-encodes, and Tim has decided that's fine. The mark is the icon the Commission publishes with its [Code of Practice](https://digital-strategy.ec.europa.eu/en/policies/eu-icons-labelling-ai-generated-content), with its `<style>` block rewritten as fill attributes.
-
+**The components have their own file.** `Callout`, `Hero` and where its watermark lands, `Figure`, `Table`, `Pipeline`, the AI image label and the contents list are in [`.claude/rules/components.md`](.claude/rules/components.md), each with the way it goes wrong quietly. Claude Code loads it when a file under `src/content`, `src/components`, `src/layouts`, `src/pages` or `src/assets` is opened. Read it before writing a post or touching a component. 
 ## Code comments
 
 A comment says why, or explains logic that isn't obvious from the code. It doesn't narrate what the next line does, restate a name, or record the history of a change — that's what the commit message is for. The good examples here name the trap a line exists to avoid: `preserveSymlinks` in `astro.config.ts` says what breaks without it. If a comment would read the same with the code deleted, cut it.
 
-## Voice
+## Writing
 
-The posts are Tim writing, not a house style. An edit that leaves the prose correct and lifeless has failed — the jokes and asides are the reason anyone finishes the piece. Derived from the `hello-world` copy pass; extend it as more posts land.
-
-**Keep, always.** The running gag, the aside in brackets, the one-word paragraph used as a drum hit. Hogwash. `27001, looking at you`. A joke that survives the edit is worth more than a sentence that reads smoothly. Never explain one — if it needs a gloss, cut it instead.
-
-**Rhythm over uniformity.** A long, winding sentence and then a short one. Fragments are fine deliberately. A spaced hyphen (` - `) carries an aside; semicolons rarely do. Never an em dash in anything a reader sees: posts, page copy, titles, descriptions, footnotes. Readers take one as the mark of machine-written prose and stop reading. Read it aloud — if you run out of breath, split it.
-
-**Cut, don't pad.** Throat-clearing ("Arguably you may ask…"), hedges, and stacked qualifiers all go. Say it once, in the active voice. History goes in the past tense and stays there; the drift into present tense is the most common thing to fix.
-
-**Fix facts, don't soften them.** A wrong claim gets corrected and cited, not vagued up — "the world's first paid LLM product" became "one of the first a working developer paid for out of their own pocket" because the original was simply untrue. Anything dated, priced or attributed gets a footnote, and the source is *fetched* before citing. Don't write a plausible URL.
-
-**Footnotes are GFM** — `[^slug]` inline, `[^slug]: …` at the foot. Named, not numbered, so inserting one doesn't renumber the rest. remark-gfm handles them; no plugin. Each definition reads as a citation: `["Title"](url), Publisher, date` — the title quoted as the link text, a publication in italics, the date the page carries or "accessed 30 September 2026" when it carries none. Then a spaced hyphen and the quote that supports the claim, or a sentence of context. `hello-world` is the worked example.
-
-**Terms get expanded once**, on first use, via `<abbr title="…">`.
-
-**A copy pass is not a rewrite.** Match the existing register rather than importing one. This is also why a copy pass is poor delegation material: an agent starting cold re-derives the rules from the text and reliably sands the personality off.
-
-## Content
-
-Two collections, `posts` and `projects`, schemas in `src/content.config.ts`. Invalid frontmatter fails the build by design.
-
-**`description` and `lede` do different jobs.** `description` is the pitch that search results, link previews, the feed and JSON-LD show. It says why someone should read the piece, not what it's called, and it stays under 160 characters, roughly where Google truncates. The schema enforces the limit. `lede` is what the site itself shows on the entry card and as the subtitle, and it's where the joke goes. It's optional and falls back to `description`.
-
-**`date` is when it was published; `updated` is optional and set by hand.** Setting it adds "updated" to the entry's byline and feeds `dateModified` in JSON-LD, `article:modified_time`, the sitemap's `lastmod` and the feed's `lastBuildDate`. Bump it when the substance changes, not for a typo: it tells readers and crawlers the piece is worth another look.
-
-**Every entry opens with a `<Summary>`.** It's a native `<details>`, closed by default, sitting first in the MDX body: what the piece was about, for the reader coming back to it or deciding whether to start. Two to four sentences in Tim's voice, not a table of contents. It comes before the post's first `<abbr>`, so keep abbreviations out of it. Adding or rewording one is not a reason to bump `updated`.
-
-`draft: true` entries render in `astro dev`, are excluded from a production build, and are `noindex`'d if built anyway. To exercise the templates against a real build:
-
-```powershell
-$env:BUILD_DRAFTS = "true"; npm run build; Remove-Item Env:\BUILD_DRAFTS
-```
-
-Draft status controls which **pages** reach the site. An image a draft imports is still built and shipped to `_astro/` under a hashed name, linked from nowhere. And it does nothing about what's readable in the **repo** — see below.
-
-## Before a post goes live
-
-Between setting `draft: false` and the squash merge, two reviews run. Both are read-only, and both go to a fresh agent on purpose: by then the author and the session that helped draft can't read the piece cold. A copy pass is the opposite case and stays inline, as Voice says.
-
-**Cold read.** One pass top to bottom as a reader before analysing anything, then a report of where it stumbled: where the argument jumps or repeats, what's used before it's explained, whether each section earns its place.
-
-**Voice check.** Read against the published posts and the About page. Flag passages that sound like a different writer in either direction: flatter and more technical, or trying too hard. Go through every running gag and callback and say whether it landed, landed late, or missed, and why.
-
-One agent can do both. Its brief has to carry what it can't work out from the text:
-
-- **Who the reader is.** Name the audience for this post. The baseline is a technically aware reader, not necessarily a developer: AI power users, and developers who may or may not use AI themselves. Some posts lean more general still, and the brief says so when one does. Whichever it is, the reader is owed three things: every term expanded once in an `<abbr>`, a footnote for anything they might want to check, and prose that's fun to read, because the content is dry if you aren't in the weeds. Leave the audience out and the feedback comes back generic, advice for any reader of any post.
-- **What the post is for.** The one thing a reader should leave with, so the agent can judge whether the piece delivers it.
-- **The Voice rules, and that personality isn't a fault.** Hiberno-English is deliberate. No smoothing to neutral. Flag the problem and give at most one suggested wording, never a rewrite.
-- **No em dashes**, and not to suggest any.
-- **What's fixed and what's open.** `description` isn't up for change. Title and `lede` can get suggestions, along with any constraint on them, such as a joke later in the post that depends on a word in the title.
-- **Code blocks** are out of scope for correctness and in scope for placement and length.
-- **Factual doubts get flagged**, not verified.
-- **What to send back:** a verdict, first-read stumbles with line numbers, each joke in a line, voice drifts, title and lede, and which findings are confident and which are taste.
-
-Tim decides what to act on. A taste finding about his voice is his call, so don't apply one unasked. Then the definition of done, then the squash.
+Voice, the frontmatter fields, and the two reviews a post gets before it goes live are in [`.claude/rules/writing.md`](.claude/rules/writing.md). Claude Code loads it when a file under `src/content` or `src/pages` is opened. Read it before drafting, editing or reviewing prose, including in a conversation that hasn't opened a post yet.
 
 ## Narration
 
