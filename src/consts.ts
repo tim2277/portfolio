@@ -25,7 +25,7 @@ export const SITE_AUTHOR = 'Tim';
     reason for reading it (masthead text) differs from metadata's (brand
     name), even though the value has to stay identical. */
 export const SITE_WORDMARK = SITE_TITLE;
-export const SITE_LOCALE = 'en-GB';
+export const SITE_LOCALE = 'en-IE';
 
 /** Canonical URL of the About page — the one place Tim, the person, has a
     page. Feeds the Person JSON-LD node's `@id` and `url`, and article:author. */

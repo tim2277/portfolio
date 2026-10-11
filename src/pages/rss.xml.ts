@@ -1,7 +1,7 @@
 import rss from '@astrojs/rss';
 import type { APIRoute } from 'astro';
 import { getPosts } from '../lib/content';
-import { SITE_TITLE, SITE_DESCRIPTION, SITE_AUTHOR } from '../consts';
+import { SITE_TITLE, SITE_DESCRIPTION, SITE_AUTHOR, SITE_LOCALE } from '../consts';
 
 export const GET: APIRoute = async (context) => {
   const posts = await getPosts();
@@ -34,6 +34,6 @@ export const GET: APIRoute = async (context) => {
       link: `/posts/${post.id}/`,
       customData: `<dc:creator>${SITE_AUTHOR}</dc:creator>`,
     })),
-    customData: `<language>en-gb</language><lastBuildDate>${lastBuildDate.toUTCString()}</lastBuildDate><atom:link href="${selfHref}" rel="self" type="application/rss+xml"/>`,
+    customData: `<language>${SITE_LOCALE.toLowerCase()}</language><lastBuildDate>${lastBuildDate.toUTCString()}</lastBuildDate><atom:link href="${selfHref}" rel="self" type="application/rss+xml"/>`,
   });
 };
