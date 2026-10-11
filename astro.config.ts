@@ -28,6 +28,9 @@ function readEntryDates(base: string): Map<string, string> {
       const date = frontmatter.match(/^date:\s*(.+)$/m)?.[1]?.trim();
       const updated = frontmatter.match(/^updated:\s*(.+)$/m)?.[1]?.trim();
       if (!date) continue;
+      // A draft left in would date the listing pages by an entry that isn't
+      // on them.
+      if (/^draft:\s*true\s*$/m.test(frontmatter)) continue;
       const slug = slugPrefix + name.replace(/\.(md|mdx)$/, '');
       dates.set(slug, new Date(updated ?? date).toISOString());
     }
@@ -36,14 +39,30 @@ function readEntryDates(base: string): Map<string, string> {
   return dates;
 }
 
+const postDates = readEntryDates('./src/content/posts');
+const projectDates = readEntryDates('./src/content/projects');
+
 const entryLastmod = new Map<string, string>([
-  ...[...readEntryDates('./src/content/posts')].map(
-    ([slug, lastmod]) => [`/posts/${slug}/`, lastmod] as const
-  ),
-  ...[...readEntryDates('./src/content/projects')].map(
-    ([slug, lastmod]) => [`/projects/${slug}/`, lastmod] as const
-  ),
+  ...[...postDates].map(([slug, lastmod]) => [`/posts/${slug}/`, lastmod] as const),
+  ...[...projectDates].map(([slug, lastmod]) => [`/projects/${slug}/`, lastmod] as const),
 ]);
+
+/*
+  Without a `lastmod` a crawler has nothing to say a listing page changed, and
+  a search result goes on quoting a card lede long after it was reworded. A
+  listing page shows its entries' ledes, so it's as new as the newest of
+  them. ISO strings sort chronologically.
+*/
+const latest = (...dates: Map<string, string>[]) =>
+  dates.flatMap((d) => [...d.values()]).sort().at(-1);
+
+for (const [path, lastmod] of [
+  ['/', latest(postDates, projectDates)],
+  ['/posts/', latest(postDates)],
+  ['/projects/', latest(projectDates)],
+] as const) {
+  if (lastmod) entryLastmod.set(path, lastmod);
+}
 
 // https://astro.build/config
 export default defineConfig({
@@ -71,9 +90,8 @@ export default defineConfig({
       // sitemap that way. Under BUILD_DRAFTS they would — they're noindex'd,
       // which is the backstop. This filter only drops the 404 page.
       filter: (page) => !page.includes('/404'),
-      // Only entry pages have a real `lastmod` source (their own
-      // frontmatter). Everything else — home, the index pages — gets none
-      // rather than a fabricated one.
+      // About has no dated source, so it gets no `lastmod` rather than a
+      // fabricated one.
       serialize(item) {
         const lastmod = entryLastmod.get(new URL(item.url).pathname);
         return lastmod ? { ...item, lastmod } : item;
