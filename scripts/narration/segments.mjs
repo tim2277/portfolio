@@ -18,6 +18,7 @@ export function segmentPost(path, { lexicon = {}, summary = false, site, name, r
   const tree = mdxToMdast(source, { features: { gfm: true } });
   const segments = [];
   const unlisted = new Set();
+  const expanded = new Set();
 
   const spoken = (value, isCode) => {
     const alias = lexicon.code?.[value];
@@ -38,8 +39,18 @@ export function segmentPost(path, { lexicon = {}, summary = false, site, name, r
         return ITALIC[0] + kids(node) + ITALIC[1];
       case 'footnoteReference':
         return '';
-      case 'mdxJsxTextElement':
-        return node.name === 'abbr' ? spoken(flat(node), false) : kids(node);
+      case 'mdxJsxTextElement': {
+        if (node.name !== 'abbr') return kids(node);
+        // A listener can't hover for the title, so the first use says it in full and then
+        // the short form; after that the short form alone. Commas, not brackets: push()
+        // would wrap a bracket pair in an aside, inside the attribute.
+        const short = flat(node);
+        const full = node.attributes.find((a) => a.name === 'title')?.value;
+        const alias = `${full}, ${short},`;
+        if (typeof full !== 'string' || expanded.has(short) || alias.length > 80) return spoken(short, false);
+        expanded.add(short);
+        return say(escapeXml(short), alias);
+      }
       default:
         return node.children ? kids(node) : '';
     }

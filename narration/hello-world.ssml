@@ -1,0 +1,82 @@
+# Narration for src/content/posts/hello-world.mdx. A header line per segment, then its SSML on one line.
+# "@ 012 p gap=1200" overrides the silence before a segment, in milliseconds.
+# node scripts/narration/narrate.mjs check hello-world
+voice en-US-BrianMultilingualNeural
+lang en-IE
+pitch -1.5%
+recorded 2026-10-11
+
+@ 001 intro
+Welcome to Tim writes about dev.<break time="400ms"/> I'm Brian, an AI voice,<break time="150ms"/> and Tim has asked me to read you the post,<break time="200ms"/> Hello world.<break time="500ms"/> I skip the code and the footnotes, so for those,<break time="150ms"/> check the post.
+
+@ 002 p
+"Hello world",<break time="350ms"/> <prosody pitch="-0.75%" rate="+4%">classic computer science stuff there.</prosody>
+
+@ 003 p
+Why do we say <prosody pitch="+0.75%">hello world</prosody>?<break time="350ms"/> It's as though we're granting sentience to something that didn't have it a moment ago.<break time="400ms"/> Is that just us anthropomorphising anything that holds still long enough,<break time="250ms"/> or is there something deeper in it?
+
+@ 004 p
+Philosophical digressions aside,<break time="200ms"/> ye probably want to know why I built this site and what it's initially for.
+
+@ 005 callout
+A brief introduction to me and this site.
+
+@ 006 h
+Why this site?
+
+@ 007 p
+Just a <prosody pitch="+0.75%">tiny</prosody> bit of background.
+
+@ 008 p
+I'm not going to launch into a detailed <lang xml:lang="de-DE">spiel</lang> about when I started programming,<break time="150ms"/> or engineering,<break time="150ms"/> or software development<break time="350ms"/> that's what an About page is for.<break time="400ms"/> This post is about the <prosody rate="-4%" pitch="+0.75%">why</prosody>.
+
+@ 009 p
+<prosody rate="-4%">Simple.</prosody><break time="500ms"/> Machine learning and artificial intelligence have been around <prosody rate="-4%">roughly forever.</prosody><break time="350ms"/> Turing was describing learning machines in the 1940s, and went on to write one of the best essays anybody has written on the subject<break time="300ms"/> I'd recommend it to anyone with a shred of interest in where this all came from.<break time="400ms"/> Progress after that was mostly slow.<break time="350ms"/> It was only once we started solving natural language problems with <sub alias="Large Language Models, L L Ms,">LLMs</sub> that the strides got long, and the pace of it since has been christened<break time="200ms"/> <prosody rate="-4%">the new AI era.</prosody>
+
+@ 010 p gap=1000
+<prosody rate="-4%" pitch="-0.75%">Hogwash.</prosody><break time="500ms"/> This AI era is just the latest in a long line of phoenix rebirths since Turing's paper.<break time="350ms"/> What makes it different isn't the era's <prosody pitch="+0.75%">promises</prosody><break time="250ms"/> <prosody pitch="-0.75%" rate="+4%">every one of them promised plenty</prosody><break time="250ms"/> it's the <prosody rate="-4%" pitch="+0.75%">applications</prosody> that have actually turned out to be possible.
+
+@ 011 p
+The phoenix's previous lives were each aimed at one specific problem:<break time="250ms"/> knowledge systems, computer vision, robotic control, big data analytics, chatbots,<break time="200ms"/> <prosody pitch="-0.75%" rate="+4%"><phoneme alphabet="ipa" ph="ɛt ˈsɛtərə">et cetera</phoneme> <phoneme alphabet="ipa" ph="æd ˌɪnfɪˈnaɪtəm">ad infinitum</phoneme>.</prosody><break time="400ms"/> What LLMs did instead was set off a <prosody rate="-4%">chain reaction</prosody> in how we work with information at all.<break time="350ms"/> Largely courtesy of a small research lab called OpenAI,<break time="150ms"/> and the GPT models it published between 2018 and 2020.
+
+@ 012 p
+Gone is crawling the search results pages.<break time="300ms"/> Gone is trawling Wikipedia,<break time="200ms"/> gone is the endless Google Scholar rabbit hole,<break time="200ms"/> gone is squinting at cryptic software docs.<break time="450ms"/> Ask an agent instead and it does the legwork, ideally saving you several hours of it.<break time="400ms"/> But the more interesting realisation was that LLMs could do more than <prosody pitch="+0.75%">fetch</prosody><break time="300ms"/> they could turn a prompt into something that did real work.<break time="450ms"/> Enter,<break time="200ms"/> stage left,<break time="250ms"/> GitHub Copilot:<break time="300ms"/> humble beginnings as a model trained on public GitHub code, and now multi-provider and multi-agent.
+
+@ 013 callout-title
+Copilot.
+
+@ 014 callout
+Copilot became the name of every Microsoft AI initiative around 2023.<break time="500ms"/> Copilot sounds better than AI.
+
+@ 015 p
+I can't overstate how revolutionary Copilot was.<break time="350ms"/> A glorified chatbot could suddenly read our code and our content and give an answer grounded in something <prosody rate="-4%">real.</prosody><break time="350ms"/> No more editing and replacing the same line by hand forty times<break time="350ms"/> <prosody pitch="-0.75%" rate="+4%">an extremely risky task.</prosody><break time="350ms"/> No more writing comments that were clear to the author<break time="200ms"/> and to nobody else.<break time="400ms"/> In came the term "AI pair programmer",<break time="200ms"/> at a very reasonable ten dollars a month, and one of the first LLM products a working developer actually paid for out of their own pocket.
+
+@ 016 p
+Then the models themselves got smarter, thanks in large part to a relatively small company called Anthropic, founded in 2021 by former OpenAI staff.<break time="400ms"/> A new challenger dethroned the incumbent:<break time="300ms"/> Claude 3 Opus, with Claude 3.5 Sonnet three months behind it.<break time="350ms"/> Copilot started supporting models from more than one provider.<break time="450ms"/> And so the <prosody rate="-4%">frontier model race</prosody> began.
+
+@ 017 p
+By 2025, agentic AI had arrived properly, popularised under the name<break time="200ms"/> <prosody rate="-4%">vibe coding.</prosody><break time="350ms"/> It was limited to well-trodden ground at first<break time="300ms"/> TypeScript and JavaScript websites and the like.<break time="350ms"/> Talk of tokens became commonplace.<break time="350ms"/> Developers were made to look rather closely at what they actually did<break time="200ms"/> versus what an agent does.<break time="400ms"/> Copilot gained full agent modes, then coding agents proper:<break time="250ms"/> running in their own containers, reviewing pull requests, driving Playwright tests in a browser.
+
+@ 018 p
+That trend carried into 2026.<break time="300ms"/> The race is now for faster, cheaper models and larger context windows.<break time="350ms"/> Underneath it all has been a steadier, less glamorous effort to make agents reason better and work unsupervised for longer.
+
+@ 019 p
+And yet,<break time="200ms"/> for all of that,<break time="200ms"/> it's the <prosody rate="-4%" pitch="+0.75%">actual operationalisation</prosody> of agentic AI inside an existing <sub alias="Software Development Lifecycle, S D L C,">SDLC</sub> that remains the weakest part of the whole business.<break time="400ms"/> <lang xml:lang="fr-FR"><sub alias="Organisation internationale de normalisation,">I</sub></lang><sub alias="ISO">SO</sub> standards<break time="250ms"/> <prosody pitch="-0.75%" rate="+4%"><sub alias="twenty-seven oh oh one">27001</sub>, looking at you</prosody><break time="300ms"/> internal operating procedures, tooling, deployment processes, the daily work, the work items, and the skill of the team<break time="200ms"/> all combine.<break time="400ms"/> Agentic AI <prosody pitch="+0.75%">might</prosody> have solved writing the code.<break time="350ms"/> It cannot do the rest without being fitted with skill, knowledge and experience.<break time="450ms"/> That is what this site is for,<break time="150ms"/> at least initially:<break time="250ms"/> exploring the paths that let a team deliver good work more effectively.
+
+@ 020 h
+What's the point?
+
+@ 021 p
+You might reasonably ask why you should operationalise any of this.<break time="350ms"/> Why not just tell the agent what you need<break time="150ms"/> and let it get on with it?
+
+@ 022 p
+That only works if the agent can absorb your project-specific knowledge, or reliably reference it.<break time="300ms"/> Or if you happen to be building something so well-trodden it's already documented a thousand times over.<break time="400ms"/> Neither is realistic with what we have today<break time="300ms"/> <prosody pitch="-0.75%" rate="+4%">never mind the cybersecurity, legal and commercial questions sitting alongside.</prosody><break time="400ms"/> And not every agent needs all of the context all of the time.<break time="350ms"/> Some models get measurably worse with too much of it, which is a familiar shape:<break time="300ms"/> it's overfitting,<break time="350ms"/> wearing a different hat.
+
+@ 023 p
+What you end up with is several competing <phoneme alphabet="ipa" ph="ˈæksiːz">axes</phoneme> intersecting at once.<break time="350ms"/> The pragmatic engineering answer is the usual one<break time="300ms"/> fit the tool and the resources to the task in front of you.<break time="450ms"/> This site is an exploration of the concepts and methods that have been tried in a <prosody pitch="+0.75%">real</prosody> development team, with real end users,<break time="250ms"/> even when the end user is another agent<break time="200ms"/> or the developer sitting next to you.
+
+@ 024 outro
+This post was last updated on 27 September 2026.<break time="400ms"/> This recording was made on 11 October 2026,<break time="150ms"/> for <sub alias="Tim Writes dot dev">timwrites.dev</sub>.
+
+@ 025 egg
+Eighty years of artificial intelligence,<break time="250ms"/> from Turing to now.<break time="600ms"/> And on my first day<break time="250ms"/> they have me reading the blog.<break time="1000ms"/> Right so.<break time="400ms"/> Mind yourselves.

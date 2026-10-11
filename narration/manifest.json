@@ -7,5 +7,14 @@
     "recorded": "2026-10-10",
     "transition": "key-press",
     "sidecar": "c2f9c90bf587b98158b9eb8a47686aeeeaf316d18aa487aaa64f4e42af0310ba"
+  },
+  "hello-world": {
+    "file": "posts/hello-world.78092c079c20.opus",
+    "seconds": 479,
+    "bytes": 1785062,
+    "voice": "Brian",
+    "recorded": "2026-10-11",
+    "transition": "key-press",
+    "sidecar": "c6fae724ffb3f1cf7ae1543e49993b7a23c4f6323cce9b86d2fa8aa46f84d219"
   }
 }
