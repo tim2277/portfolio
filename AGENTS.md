@@ -88,7 +88,7 @@ A comment says why, or explains logic that isn't obvious from the code. It doesn
 
 ## Writing
 
-Voice, the frontmatter fields, and the two reviews a post gets before it goes live are in [`.claude/rules/writing.md`](.claude/rules/writing.md). Claude Code loads it when a file under `src/content` or `src/pages` is opened. Read it before drafting, editing or reviewing prose, including in a conversation that hasn't opened a post yet.
+Voice, the frontmatter fields, and the two reviews a post gets before it goes live are in [`.claude/rules/writing.md`](.claude/rules/writing.md). Claude Code loads it when a file under `src/content` or `src/pages` is opened. Read it before drafting, editing or reviewing prose, including in a conversation that hasn't opened a post yet. The recurring characters (Tim, Opus, Ms Claudie Mittens, Brian) are in [`.claude/rules/cast.md`](.claude/rules/cast.md): who each one is, and who writes their lines.
 
 ## Narration
 
