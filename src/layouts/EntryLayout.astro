@@ -1,8 +1,9 @@
 ---
-import { Image, getImage } from 'astro:assets';
+import { getImage } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import type { MarkdownHeading } from 'astro';
 import BaseLayout from './BaseLayout.astro';
+import Figure from '../components/Figure.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import Narration from '../components/Narration.astro';
 import TableOfContents from '../components/TableOfContents.astro';
@@ -43,11 +44,6 @@ const share = data.heroImage
       format: 'jpeg',
     })
   : undefined;
-
-// A <Picture> for the hero breaks in Edge's Immersive Reader. It keeps the
-// <source> tags but resolves their root-relative URLs against its own read://
-// address, so the image never loads. Only <img> URLs get rewritten, which
-// leaves room for one format.
 ---
 
 <BaseLayout
@@ -90,16 +86,7 @@ const share = data.heroImage
         {!isProject && <Narration slug={entry.id} />}
         {
           data.heroImage && (
-            <Image
-              src={data.heroImage}
-              alt={data.heroAlt ?? ''}
-              widths={[480, 800, 1200]}
-              sizes="(min-width: 74ch) 74ch, 100vw"
-              format="avif"
-              loading="eager"
-              fetchpriority="high"
-              class="hero"
-            />
+            <Figure src={data.heroImage} alt={data.heroAlt ?? ''} id="entry-hero" hero />
           )
         }
       </header>
@@ -163,12 +150,6 @@ const share = data.heroImage
     font-family: var(--font-mono);
     font-size: 0.9em;
     overflow-wrap: anywhere;
-  }
-
-  article :global(.hero) {
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    margin-block: 1.75rem 0;
   }
 
   header {

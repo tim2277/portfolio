@@ -17,9 +17,12 @@ interface Props {
   wide?: boolean;
   /** Only needed when the same image appears twice on one page. */
   id?: string;
+  /** For the image at the top of an entry. It's the page's largest paint, so
+      it's fetched eagerly, at high priority, as AVIF. */
+  hero?: boolean;
 }
 
-const { src, alt, wide = false, ai } = Astro.props;
+const { src, alt, wide = false, ai, hero = false } = Astro.props;
 
 const aiLabels = {
   generated: 'AI-generated',
@@ -36,6 +39,18 @@ const id = Astro.props.id ?? `figure-${name.toLowerCase().replace(/[^a-z0-9]+/g,
 
 const widths = [480, 800, 1200].filter((width) => width < src.width);
 
+// Offered the full-width file, a 2x screen takes it for the first paint. The
+// overlay is where that file belongs.
+const inlineWidths = hero && src.width > 1200 ? widths : [...widths, src.width];
+
+// A <Picture> breaks in Edge's Immersive Reader. It keeps the <source> tags
+// but resolves their root-relative URLs against its own read:// address, so
+// the image never loads. Only <img> URLs get rewritten, which leaves room for
+// one format.
+const priority = hero
+  ? ({ format: 'avif', loading: 'eager', fetchpriority: 'high' } as const)
+  : {};
+
 const caption = Astro.slots.has('default') ? await Astro.slots.render('default') : '';
 
 // A footnote marker copied into the overlay would repeat its id on the page,
@@ -43,13 +58,21 @@ const caption = Astro.slots.has('default') ? await Astro.slots.render('default')
 const overlayCaption = caption.replace(/<sup><a [^>]*data-footnote-ref.*?<\/a><\/sup>/gs, '');
 ---
 
-<figure class:list={['figure', wide && 'figure-wide', caption && 'figure-captioned']}>
+<figure
+  class:list={[
+    'figure',
+    wide && 'figure-wide',
+    caption && 'figure-captioned',
+    hero && 'figure-hero',
+  ]}
+>
   <div class="figure-frame">
     <Image
       src={src}
       alt={alt}
-      widths={[...widths, src.width]}
+      widths={inlineWidths}
       sizes="(min-width: 74ch) 74ch, 100vw"
+      {...priority}
     />
     <a class="figure-link" href={full.src} aria-label="Open the full-size image"></a>
     <button
@@ -84,6 +107,15 @@ const overlayCaption = caption.replace(/<sup><a [^>]*data-footnote-ref.*?<\/a><\
 
   .figure-frame > :global(img) {
     display: block;
+  }
+
+  .figure-hero {
+    margin-block: 1.75rem 0;
+  }
+
+  .figure-hero .figure-frame > :global(img) {
+    border: 1px solid var(--border);
+    border-radius: 6px;
   }
 
   /* Laid over the picture, not beside the caption: the label has to be seen
