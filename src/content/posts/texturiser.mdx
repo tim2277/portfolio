@@ -36,7 +36,7 @@ Now you might be asking: but claude.ai, chatgpt.com, or [random <abbr title="lar
 A few things to unpack there - so, just like a counsellor, let's go through it bit by bit:
 
 - Online AI chat platforms (even their desktop apps) remember you across chats: memory, chat indexing and _projects_, all of which can be referenced (to various degrees of success)[^claude-memory][^openai-memory]
-- Claude Code (and most other TUIs or GUIs that help write code) remembers per repo or directory, which is great when you work in one repo - but for personal projects you likely have many, with different goals[^claude-code-memory]
+- Claude Code (and most other <abbr title="terminal user interface">TUI</abbr>s or <abbr title="graphical user interface">GUI</abbr>s that help write code) remembers per repo or directory, which is great when you work in one repo - but for personal projects you likely have many, with different goals[^claude-code-memory]
 - Claude Code does have a cross-repo place, your profile instructions (`~/.claude/CLAUDE.md`), and those are static: preferences you wrote down by hand[^claude-code-memory]
 
 The **gap**: Claude Code doesn't know *you* the way the online platforms do. You're working with the same persona but a stranger each time.
@@ -110,7 +110,7 @@ This particular approach builds on Claude Code specifics, which means two hooks 
 - `~/.claude/hooks/texturise.ps1`: folds the session into the texture when it ends
 - `~/.claude/texture-prompt.md`: the prompt, in full at step 4
 - `~/.claude/texturise-nohooks.settings.json`: one line, `{ "disableAllHooks": true }`
-- PowerShell 7 and the `claude` CLI on your `PATH`. Mine runs on Windows: the shape ports, the scripts as written don't
+- PowerShell 7 and the `claude` <abbr title="command-line interface">CLI</abbr> on your `PATH`. Mine runs on Windows: the shape ports, the scripts as written don't
 
 Everything else (`texture.md`, `texture-markers.json`, `texture-history/` and `texturise.log`) makes itself on the first run.
 
@@ -248,7 +248,7 @@ I was plumping up the prompts and tidying the logic when it dawned on me: I cann
 
 My deep clean revealed several "bugs" or "design assumptions" - whichever you prefer:
 
-1. **Concurrency.** The texturiser never had to deal with concurrency because my personal work is one session at a time. Not like work, where I may be running several sessions, each focused on a different task. Authoring this post was the first time I needed to: I wanted one session adjusting the UI/UX and the other working with me on the post (future post on the way here - stay tuned). Two sessions ending close together both folded against the same `texture.md`, so the last writer won and the other session's fold was gone, with nothing in the log to say so. Fixed with a proper named mutex with a timeout of 10 minutes.
+1. **Concurrency.** The texturiser never had to deal with concurrency because my personal work is one session at a time. Not like work, where I may be running several sessions, each focused on a different task. Authoring this post was the first time I needed to: I wanted one session adjusting the <abbr title="user interface">UI</abbr>/<abbr title="user experience">UX</abbr> and the other working with me on the post (future post on the way here - stay tuned). Two sessions ending close together both folded against the same `texture.md`, so the last writer won and the other session's fold was gone, with nothing in the log to say so. Fixed with a proper named mutex with a timeout of 10 minutes.
 2. **Date handling.** "Last updated *yesterday*" came from rounding elapsed days, so a morning note read late the same evening was a day old - which did explain some odd behaviour that I'd just dismissed as non-deterministic AI. Thankfully, it counts calendar days now.
 3. **Misleading instructions.** The prompt told Sonnet that "git history keeps anything you cut". `~/.claude` isn't a git repo. What I'd meant was closer to "git history is for repo specifics, not the texturiser" (and yes, I'm paraphrasing myself, I don't remember my exact words 😅). Fixed by clarifying the prompt and keeping the last thirty versions in `texture-history/`.
 4. **Silent truncation.** The delta was capped at 60,000 characters, which is only about 24,000 tokens at roughly 2.5 characters per token[^tokens], so there was plenty of room to raise it. The bug was that the cut wasn't logged. It is now, and the cap has since gone up to 1,000,000 characters: a backstop, not a budget. I would recommend adjusting it to your specific needs.
@@ -262,7 +262,7 @@ These are trade-offs, not bugs. Each was left alone on purpose.
 
 - **One session at a time is assumed.** The mutex stops concurrent folds eating each other, but two live sessions still can't see each other: a texture injected at startup is only as fresh as the last session to *end*.
 - **Images are dropped.** Only user messages whose content is a plain string count as typed turns; a prompt with an image attached arrives as a list of blocks and is skipped.
-- **It parses a format it was told not to.** Transcripts are JSONL under `~/.claude/projects/`, and the docs are explicit that the entry format is internal and "scripts that parse these files directly can break on any release"[^transcripts]. The texturiser does exactly that. It also reads a file that is "written asynchronously and may lag the in-memory conversation"[^hooks-input], so the last exchange before exit can miss the fold.
+- **It parses a format it was told not to.** Transcripts are <abbr title="JSON Lines">JSONL</abbr> under `~/.claude/projects/`, and the docs are explicit that the entry format is internal and "scripts that parse these files directly can break on any release"[^transcripts]. The texturiser does exactly that. It also reads a file that is "written asynchronously and may lag the in-memory conversation"[^hooks-input], so the last exchange before exit can miss the fold.
 - **Sensitive by design.** The texturiser is intended to store potentially sensitive facts about you - that's the whole point, it's a friend after all. That's the opposite of claude.ai, which by default "does not store topics related to personal or sensitive subject matter"[^claude-memory]. The prompt's only brake is the last line of `DO NOT CAPTURE`, so it's up to you if you want to add more restrictions. It all sits in a plain-text file on your machine, and every session reads it.
 
 A texturiser gives you a friend, not a hoover: one who knows about Ms Claudie Mittens and how she loves to stretch out on your keyboard. Optimise it the way you like, because you know what you like in people better than Claude or I do 😊

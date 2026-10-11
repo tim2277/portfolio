@@ -1,12 +1,12 @@
 {
   "texturiser": {
-    "file": "posts/texturiser.013fa54cdfc4.opus",
-    "seconds": 1481,
-    "bytes": 5545199,
+    "file": "posts/texturiser.ed8228a7a62f.opus",
+    "seconds": 1499,
+    "bytes": 5610414,
     "voice": "Brian",
-    "recorded": "2026-10-10",
+    "recorded": "2026-10-11",
     "transition": "key-press",
-    "sidecar": "c2f9c90bf587b98158b9eb8a47686aeeeaf316d18aa487aaa64f4e42af0310ba"
+    "sidecar": "5a4bfb2220485e503fccc3fbe6c8b55db139f943ca21a23e90c7cfc88e145759"
   },
   "hello-world": {
     "file": "posts/hello-world.78092c079c20.opus",
