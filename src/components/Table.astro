@@ -1,0 +1,146 @@
+---
+import { createHash } from 'node:crypto';
+
+// Mapped onto every Markdown table by the entry routes, so a post writes a
+// plain GFM table and gets this.
+const html = await Astro.slots.render('default');
+
+// Below this a table fits a phone by wrapping. From here up the columns get
+// too narrow to read, and a code span that can't wrap pushes the page wide.
+const WIDE_FROM = 4;
+const wide = (html.match(/<th[\s>]/g) ?? []).length >= WIDE_FROM;
+
+// The popover and its buttons find each other by id, and Astro has no
+// per-instance id to offer, so it comes from the table's own content.
+const id = `table-${createHash('sha256').update(html).digest('hex').slice(0, 8)}`;
+
+// A footnote marker copied into the overlay would repeat its id on the page,
+// and following it would scroll the article behind the backdrop.
+const overlayHtml = html.replace(/<sup><a [^>]*data-footnote-ref.*?<\/a><\/sup>/gs, '');
+---
+
+{
+  wide ? (
+    <div class="table-block">
+      <div class="table-scroll">
+        <table set:html={html} />
+      </div>
+      <button class="table-open" type="button" popovertarget={id}>
+        Open the full table
+      </button>
+      <div class="table-full" id={id} popover>
+        <div class="table-bar">
+          <button class="table-close" type="button" popovertarget={id} popovertargetaction="hide">
+            Close
+          </button>
+        </div>
+        <table set:html={overlayHtml} />
+      </div>
+    </div>
+  ) : (
+    <table set:html={html} />
+  )
+}
+
+<style>
+  .table-block {
+    margin-block: 0 1.15em;
+  }
+
+  .table-scroll > table {
+    margin-block-end: 0;
+  }
+
+  /* A browser that doesn't know the popover attribute would draw this in the
+     page, as a second copy of the table. */
+  .table-full,
+  .table-open {
+    display: none;
+  }
+
+  .table-open,
+  .table-close {
+    padding: 0.35rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+  }
+
+  .table-open:hover,
+  .table-close:hover {
+    border-color: var(--accent);
+  }
+
+  /* 44rem is just past the article's measure, so none of this touches a
+     screen where the table already has the room it wants. */
+  @media (max-width: 44rem) {
+    /* Cut off at the screen's edge and scrolled sideways, with columns wide
+       enough to read. This half needs nothing from the browser, so it's also
+       what a reader without popovers gets. */
+    .table-scroll {
+      overflow-x: auto;
+      /* Fades the edge the table runs off, and only that edge: the first two
+         layers travel with the content and cover the shadows at either end. */
+      background:
+        linear-gradient(to right, var(--bg) 40%, transparent) left / 2.5rem 100% no-repeat local,
+        linear-gradient(to left, var(--bg) 40%, transparent) right / 2.5rem 100% no-repeat local,
+        linear-gradient(to right, var(--border), transparent) left / 0.75rem 100% no-repeat scroll,
+        linear-gradient(to left, var(--border), transparent) right / 0.75rem 100% no-repeat scroll;
+    }
+
+    .table-scroll > table {
+      min-width: 36rem;
+    }
+
+    @supports selector(:popover-open) {
+      .table-open {
+        display: block;
+        margin-block-start: 0.6rem;
+      }
+    }
+  }
+
+  @supports selector(:popover-open) {
+    .table-full:popover-open {
+      display: block;
+      max-width: calc(100vw - 2rem);
+      max-height: calc(100dvh - 2rem);
+      padding: 0 1rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--text);
+      overflow: auto;
+    }
+
+    .table-full::backdrop {
+      background: rgb(0 0 0 / 0.85);
+    }
+  }
+
+  /* Wider than the in-page copy: the overlay is where the table gets read, so
+     it's sized for the cells and scrolls both ways. */
+  .table-full > table {
+    min-width: 52rem;
+    margin-block-end: 0;
+  }
+
+  /* Stuck on both axes, so Close stays in reach however far the table has
+     been scrolled. */
+  .table-bar {
+    position: sticky;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    display: flex;
+    justify-content: flex-end;
+    padding-block: 0.75rem;
+    background: var(--bg);
+  }
+</style>

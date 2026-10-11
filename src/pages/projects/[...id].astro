@@ -2,6 +2,7 @@
 import { render } from 'astro:content';
 import type { GetStaticPaths } from 'astro';
 import EntryLayout from '../../layouts/EntryLayout.astro';
+import Table from '../../components/Table.astro';
 import { getProjects } from '../../lib/content';
 
 export const getStaticPaths = (async () => {
@@ -14,5 +15,5 @@ const { Content, headings } = await render(project);
 ---
 
 <EntryLayout entry={project} headings={headings} backHref="/projects/" backLabel="All projects">
-  <Content />
+  <Content components={{ table: Table }} />
 </EntryLayout>

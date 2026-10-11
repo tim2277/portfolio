@@ -8,8 +8,9 @@ interface Props {
   /** Collection route prefix, e.g. '/posts'. */
   base: string;
   emptyMessage?: string;
-  /** Heading level for each card title: 3 under a section h2, 2 otherwise. */
-  headingLevel?: 2 | 3;
+  /** Heading level for each card title: one below the heading the cards sit
+      under, 2 when there is none. */
+  headingLevel?: 2 | 3 | 4;
   /** Cards per row on a wide viewport. Narrow ones always get one. */
   columns?: 1 | 2;
 }
@@ -22,7 +23,7 @@ const {
   columns = 2,
 } = Astro.props;
 
-const Heading = `h${headingLevel}` as 'h2' | 'h3';
+const Heading = `h${headingLevel}` as 'h2' | 'h3' | 'h4';
 
 /*
   Cropped at build time rather than by the browser: a card shows the hero at

@@ -100,6 +100,10 @@ Get either wrong and the credit sits outside the visible band — present in the
 - A strip several times wider than it is tall needs `wide`. Without it the enlarged copy shrinks to the screen's width and is no bigger than it was in the article.
 - The caption is rendered twice, once in the overlay with its footnote marker stripped. A marker there would repeat an id and scroll the page behind the backdrop.
 
+**A Markdown table is a `Table`.** The entry routes map `src/components/Table.astro` onto every GFM table, so a post writes a plain one. With four or more columns, on a screen under 44rem, it's cut off at the edge and scrolls sideways, and a button opens it in a popover: plain HTML again, no script and no CSP hash. Its footnote markers are stripped from the overlay copy for the same reason as a `Figure` caption's.
+
+**A pipeline diagram is a `Pipeline` of `Step`s.** `<Pipeline label="…" caption="…">` around `<Step title="…" by="…" human loop="…">`, with the description as the body. It's an ordered list styled as cards and arrows, so it follows the theme and reads as a list anywhere the stylesheet doesn't reach. More than three steps never wrap: they run off the article's edge in one row and open full size in a popover. Below 48rem it's a single column. It draws a sequence and nothing else. A step that repeats says so with `loop`; a diagram that forks or merges needs another tool, and that decision hasn't been made.
+
 **An AI image carries its label in three places, set by two arguments that have to agree.** Anything generative AI had a hand in is converted with `-Ai`, lives in `src/assets/generated/`, and is shown with the matching `ai` prop:
 
 ```powershell

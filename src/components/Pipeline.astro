@@ -1,0 +1,165 @@
+---
+import { createHash } from 'node:crypto';
+
+interface Props {
+  /** Names the list for a screen reader, which otherwise meets a run of
+      numbered items with nothing to say what they're steps of. */
+  label: string;
+  caption?: string;
+}
+
+const { label, caption } = Astro.props;
+
+const html = await Astro.slots.render('default');
+
+// What one row of the article's measure holds at a readable card width. A
+// longer pipeline never wraps: a second row sends the eye back to the left
+// edge, and the sequence is lost. It runs off the edge and opens full size.
+const FITS = 3;
+const long = (html.match(/<li[\s>]/g) ?? []).length > FITS;
+
+// The popover and its buttons find each other by id, and Astro has no
+// per-instance id to offer, so it comes from the steps themselves.
+const id = `pipeline-${createHash('sha256').update(html).digest('hex').slice(0, 8)}`;
+
+// A footnote marker copied into the overlay would repeat its id on the page,
+// and following it would scroll the article behind the backdrop.
+const overlayHtml = html.replace(/<sup><a [^>]*data-footnote-ref.*?<\/a><\/sup>/gs, '');
+---
+
+<figure class:list={['pipeline', long && 'pipeline-long']}>
+  <div class="pipeline-scroll">
+    <ol aria-label={label} set:html={html} />
+  </div>
+  {
+    long && (
+      <>
+        <button class="pipeline-open" type="button" popovertarget={id}>
+          Open the full pipeline
+        </button>
+        <div class="pipeline-full" id={id} popover>
+          <div class="pipeline-bar">
+            <button class="pipeline-close" type="button" popovertarget={id} popovertargetaction="hide">
+              Close
+            </button>
+          </div>
+          <ol aria-label={label} set:html={overlayHtml} />
+        </div>
+      </>
+    )
+  }
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .pipeline {
+    margin-block: 0 1.75rem;
+  }
+
+  /* A column by default, so the order is the order down the page. Step turns
+     its own arrow to match at the same width. */
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: step;
+    display: flex;
+    flex-direction: column;
+  }
+
+  figcaption {
+    margin-block-start: 0.75rem;
+  }
+
+  /* A browser that doesn't know the popover attribute would draw this in the
+     page, as a second copy of the steps. */
+  .pipeline-full,
+  .pipeline-open {
+    display: none;
+  }
+
+  .pipeline-open,
+  .pipeline-close {
+    padding: 0.35rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+  }
+
+  .pipeline-open:hover,
+  .pipeline-close:hover {
+    border-color: var(--accent);
+  }
+
+  /* 48rem is where the article reaches its full measure, so a row always has
+     the same width to work with. */
+  @media (min-width: 48rem) {
+    ol {
+      flex-direction: row;
+    }
+
+    /* Cut off at the article's edge and scrolled sideways. This half needs
+       nothing from the browser, so it's also what a reader without popovers
+       gets. */
+    .pipeline-long .pipeline-scroll {
+      overflow-x: auto;
+      padding-block-end: 0.5rem;
+      /* Fades the edge the row runs off, and only that edge: the first two
+         layers travel with the content and cover the shadows at either end. */
+      background:
+        linear-gradient(to right, var(--bg) 40%, transparent) left / 2.5rem 100% no-repeat local,
+        linear-gradient(to left, var(--bg) 40%, transparent) right / 2.5rem 100% no-repeat local,
+        linear-gradient(to right, var(--border), transparent) left / 0.75rem 100% no-repeat scroll,
+        linear-gradient(to left, var(--border), transparent) right / 0.75rem 100% no-repeat scroll;
+    }
+
+    .pipeline-long :global(.step) {
+      flex-shrink: 0;
+    }
+
+    @supports selector(:popover-open) {
+      .pipeline-long .pipeline-open {
+        display: block;
+        margin-block-start: 0.6rem;
+      }
+    }
+  }
+
+  @supports selector(:popover-open) {
+    .pipeline-full:popover-open {
+      display: block;
+      width: max-content;
+      max-width: calc(100vw - 2rem);
+      max-height: calc(100dvh - 2rem);
+      padding: 0 1rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--text);
+      overflow: auto;
+    }
+
+    .pipeline-full::backdrop {
+      background: rgb(0 0 0 / 0.85);
+    }
+  }
+
+  /* Stuck on both axes, so Close stays in reach however far the row has been
+     scrolled. */
+  .pipeline-bar {
+    position: sticky;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    display: flex;
+    justify-content: flex-end;
+    padding-block: 0.75rem;
+    background: var(--bg);
+  }
+</style>

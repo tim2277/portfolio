@@ -1,5 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import type { MarkdownHeading } from 'astro';
+import { SITE_LOCALE } from '../consts';
 
 /** Below this many sections a contents list is furniture, not navigation. */
 export const TOC_MINIMUM = 3;
@@ -30,6 +31,53 @@ const byNewestFirst = (a: { data: { date: Date } }, b: { data: { date: Date } })
 export async function getPosts(): Promise<CollectionEntry<'posts'>[]> {
   const posts = await getCollection('posts', ({ data }) => includeDrafts || !data.draft);
   return posts.sort(byNewestFirst);
+}
+
+export interface TimelineMonth {
+  /** Anchor for the month's heading, e.g. '2026-10'. */
+  id: string;
+  label: string;
+  posts: CollectionEntry<'posts'>[];
+}
+
+export interface TimelineYear {
+  id: string;
+  label: string;
+  count: number;
+  months: TimelineMonth[];
+}
+
+/**
+ * Keeps the order it's given, so pass posts already sorted. Reads the date in
+ * UTC: frontmatter dates are midnight UTC, and a build machine west of
+ * Greenwich would otherwise file a post from the 1st under the month before.
+ */
+export function byYearAndMonth(posts: CollectionEntry<'posts'>[]): TimelineYear[] {
+  const monthName = new Intl.DateTimeFormat(SITE_LOCALE, { month: 'long', timeZone: 'UTC' });
+  const years: TimelineYear[] = [];
+
+  for (const post of posts) {
+    const date = post.data.date;
+    const yearId = String(date.getUTCFullYear());
+    const monthId = `${yearId}-${String(date.getUTCMonth() + 1).padStart(2, '0')}`;
+
+    let year = years.at(-1);
+    if (year?.id !== yearId) {
+      year = { id: yearId, label: yearId, count: 0, months: [] };
+      years.push(year);
+    }
+
+    let month = year.months.at(-1);
+    if (month?.id !== monthId) {
+      month = { id: monthId, label: monthName.format(date), posts: [] };
+      year.months.push(month);
+    }
+
+    month.posts.push(post);
+    year.count += 1;
+  }
+
+  return years;
 }
 
 export async function getProjects(): Promise<CollectionEntry<'projects'>[]> {

@@ -1,0 +1,141 @@
+---
+interface Props {
+  title: string;
+  /** Who or what does the step: a person, a script, a service. */
+  by?: string;
+  /** Picks the step out as one a person does. */
+  human?: boolean;
+  /** For a step that repeats: what it's waiting on, e.g. "until it sounds
+      right". A box-and-arrow list can't draw the arrow back, so it's said. */
+  loop?: string;
+}
+
+const { title, by, human = false, loop } = Astro.props;
+---
+
+<li class:list={['step', human && 'step-human']}>
+  <div class="step-card">
+    <p class="step-by">{by}</p>
+    <p class="step-title">{title}</p>
+    <div class="step-body">
+      <slot />
+    </div>
+    {
+      loop && (
+        <p class="step-loop">
+          <span aria-hidden="true">↺</span> {loop}
+        </p>
+      )
+    }
+  </div>
+</li>
+
+<style>
+  .step {
+    counter-increment: step;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .step-card {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0.8rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg-subtle);
+  }
+
+  .step-human .step-card {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 9%, var(--bg-subtle));
+  }
+
+  /* The arrow is the gap between two cards. The second value is its
+     alternative text, empty so a screen reader isn't read an arrow between
+     items it has already numbered; a browser without that syntax keeps the
+     first declaration. */
+  .step::after {
+    content: '↓';
+    content: '↓' / '';
+    flex: none;
+    height: 2rem;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+  }
+
+  .step:last-child::after {
+    display: none;
+  }
+
+  /* A row, at the width Pipeline lays one out, and the arrows turn to point
+     along it. The last step has no arrow, so it starts 2rem narrower and the
+     cards come out one width. */
+  @media (min-width: 48rem) {
+    .step {
+      flex: 1 1 11.5rem;
+      flex-direction: row;
+    }
+
+    .step:last-child {
+      flex-basis: 9.5rem;
+    }
+
+    .step::after {
+      content: '→';
+      content: '→' / '';
+      width: 2rem;
+      height: auto;
+    }
+  }
+
+  .step-by {
+    margin: 0 0 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-muted);
+  }
+
+  .step-by::before {
+    content: counter(step, decimal-leading-zero);
+    color: var(--accent);
+  }
+
+  .step-by:not(:empty)::before {
+    content: counter(step, decimal-leading-zero) ' · ';
+  }
+
+  .step-title {
+    margin: 0 0 0.3rem;
+    font-family: var(--font-heading);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .step-body {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+
+  .step-body :global(p) {
+    margin-block: 0;
+  }
+
+  /* Pushed to the foot, so the notes line up across a row of uneven cards. */
+  .step-loop {
+    margin: auto 0 0;
+    padding-block-start: 0.6rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--accent);
+  }
+</style>

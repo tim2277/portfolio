@@ -3,10 +3,11 @@ import { getImage } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Hero from '../../components/Hero.astro';
 import EntryCards from '../../components/EntryCards.astro';
-import { getPosts } from '../../lib/content';
+import Timeline from '../../components/Timeline.astro';
+import { byYearAndMonth, getPosts } from '../../lib/content';
 import heroImage from '../../assets/photos/posts-hero.jpg';
 
-const posts = await getPosts();
+const years = byYearAndMonth(await getPosts());
 
 const share = await getImage({
   src: heroImage,
@@ -38,11 +39,64 @@ const share = await getImage({
     </p>
   </Hero>
 
-  <EntryCards
-    entries={posts}
-    base="/posts"
-    emptyMessage="No posts published yet. Watch this space."
-    headingLevel={2}
-    columns={1}
-  />
+  {
+    years.length === 0 ? (
+      <p class="muted">No posts published yet. Watch this space.</p>
+    ) : (
+      <div class="timeline-layout">
+        <Timeline years={years} fold />
+        <div class="timeline-list">
+          {years.map((year) => (
+            <section aria-labelledby={year.id}>
+              <h2 id={year.id} class="timeline-year">
+                {year.label}
+              </h2>
+              {year.months.map((month) => (
+                <section aria-labelledby={month.id}>
+                  <h3 id={month.id} class="timeline-month">
+                    {month.label}
+                  </h3>
+                  <EntryCards entries={month.posts} base="/posts" headingLevel={4} columns={1} />
+                </section>
+              ))}
+            </section>
+          ))}
+        </div>
+        <Timeline years={years} />
+      </div>
+    )
+  }
 </BaseLayout>
+
+<style>
+  /* The cards take what the sidebar leaves, where the prose in .toc-layout
+     keeps its measure: a card has no line length to protect. */
+  @media (min-width: 64rem) {
+    .timeline-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(11rem, 15rem);
+      gap: 3rem;
+      align-items: start;
+    }
+  }
+
+  .timeline-year {
+    margin-block: 2.5rem 0.25rem;
+  }
+
+  section:first-child > .timeline-year {
+    margin-block-start: 0;
+  }
+
+  .timeline-month {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--text-muted);
+    margin-block: 1.5rem 0.75rem;
+    padding-block-end: 0.5rem;
+    border-block-end: 1px solid var(--border);
+  }
+</style>
