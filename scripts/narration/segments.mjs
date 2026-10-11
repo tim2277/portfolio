@@ -85,8 +85,16 @@ export function segmentPost(path, { lexicon = {}, summary = false, site, name, r
         for (const cells of rows) push('tr', cells.map((cell, i) => (i ? `${head[i]} ${cell}.` : `${cell}.`)).join(' '));
         break;
       }
+      case 'blockquote':
+        node.children.forEach((c) => block(c, 'quote'));
+        break;
       case 'mdxJsxFlowElement': {
         if (node.name === 'Summary' && !summary) break;
+        // A caption read cold sounds like a paragraph about nothing, so it's announced.
+        if (node.name === 'Figure') {
+          push('caption', `${prose(lexicon.caption ?? '')} ${kids(node)}`);
+          break;
+        }
         const title = node.attributes.find((a) => a.name === 'title')?.value;
         const inner = node.name === 'Callout' ? 'callout' : node.name === 'Summary' ? 'summary' : kind;
         if (typeof title === 'string') push('callout-title', prose(title), { stop: true });

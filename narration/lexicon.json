@@ -3,7 +3,10 @@
   "outro": "This post was last updated on {updated}. This recording was made on {recorded} for {site}.",
   "companion": "wrote-it-down",
   "transition": "key-press",
+  "caption": "Picture caption.",
   "prose": {
+    "colophon": { "ipa": "ˈkɒləfɒn" },
+    "colophons": { "ipa": "ˈkɒləfɒnz" },
     "repo": "repository",
     "repos": "repositories",
     "resume": { "ipa": "rɪˈzjuːm" },

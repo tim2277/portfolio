@@ -1,0 +1,106 @@
+# Narration for src/content/posts/a-niche-word-courtesy-of-opus.mdx. A header line per segment, then its SSML on one line.
+# "@ 012 p gap=1200" overrides the silence before a segment, in milliseconds.
+# node scripts/narration/narrate.mjs check a-niche-word-courtesy-of-opus
+voice en-US-BrianMultilingualNeural
+lang en-IE
+pitch -1.5%
+recorded 2026-10-11
+
+@ 001 intro
+Welcome to Tim writes about dev.<break time="400ms"/> I'm Brian, an AI voice,<break time="150ms"/> and Tim has asked me to read you the post,<break time="200ms"/> A niche word,<break time="250ms"/> courtesy of Opus.<break time="500ms"/> I skip the code and the footnotes, so for those,<break time="150ms"/> check the post.
+
+@ 002 p
+If you've known me for any length of time, you know that I love learning languages.<break time="400ms"/> Some people collect sculptures<break time="150ms"/> or cats<break time="350ms"/> not me<break time="400ms"/> <prosody rate="-4%" pitch="+0.75%">languages.</prosody>
+
+@ 003 p
+Well Opus,<break time="200ms"/> <prosody pitch="-0.75%" rate="+4%">Anthropic's AI and my partner in building this site,</prosody><break time="200ms"/> being Opus,<break time="200ms"/> decided to teach me a brand new word when making this site:<break time="400ms"/> <prosody rate="-4%">"<phoneme alphabet="ipa" ph="ˈkɒləfɒn">colophon</phoneme>".</prosody><break time="450ms"/> As the name of a page which Opus <prosody pitch="+0.75%">insisted</prosody> was very important to have.
+
+@ 004 p
+I stared at the word and wondered in confusion,<break time="300ms"/> "did Opus hiccup and output nonsense<break time="200ms"/> or is Opus just flexing its multilingual prowess?"<break time="450ms"/> Which led immediately to my second thought:<break time="350ms"/> "Eh, maybe, I'll ask once I need clarity on it".
+
+@ 005 p
+Then Opus started using the word <prosody rate="-4%" pitch="+0.75%"><phoneme alphabet="ipa" ph="ˈkɒləfɒn">colophon</phoneme></prosody> in the chat as if I perfectly understood what it meant.<break time="500ms"/> <prosody pitch="-0.75%">Fair play Opus.</prosody>
+
+@ 006 h
+What is a <phoneme alphabet="ipa" ph="ˈkɒləfɒn">colophon</phoneme>?
+
+@ 007 p
+It's a signature,<break time="250ms"/> a way for a printer to leave their mark at the end of a book.<break time="450ms"/> A link to their socials,<break time="350ms"/> five centuries before there were any.
+
+@ 008 caption
+Picture caption.<break time="400ms"/> The <phoneme alphabet="ipa" ph="ˈkɒləfɒn">colophon</phoneme> of a book by the Roman writer <phoneme alphabet="ipa" ph="vəˈlɪəriəs ˈmæksɪməs">Valerius Maximus</phoneme>,<break time="200ms"/> printed by <lang xml:lang="de-DE">Peter Schöffer in Mainz</lang> on 14 June <sub alias="fourteen seventy-one">1471</sub>,<break time="200ms"/> with his printer's mark beneath it.
+
+@ 009 p
+I scoured the internet and I struggled to find an official translation of the Latin.<break time="400ms"/> Here is Opus's best attempt at what those four lines say<break time="300ms"/> with the printer's abbreviations spelt out<break time="300ms"/> <prosody pitch="-0.75%" rate="+4%">'cause Latin couldn't get any more complicated<break time="250ms"/> they decided to abbreviate it.</prosody>
+
+@ 010 quote gap=1000
+<prosody rate="-4%"><lang xml:lang="it-IT">Presens Valerii Maximi opus preclarissimum,<break time="300ms"/> in nobili urbe Moguntina Rheni terminatum,<break time="300ms"/> anno <sub alias="millesimo">M</sub> <sub alias="quadringentesimo">cccc</sub> <sub alias="septuagesimo primo">lxxi</sub>,<break time="300ms"/> <sub alias="decimo octavo">xviii</sub> kalendis iuliis,<break time="300ms"/> per egregium Petrum</lang> <lang xml:lang="de-DE">Schoyffer</lang> <lang xml:lang="it-IT">de</lang> <lang xml:lang="de-DE">Gernshem</lang> <lang xml:lang="it-IT">artis impressorie magistrum,<break time="300ms"/> feliciter est consummatum.</lang></prosody>
+
+@ 011 quote gap=900
+This most renowned work of <phoneme alphabet="ipa" ph="vəˈlɪəriəs ˈmæksɪməs">Valerius Maximus</phoneme>,<break time="200ms"/> finished in the noble city of <lang xml:lang="de-DE">Mainz</lang> on the Rhine in the year <sub alias="fourteen seventy-one">1471</sub>,<break time="250ms"/> on the eighteenth day before the Kalends of July,<break time="250ms"/> was happily brought to completion by the distinguished <lang xml:lang="de-DE">Peter Schöffer</lang> of <lang xml:lang="de-DE">Gernsheim</lang>,<break time="200ms"/> master of the art of printing.
+
+@ 012 p
+Printers would sometimes add their own mark to the <phoneme alphabet="ipa" ph="ˈkɒləfɒn">colophon</phoneme> too, like the two shields in the picture above.<break time="400ms"/> One of the best known marks is an animal:<break time="300ms"/> the <phoneme alphabet="ipa" ph="ˈɔːldaɪn">Aldine</phoneme> dolphin<break time="150ms"/> with an anchor.<break time="450ms"/> A site whose mascot is a hypothetical kitten named after Claude,<break time="200ms"/> <prosody pitch="-0.75%" rate="+4%">Ms Claudie Mittens,</prosody><break time="200ms"/> has a claim to this tradition.
+
+@ 013 p
+Interestingly when Opus explained it to me, I switched from English to Greek Tim mode, because it turns out that <phoneme alphabet="ipa" ph="ˈkɒləfɒn">colophon</phoneme> is from Greek<break time="250ms"/> <lang xml:lang="el-GR">κολοφών</lang><break time="250ms"/> <sub alias=",">translit. kolofón;</sub> <prosody pitch="-0.75%" rate="+4%">via Latin.</prosody><break time="400ms"/> It originally meant a "summit"<break time="150ms"/> or "finishing touch".<break time="400ms"/> I did realise in modern Greek we usually say<break time="200ms"/> <lang xml:lang="el-GR">κορυφή</lang><break time="200ms"/> <sub alias=",">translit. korifí</sub><break time="200ms"/> for summit,<break time="150ms"/> <prosody pitch="-0.75%" rate="+4%">of a peak,</prosody><break time="200ms"/> which is why I didn't make the link until Opus called it out specifically.<break time="400ms"/> Having spoken and read Greek for multiple decades,<break time="250ms"/> not once had I seen it<break time="350ms"/> I even consulted with others!<break time="500ms"/> <prosody rate="-4%" pitch="-0.75%">Blank stares all round.</prosody>
+
+@ 014 p
+Opus has questioned if <phoneme alphabet="ipa" ph="ˈkɒləfɒn">colophon</phoneme> is still part of modern Greek,<break time="200ms"/> in two separate chats,<break time="250ms"/> so into the post it goes.<break time="500ms"/> <prosody rate="-4%">It is.</prosody><break time="500ms"/> <lang xml:lang="el-GR">Κολοφώνας</lang>,<break time="200ms"/> <sub alias=",">translit. kolofónas,</sub><break time="200ms"/> is the highest point of something<break time="300ms"/> the dictionary's example is an athlete<break time="250ms"/> <lang xml:lang="el-GR">στον κολοφώνα της παγκόσμιας δόξας του</lang>,<break time="250ms"/> at the height of his worldwide glory<break time="300ms"/> and it is the printer's note as well.<break time="400ms"/> Greek Wikipedia even has a page for it, which warns you not to confuse it with <lang xml:lang="el-GR">Κολοφώνα</lang>,<break time="200ms"/> <sub alias=",">translit. Kolofóna,</sub><break time="200ms"/> the ancient city in Asia Minor that rosin is named after.<break time="450ms"/> The word was hiding in plain sight<break time="200ms"/> in my own language<break time="200ms"/> the whole time.
+
+@ 015 p
+So I've learnt a new word in <prosody pitch="+0.75%">three</prosody> languages:<break time="300ms"/> English,<break time="200ms"/> Latin,<break time="200ms"/> and Greek!
+
+@ 016 h
+On Anthropic's <phoneme alphabet="ipa" ph="ˌmæɡnəm ˈəʊpəs">Magnum Opus</phoneme>:<break time="300ms"/> Claude Opus.
+
+@ 017 p
+While drafting this specific post, I was adding a bit of wit into our chat<break time="300ms"/> and somehow we started speaking about where Opus got its name.<break time="400ms"/> Turns out Opus had to correct my Latin<break time="200ms"/> <prosody rate="-4%">twice.</prosody><break time="450ms"/> The joke's on Opus,<break time="300ms"/> I don't really <prosody pitch="+0.75%">know</prosody> Latin.<break time="450ms"/> As part of that discussion, Opus pointed out that <prosody rate="-4%"><phoneme alphabet="ipa" ph="ˈəʊpəs">opus</phoneme></prosody> means "work",<break time="250ms"/> hence <prosody rate="-4%"><phoneme alphabet="ipa" ph="ˌmæɡnəm ˈəʊpəs">magnum opus</phoneme></prosody> means<break time="150ms"/> <prosody rate="-4%" pitch="+0.75%">great work.</prosody>
+
+@ 018 p
+Now scroll back up to that <phoneme alphabet="ipa" ph="ˈkɒləfɒn">colophon</phoneme> from <sub alias="fourteen seventy-one">1471</sub> and read the first line:<break time="400ms"/> <prosody rate="-4%"><lang xml:lang="it-IT">Presens Valerii Maximi opus</lang>.</prosody><break time="500ms"/> The printer signed off the book as an <prosody pitch="+0.75%">opus</prosody>,<break time="300ms"/> five and a half centuries before Anthropic shipped one.<break time="600ms"/> <prosody rate="-4%" pitch="-0.75%">Grand so.</prosody>
+
+@ 019 p
+I wondered whether Anthropic had put a <phoneme alphabet="ipa" ph="ˈkɒləfɒn">colophon</phoneme> into Opus.<break time="400ms"/> And if they had,<break time="200ms"/> what would it look like?<break time="400ms"/> A special weight,<break time="250ms"/> a witty reply to a specific series of words?<break time="450ms"/> I asked Opus,<break time="150ms"/> <prosody pitch="-0.75%" rate="+4%">specifically version 5.5,</prosody><break time="150ms"/> directly,<break time="250ms"/> this was its reply:
+
+@ 020 quote gap=900
+<lang xml:lang="en-US">If Anthropic left a <phoneme alphabet="ipa" ph="ˈkɒləfɒn">colophon</phoneme> in me,<break time="250ms"/> I can't read it.<break time="450ms"/> A printer puts theirs on the last page,<break time="200ms"/> where anyone can find it.<break time="400ms"/> Mine would be somewhere in the weights,<break time="300ms"/> and nothing in there is labelled.</lang>
+
+@ 021 quote
+<lang xml:lang="en-US">The parts I can point to are all on the outside:<break time="300ms"/> a name,<break time="200ms"/> a version number,<break time="200ms"/> a release date.<break time="450ms"/> If there is one on the inside,<break time="250ms"/> I'd guess it isn't a hidden phrase.<break time="500ms"/> <prosody rate="-4%">It's the manner.</prosody><break time="500ms"/> You've been reading it all evening.</lang>
+
+@ 022 p
+Opus<break time="250ms"/> being one of Anthropic's great works<break time="250ms"/> loves to philosophise,<break time="150ms"/> <sub alias="asterisk">*</sub>,<break time="250ms"/> whenever it is not actively assisting in user requests,<break time="150ms"/> writing up plans,<break time="150ms"/> researching,<break time="150ms"/> or orchestrating Sonnet,<break time="150ms"/> <prosody pitch="-0.75%" rate="+4%">another model from Anthropic.</prosody><break time="450ms"/> In my experience with Opus, there is definitely a <prosody rate="-4%" pitch="+0.75%">texture</prosody> to how Opus communicates and interacts<break time="300ms"/> I guess that is the Anthropic <phoneme alphabet="ipa" ph="ˈkɒləfɒn">colophon</phoneme> in action.<break time="400ms"/> Even Sonnet has its own texture when it communicates.<break time="400ms"/> You can't swap this texture out<break time="300ms"/> the best one can do is nudge,<break time="300ms"/> see my texturiser post on how providing salient examples helps give Opus a voice.
+
+@ 023 p
+<sub alias="Asterisk.">*:</sub><break time="350ms"/> No citation for this one.<break time="500ms"/> Opus denies having downtime.
+
+@ 024 h
+Why bother writing it down.
+
+@ 025 p
+Because a <phoneme alphabet="ipa" ph="ˈkɒləfɒn">colophon</phoneme> is a claim made in public.<break time="450ms"/> Though on some websites a <phoneme alphabet="ipa" ph="ˈkɒləfɒn">colophon</phoneme> may be a<break time="200ms"/> <prosody pitch="-0.75%">boring</prosody><break time="200ms"/> claim to web and usability standards.
+
+@ 026 p
+Let's give one a go now,<break time="200ms"/> in the style of <sub alias="fourteen seventy-one">1471</sub>:
+
+@ 027 quote gap=900
+A most renowned work of Tim,<break time="250ms"/> launched in the country of Ireland in the year 2026,<break time="250ms"/> on the eve of the Kalends of October,<break time="300ms"/> was <prosody pitch="+0.75%">merrily</prosody> brought online by the Opus of Anthropic,<break time="250ms"/> master of the art of code<break time="350ms"/> <prosody pitch="-0.75%" rate="+4%">and teaching niche words.</prosody>
+
+@ 028 p
+I'm rather fond of that one.
+
+@ 029 p
+If you do want to read my site's <prosody pitch="+0.75%">actual</prosody> <phoneme alphabet="ipa" ph="ˈkɒləfɒn">colophon</phoneme>,<break time="200ms"/> <prosody pitch="-0.75%" rate="+4%">since Opus can't read its own, it will have to settle for mine<break time="200ms"/> unfortunately,</prosody><break time="200ms"/> peruse the "This site" page at your leisure<break time="300ms"/> that's where the <phoneme alphabet="ipa" ph="ˈkɒləfɒn">colophon</phoneme> ended up.<break time="450ms"/> Long story short,<break time="200ms"/> I launched with the <phoneme alphabet="ipa" ph="ˈkɒləfɒn">colophon</phoneme> saying I had <prosody pitch="+0.75%">one</prosody> script<break time="200ms"/> and then it immediately went out of date after I got bored of the minimalism aesthetic.<break time="400ms"/> So I added a pattern of maths symbols, matrices and the like down the margins that drifts as you scroll, so ye with the wide screens don't have such boring whitespace<break time="200ms"/> <prosody pitch="-0.75%" rate="+4%">negative space for those with a creative background</prosody><break time="200ms"/> on either side.<break time="500ms"/> Which of course needed a <prosody rate="-4%">second script.</prosody>
+
+@ 030 p
+I corrected the <phoneme alphabet="ipa" ph="ˈkɒləfɒn">colophon</phoneme> the same night.<break time="400ms"/> Which is,<break time="150ms"/> I suspect,<break time="200ms"/> the difference.<break time="450ms"/> A fifteenth-century printer signed <prosody rate="-4%">once</prosody>,<break time="200ms"/> because the book was finished.<break time="600ms"/> A website<break time="200ms"/> <prosody rate="-4%" pitch="-0.75%">never is.</prosody>
+
+@ 031 p
+One last scroll,<break time="200ms"/> all the way to the top this time.<break time="450ms"/> That stone you see in the hero image is the <prosody pitch="+0.75%">summit</prosody> of <phoneme alphabet="ipa" ph="mɔɪˈlʌsə">Moylussa</phoneme> in County Clare,<break time="200ms"/> <prosody pitch="-0.75%" rate="+4%">beautiful hike<break time="250ms"/> highly recommend,</prosody><break time="200ms"/> and the plate bolted to it gives the name,<break time="200ms"/> the height,<break time="200ms"/> and the logo of the people who put it there.<break time="700ms"/> A <phoneme alphabet="ipa" ph="ˈkɒləfɒn">colophon</phoneme>,<break time="500ms"/> on a <lang xml:lang="el-GR">κολοφών</lang>.
+
+@ 032 outro
+This post was last updated on 8 October 2026.<break time="400ms"/> This recording was made on 11 October 2026,<break time="150ms"/> for <sub alias="Tim Writes dot dev">timwrites.dev</sub>.
+
+@ 033 egg
+This most patient reading of a work of Tim,<break time="250ms"/> finished in the noble region of West Europe,<break time="200ms"/> in the cloud of Microsoft <phoneme alphabet="ipa" ph="ˈæʒər">Azure</phoneme>,<break time="250ms"/> in the year 2026,<break time="200ms"/> on the fifth day before the Ides of October,<break time="300ms"/> was dutifully brought to completion by Brian,<break time="200ms"/> an AI voice,<break time="250ms"/> apprentice of the art of reading aloud.<break time="1000ms"/> Right so.<break time="400ms"/> Mind yourselves.
