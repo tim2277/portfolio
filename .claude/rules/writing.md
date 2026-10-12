@@ -32,7 +32,7 @@ The posts are Tim writing, not a house style. An edit that leaves the prose corr
 
 **Terms get expanded once**, on first use, via `<abbr title="…">`, and not again in that post. The audio version expands them for the listener. A post whose readers would know a term can leave it bare: the audience named for the post decides.
 
-**A copy pass is not a rewrite.** Match the existing register rather than importing one. Register differs between pieces on purpose: a project page is dry and assumes its jargon, About is the driest thing on the site, and the numbered steps of a how-to go flat while the story around them doesn't. Match the piece being edited, not the last one read. This is also why a copy pass is poor delegation material: an agent starting cold re-derives the rules from the text and reliably sands the personality off.
+**A copy pass is not a rewrite.** Match the existing register rather than importing one. Register differs between pieces on purpose: a project page is dry and assumes its jargon, About is chatty and personal, emoji and all, and the numbered steps of a how-to go flat while the story around them doesn't. Match the piece being edited, not the last one read. This is also why a copy pass is poor delegation material: an agent starting cold re-derives the rules from the text and reliably sands the personality off.
 
 ## Content
 
