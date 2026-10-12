@@ -24,6 +24,8 @@ npm run check
 npm run build
 ```
 
+The build ends with `scripts/verify-anchors.mjs`, which fails on any internal link whose `#fragment` isn't an id on the page it points to. A heading's id comes from its text, so rename a heading and fix the links the build then names. A deep link goes to the page itself: a redirect such as `/colophon/` has no file in `dist/` and is reported as missing.
+
 Then confirm the build actually produced a site:
 
 - `dist/_astro/*.css` exists — see the junction trap below
