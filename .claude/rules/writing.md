@@ -71,6 +71,6 @@ One agent can do both. Its brief has to carry what it can't work out from the te
 - **Factual doubts get flagged**, not verified.
 - **What to send back:** a verdict, first-read stumbles with line numbers, each joke in a line, voice drifts, title and lede, and which findings are confident and which are taste.
 
-**Tags.** Before `draft: false`, list the tags on every published entry and set the new post's against them. A post on the same subject carries the same tags: one about Opus carries `opus` because the colophon post does. A tag no published entry uses is a decision, so name it to Tim rather than coining it. Tags render as plain labels, not links, so nothing on the site shows a mismatch. After the deploy, read them off each live entry page.
+**Tags.** Before `draft: false`, check the post's tags against the vocabulary in [`tags.md`](tags.md) and against the published posts on the same subject, and read them off the live page after the deploy.
 
 Tim decides what to act on. A taste finding about his voice is his call, so don't apply one unasked. Then the definition of done, then the squash.
