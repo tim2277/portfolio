@@ -11,7 +11,10 @@
     "repos": "repositories",
     "resume": { "ipa": "rɪˈzjuːm" },
     "git": { "ipa": "ɡɪt" },
-    "jsonl": { "ipa": "ˈdʒeɪsən ˈɛl" }
+    "jsonl": { "ipa": "ˈdʒeɪsən ˈɛl" },
+    "mic": "mike",
+    "merrow":{ "ipa": "ˈmɛɹoʊ" },
+    "werren": { "ipa": "ˈwɛɹən" }
   },
   "code": {
     "timwrites.dev": "Tim Writes dot dev",

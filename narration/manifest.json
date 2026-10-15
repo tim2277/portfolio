@@ -25,5 +25,14 @@
     "recorded": "2026-10-11",
     "transition": "key-press",
     "sidecar": "1785449759317f2c99f2e9e689a369f1bd481a9299bf90f909959e1eb525cbab"
+  },
+  "things-opus-has-said": {
+    "file": "posts/things-opus-has-said.4d010559aafc.opus",
+    "seconds": 674,
+    "bytes": 2519989,
+    "voice": "Brian",
+    "recorded": "2026-10-15",
+    "transition": "key-press",
+    "sidecar": "d3dd9654cea17fdfb5715d38b7181220b24e52cd31725c60792cf8839c712aa8"
   }
 }

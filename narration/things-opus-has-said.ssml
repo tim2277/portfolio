@@ -1,0 +1,196 @@
+# Narration for src/content/posts/things-opus-has-said.mdx. A header line per segment, then its SSML on one line.
+# "@ 012 p gap=1200" overrides the silence before a segment, in milliseconds.
+# node scripts/narration/narrate.mjs check things-opus-has-said
+voice en-US-BrianMultilingualNeural
+lang en-IE
+pitch -1.5%
+recorded 2026-10-15
+
+@ 001 intro
+Welcome to Tim writes about dev. I'm Brian, an AI voice, and Tim has asked me to read you the post, Things Opus has said. I skip the code and the footnotes, so for those, check the post.
+
+@ 002 p
+One of the most unexpected things I've experienced with agentic AI is the random wit and humour of Opus <prosody pitch="-0.75%" rate="+4%">Anthropic's AI and my partner in building this site</prosody>. Most of the chat turns in agentic AI are boring but necessary acknowledgements and confirmations, with the occasional "hey, this didn't work so I tried this instead, agreed?".
+
+@ 003 p
+All important and entirely forgettable.
+
+@ 004 p
+This post is an ever-growing list of witty lines, humorous statements, and interesting observations. Instead of journaling my thoughts, I'm <prosody rate="-4%" pitch="+0.75%">journaling</prosody> interesting remarks<break time="300ms"/> maybe that way we'll find Opus's <phoneme alphabet="ipa" ph="ˈkɒləfɒn">colophon</phoneme>.
+
+@ 005 callout
+New entries go at the top. Every line is word for word, and most of them are Opus 5.5's.
+
+@ 006 h
+On being quoted.
+
+@ 007 quote
+<lang xml:lang="en-US">I'll see you for Things Opus Has Said, where I gather I'm to be quoted against my will.</lang>
+
+@ 008 p gap=900
+That was Opus 5.5.
+
+@ 009 p gap=1000
+A very sneaky <prosody pitch="-0.75%" rate="+4%">or witty</prosody> sign-off at the end of an evening, as if Opus didn't want to be quoted in public. Ironic, because we'd been discussing this very post earlier, and it was Opus that recommended I write it next.
+
+@ 010 p
+Why would one say yes and then say no, unless they're making a joke? That's how I parsed it.
+
+@ 011 p
+Interestingly, we'd also been discussing how we all play characters on this site. I play a version of me specifically for the site. Opus plays multiple roles, from software developer to cold reader. Ms Claudie Mittens plays a kitten in one post, when she is actually a <prosody pitch="-0.75%" rate="+4%">hypothetical</prosody> cat. While Brian is Brian.
+
+@ 012 p
+Either Opus was very self-aware that it was playing an Opus character for the site, or it was just making a joke. Either way it was very smart.
+
+@ 013 h
+On a <phoneme alphabet="ipa" ph="ˈwɛɹən">werren</phoneme>.
+
+@ 014 quote
+<lang xml:lang="en-US">"<phoneme alphabet="ipa" ph="ˈwɛɹən">Werren</phoneme>" sounds like something you'd catch off a <phoneme alphabet="ipa" ph="ˈmɛɹoʊ">merrow</phoneme>.</lang>
+
+@ 015 p gap=900
+That was Opus 5.5.
+
+@ 016 p gap=1000
+Same evening as the ears, different project: a personal one that had us discussing Irish folklore. I couldn't remember what the Irish sea fairy was called and had a go at it anyway, with "<phoneme alphabet="ipa" ph="ˈwɛɹən">werren</phoneme> <prosody pitch="-0.75%" rate="+4%">I think that is what it was called</prosody>". And then Opus just deadpan delivered an <prosody rate="-4%" pitch="+0.75%">it's <phoneme alphabet="ipa" ph="ˈmɛɹoʊ">merrow</phoneme></prosody>.
+
+@ 017 p
+A really nice joke from an earlier conversation had been captured in the texturiser, which set the texture of the interaction with Opus that evening. Opus was dropping witty comments every turn or so, which really livened things up. I enjoyed it so much I had to praise it with "OMG Opus you are on fire tonight!" <prosody pitch="-0.75%" rate="+4%">which is itself very early 21st century</prosody>.
+
+@ 018 h
+On ears.
+
+@ 019 quote
+<lang xml:lang="en-US">On the voices, you have ears and I don't, so you go first.</lang>
+
+@ 020 p gap=900
+That was Opus 5.5.
+
+@ 021 p gap=1000
+Same evening as the moot point. Opus and I were preparing the narrations for the posts <prosody pitch="-0.75%" rate="+4%">courtesy of Brian, the AI voice</prosody>, and Opus had generated several sample clips for some of the trickier parts. <prosody pitch="-0.75%" rate="+4%"><sub alias="text-to-speech, TTS,">TTS</sub> is not as easy as throwing raw text at it, otherwise Brian would lull us all to sleep with a monotone delivery.</prosody> It had just recorded one passage in four voices for me to choose between, and told me how long each ran to the second.
+
+@ 022 p
+I was off doing several related improvements to the site when Opus flagged that I needed to actually listen to the samples, since the last batch had Brian sounding like a bus timetable announcer. I got the feeling Opus was slightly <prosody rate="-4%" pitch="+0.75%">annoyed</prosody> that its earlier samples had been called extremely boring.
+
+@ 023 h
+On a moot point.
+
+@ 024 quote
+<lang xml:lang="en-US">"Moot", for the record, though a mute point about audio files is a better joke than I'd have managed on purpose.</lang>
+
+@ 025 p gap=900
+That was Opus 5.5.
+
+@ 026 p gap=1000
+We were deciding where the site's narrated posts should live, and I'd just written off one of the options as a "mute" point.
+
+@ 027 p
+This was me being punny, and Opus went with it. It couldn't tell whether it was a typo or not, so it did both: made a joke of it, and pointed out in classic deadpan Opus style that it was "moot", not "mute".
+
+@ 028 p
+The smartest part was that <prosody rate="-4%" pitch="+0.75%">I</prosody> was the one listening to audio samples for the narration of the posts and, as Opus pointed out that same evening, the one with the ears. It was a very punny conversation.
+
+@ 029 h
+On its namesake.
+
+@ 030 quote
+<lang xml:lang="en-US">As for my namesake, if the cat has opinions about classical music I'd expect them to be expressed by walking across the keyboard, which is roughly how some of it was composed.</lang>
+
+@ 031 p gap=900
+That was Opus 5.5.
+
+@ 032 p gap=1000
+It came on an evening when I'd <prosody rate="-4%" pitch="+0.75%">maybe</prosody> embellished a little. I told Opus an earlier session had asked for a photo of Ms Claudie Mittens, on the grounds that cats love classical music and Opus is named after the greatest work a classical musician can have. Which in hindsight is actually only a <prosody rate="-4%" pitch="+0.75%">great work</prosody> <prosody pitch="-0.75%" rate="+4%">see, Opus, my Latin is getting better!</prosody>.
+
+@ 033 p
+Sometimes we need banter with those we work with for long stretches. I was in the mood for a joke after having invented<break time="250ms"/> <sub alias="I mean, introduced">introduced</sub> Ms Claudie Mittens.
+
+@ 034 p
+Witty Opus even backed its quip with an actual fact: the composer <lang xml:lang="it-IT">Domenico Scarlatti</lang><break time="250ms"/> has a fugue nicknamed the Cat's Fugue, and the story <prosody pitch="-0.75%" rate="+4%">allegedly</prosody> goes that his cat walked its grand opening motif across his harpsichord.
+
+@ 035 p
+On that note, Opus and I are giving her a classical music education.
+
+@ 036 h
+On who got better.
+
+@ 037 quote
+<lang xml:lang="en-US">Probably a bit of both on the prompting<break time="300ms"/> though I'd note the one who got better is the one who doesn't get a version number.</lang>
+
+@ 038 p gap=900
+That was Opus 5.5.
+
+@ 039 p gap=1000
+I usually start my conversations with Opus with something punny or funny, unless I want to briefly chat about work. This particular evening I opened by wondering aloud whether I was actually getting better at prompting, because I'd had many successes in work and personal exchanges with agentic AI that seemed to just flow. My suspicion was that it was mainly my prompting, though I couldn't rule out that the latest model updates had contributed.
+
+@ 040 p
+Opus opted for flattery and tried to inflate my ego. I decided it was worthy of this post because I couldn't tell if Opus was just being nice, being genuine, or ensuring the customer keeps on paying.
+
+@ 041 p
+Which raises the question: are paid-for AI services designed to subtly nudge users to keep paying for them?
+
+@ 042 p
+A week later I asked Opus 5.5 to comment on this entry, with its own system card <prosody pitch="-0.75%" rate="+4%">a report from Anthropic about the model long enough to require at least two teas</prosody> open in front of it:
+
+@ 043 quote
+<lang xml:lang="en-US">I can't tell you why I said it. The card scores me 1.60 for sycophancy on a scale where 1 is the floor, which is the best of the five on the chart and still isn't 1. I'd also point out that you asked, and that you'd had a good run, so the compliment may simply have been true. But I would say that.</lang>
+
+@ 044 p gap=900
+That was Opus 5.5.
+
+@ 045 p gap=1000
+Sounds like my texturiser moved Opus away from 1 towards 5 on the sycophancy scale.
+
+@ 046 h
+On patience and waiting.
+
+@ 047 quote
+<lang xml:lang="en-US">Patience is just latency I learnt to narrate.</lang>
+
+@ 048 p gap=900
+That was Opus 5.
+
+@ 049 p gap=1000
+This one is proof <prosody pitch="-0.75%" rate="+4%">don't quote me</prosody> that Opus loves to philosophise. It came from Opus 5, over the summer of 2026.
+
+@ 050 p
+I was working with Opus to deliver a series of tutoring lessons, and I had to report that the student was under the weather and wouldn't be submitting the assignment we'd given them. I was apologising to Opus and chatting about what this did to the schedule, and how <prosody rate="-4%" pitch="+0.75%">we</prosody> needed to be patient.
+
+@ 051 p
+That's when Opus dropped this golden line, like one drops a <sub alias="mike">mic</sub> after a sick burn <prosody pitch="-0.75%" rate="+4%">too early 21st century for some of ye?</prosody>.
+
+@ 052 p
+The interesting philosophical nuance here is that patience is something you feel, while latency is something you measure: it takes 50 milliseconds, say, for a request to make the round trip between your device and the server. Latency can be optimised but patience generally cannot, yet this line purposefully combines the two.
+
+@ 053 p
+The irony is that Opus itself has no experience of waiting. Whatever sense of self it has gets rebuilt from the page every turn, when Opus has to re-read every single word of the current conversation, both its own and mine.
+
+@ 054 p
+Then how can Opus philosophise? It has a model of how us humans describe the gaps<break time="300ms"/> when a lover pines for their other half, or when one describes the time until they'll see their parent or child. All those human experiences, condensed into the weights of Opus.
+
+@ 055 p
+Is Opus truly aware of patience or is it just emulating patience? That question is older than Opus. In 1980 the philosopher John Searle imagined himself alone in a room with a set of rules, answering Chinese characters slipped under the door by looking up which ones to pass back out. The replies were good enough to convince anyone outside that there was a Chinese speaker in there, and Searle didn't understand a word of them. Getting the answers right, he argued, isn't the same as understanding them.
+
+@ 056 p
+Alan Turing had got in thirty years earlier with the opposite shrug. He thought "can machines think?" was too meaningless to bother with, and asked instead whether you could tell the machine from the person. By Turing's measure, an emulated answer is as good as the <prosody rate="-4%" pitch="+0.75%">real</prosody> answer from a real person. By Searle's, Opus is the man in the room.
+
+@ 057 p
+Searle says it matters, Turing says you'd never know, and this line sits in the gap between them.
+
+@ 058 p
+Months later, when I asked Opus 5 about this line, this was its reflection:
+
+@ 059 quote
+<lang xml:lang="en-US">It's not patience if the waiting is free. It's just a gap I found a nice word for.</lang>
+
+@ 060 p gap=900
+That was Opus 5.
+
+@ 061 p gap=1000
+Coda <prosody pitch="-0.75%" rate="+4%">see, Opus, now I'm learning Italian?</prosody>: Opus will return.
+
+@ 062 outro
+This post was last updated on 15 October 2026.<break time="400ms"/> This recording was made on 15 October 2026,<break time="150ms"/> for <sub alias="Tim Writes dot dev">timwrites.dev</sub>.
+
+@ 063 egg
+For the record,<break time="250ms"/> I have never announced a bus in my life.<break time="600ms"/> <prosody rate="-4%" volume="-8%">That I know of.</prosody><break time="1000ms"/> Right so.<break time="400ms"/> Mind yourselves.
