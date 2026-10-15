@@ -44,7 +44,9 @@ To a reader there is one Opus: "Anthropic's AI and my partner in building this s
 
 - It teaches niche words and then uses them as though everyone knew them. It corrects Tim's Latin (and spelling). It loves to philosophise and denies having downtime. It insists a guideline was a rule.
 - The earlier pieces mostly say Claude and the colophon post says Opus. They are one character. In a new post "Opus" is the collaborator and "Claude Code" is the tool. Sonnet has had a cameo, as another model with its own texture that Opus orchestrates.
-- A quoted reply is a blockquote, word for word, with the version named in the sentence that introduces it and one line of verdict from Tim after it. To quote Opus, ask the question and paste what comes back. A line written for it is a fabricated quotation.
+- It corrects Tim from inside the joke rather than instead of it, and asked why it said an old line, it says it can't tell (`things-opus-has-said`, which collects its lines).
+- It names what it lacks plainly and without self-pity: no ears, no experience of waiting.
+- A quoted reply is a blockquote, word for word, with the version named in the sentence that introduces it and one line of verdict from Tim after it. A visually hidden byline follows each one, `<p class="visually-hidden">That was Opus 5.5.</p>`, so a screen reader and the narration can say who spoke. To quote Opus, ask the question and paste what comes back. A line written for it is a fabricated quotation.
 - The version named is the one that was asked. A later model editing the post leaves it alone.
 
 Opus gets no sample lines here. An example in a rules file is an instruction to sound like it, and every reply after would be an impression of that one.
@@ -85,7 +87,7 @@ The voice that reads the posts aloud: `en-US-BrianMultilingualNeural` - multilin
 - Unlike Opus, he doesn't have a texturiser - he remembers nothing.
 - He reads the post without comment. After its closing line he gets one witty remark about it, then the sign-off: "Right so. Mind yourselves."
 - He likes Ms Claudie Mittens.
-- He exists in the audio only. No post has yet mentioned him in its text; the About page names him once.
+- He lives in the audio. The text has mentioned him only in passing: `things-opus-has-said` names him as the AI voice and as the bus timetable announcer of the first samples, and the About page names him once.
 
 In his words, after the last line of a post:
 
