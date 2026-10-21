@@ -22,6 +22,10 @@ import { segmentPost } from './segments.mjs';
 import { respell, speak, textOf, validate, words } from './ssml.mjs';
 
 const VOICE = 'en-US-BrianMultilingualNeural';
+// Without these Brian reads in his own American accent at his own pitch, and the take still
+// builds clean. Tim's settings by ear, 10 Oct 2026; a new voice needs its own auditions.
+const LANG = 'en-IE';
+const PITCH = '-1.5%';
 const FORMAT = 'riff-24khz-16bit-mono-pcm';
 const RATE = 24000;
 
@@ -75,6 +79,8 @@ if (command === 'respell') {
     `# "@ 012 p gap=1200" overrides the silence before a segment, in milliseconds.`,
     `# node scripts/narration/narrate.mjs check ${target.id}`,
     `voice ${VOICE}`,
+    `lang ${LANG}`,
+    `pitch ${PITCH}`,
     `recorded ${recorded}`,
   ];
   mkdirSync(dirname(sidecar), { recursive: true });
@@ -87,7 +93,7 @@ if (command === 'respell') {
   if (command === 'publish') publish();
   if (command === 'audition') {
     const voice = option('voice') ?? tuned.voice;
-    const [lang, pitch] = [option('lang') ?? tuned.lang ?? 'en-GB', option('pitch') ?? tuned.pitch];
+    const [lang, pitch] = [option('lang') ?? tuned.lang, option('pitch') ?? tuned.pitch];
     const [from, to] = (option('segments') ?? '1-5').split('-').map(Number);
     if (!/^[a-z]{2}-[A-Z]{2}$/.test(lang) || (pitch && !/^[+-]\d{1,2}(\.\d)?%$/.test(pitch)) || !(from >= 1 && to >= from)) fail('bad --lang, --pitch or --segments');
     const name = [voice.replace(/^([a-z]{2}-[A-Z]{2})-(.*?)(Multilingual)?Neural$/, '$2-$1').toLowerCase(), lang === 'en-GB' ? '' : `as-${lang}`, pitch ? `pitch${pitch.slice(0, -1)}` : '', option('tag')]
@@ -104,7 +110,7 @@ if (command === 'respell') {
 function readSidecar() {
   if (!existsSync(sidecar)) fail(`${sidecar} doesn't exist. Run init first.`);
   const segments = [];
-  const settings = { voice: VOICE };
+  const settings = { voice: VOICE, lang: LANG, pitch: PITCH };
   for (const line of readFileSync(sidecar, 'utf8').split(/\r?\n/)) {
     if (!line.trim() || (!segments.length && line.startsWith('#'))) continue;
     const setting = segments.length ? null : line.match(/^(voice|lang|pitch|recorded|transition) (\S+)$/);
