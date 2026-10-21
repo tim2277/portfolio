@@ -94,11 +94,11 @@ Voice, the frontmatter fields, and the two reviews a post gets before it goes li
 
 ## Narration
 
-A post can carry a recording of itself, read aloud by an AI voice called Brian and played by a native `<audio controls>` with no script. The audio is made on Tim's machine and served from Azure Blob Storage; a post has a player when `narration/manifest.json` lists it. Read [`narration/README.md`](narration/README.md) before touching a recording, the pipeline in `scripts/narration/`, the sound effects, or Brian's lines.
+A post, a project or the About page can carry a recording of itself, read aloud by an AI voice called Brian and played by a native `<audio controls>` with no script. The audio is made on Tim's machine and served from Azure Blob Storage; an entry has a player when `narration/manifest.json` lists it. Read [`narration/README.md`](narration/README.md) before touching a recording, the pipeline in `scripts/narration/`, the sound effects, or Brian's lines.
 
 Two parts of it reach work that has nothing to do with audio:
 
-- **Editing a narrated post fails `npm run check`**, and with it the deploy, until the post is recorded again or taken out of the manifest. The page would otherwise offer a reading of words it no longer says.
+- **Editing a narrated post, project or page fails `npm run check`**, and with it the deploy, until it's recorded again or taken out of the manifest. That includes `src/content/pages/about.mdx` once About has a recording. The page would otherwise offer a reading of words it no longer says.
 - **The storage host is written twice**, as `AUDIO_URL` in `src/consts.ts` and as `media-src` in `public/staticwebapp.config.json`. Change one alone and every player goes silent on a green build.
 
 ## Branches and remotes

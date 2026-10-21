@@ -2,6 +2,7 @@
 import { getImage } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
+import Narration from '../components/Narration.astro';
 import Panel from '../components/Panel.astro';
 import TableOfContents from '../components/TableOfContents.astro';
 import heroImage from '../assets/photos/about-hero.jpg';
@@ -43,6 +44,8 @@ const share = await getImage({
 
   <div class="toc-layout">
     <div>
+      <Narration entry="pages/about" />
+
       <Panel title="At a glance">
         <dl>
           <dt>Based</dt><dd>Ireland</dd>

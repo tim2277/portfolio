@@ -1,0 +1,91 @@
+# Narration for src/content/pages/about.mdx. A header line per segment, then its SSML on one line.
+# "@ 012 p gap=1200" overrides the silence before a segment, in milliseconds.
+# node scripts/narration/narrate.mjs check pages/about
+voice en-US-BrianMultilingualNeural
+lang en-IE
+pitch -1.5%
+recorded 2026-10-21
+
+@ 001 intro
+Welcome to Tim writes about dev. I'm Brian, an AI voice, and Tim has asked me to read you the page,<break time="150ms"/> About. I skip the code and the footnotes, so for those, check the page.
+
+@ 002 p
+I started with science experiments in the backyard,<break time="150ms"/> which morphed into <prosody rate="-4%" pitch="+0.75%">pulling apart</prosody> computers,<break time="150ms"/> then writing software for them. I eventually settled on making computers move and understand their environment through my Mechatronics and Robotics studies<break time="300ms"/> including sending a wheeled robot <prosody rate="+4%">full speed into walls</prosody>,<break time="150ms"/> or copying human movements on industrial robot arms.<break time="300ms"/> Eventually computers became smart enough that I could actually work with them in natural language and images,<break time="200ms"/> thus the <sub alias="M S C">MSc</sub> in AI.<break time="300ms"/> I've spent decades discovering why and how things work.
+
+@ 003 p
+After years of<break time="150ms"/> "too much work",<break time="250ms"/> "who's going to maintain it",<break time="250ms"/> and "social media posts are boring",<break time="400ms"/> along came agentic dev,<break time="250ms"/> and I ran out of targets to blame.
+
+@ 004 h
+What I work on.
+
+@ 005 p
+Reasonably complex applications,<break time="150ms"/> mostly,<break time="150ms"/> in whatever language the job needs. I collect software languages <prosody pitch="-0.75%" rate="+4%">like I do human ones<break time="300ms"/> more on that shortly</prosody>.<break time="300ms"/> Though my favourite is <sub alias="C sharp">C#</sub> <prosody pitch="-0.75%" rate="+4%">and the <sub alias="dot net">.NET</sub> platform since <sub alias="two thousand and five">2005</sub></prosody>,<break time="200ms"/> maybe because it was my first?<break time="400ms"/> Let's not get started on C and <sub alias="C plus plus">C++</sub><break time="300ms"/> always fun when the application crashes and the motor decides to get stuck on <prosody rate="-4%" pitch="+0.75%">maximum throttle</prosody>.<break time="400ms"/> My day job's focus is <sub alias="dot net">.NET</sub> Blazor and distributed applications.
+
+@ 006 p
+What I keep coming back to is the seam between engineering practice,<break time="200ms"/> <lang xml:lang="fr-FR"><sub alias="Organisation internationale de normalisation,">I</sub></lang><sub alias="ISO">SO</sub> standards<break time="250ms"/> <prosody pitch="-0.75%" rate="+4%"><sub alias="twenty-seven oh oh one">27001</sub>, looking at you</prosody>,<break time="250ms"/> and tooling<break time="300ms"/> the parts of delivery that quietly decide whether a team ships monthly,<break time="150ms"/> or quarterly,<break time="250ms"/> or <prosody rate="-4%" pitch="+0.75%">not at all</prosody> because a change breaks all access controls!
+
+@ 007 h
+Using AI to engineer <prosody pitch="-0.75%" rate="+4%">fun</prosody> stuff.
+
+@ 008 p
+Most of what I write about here.<break time="300ms"/> Not "AI will replace your job and everyone you love",<break time="300ms"/> but the more interesting and less glamorous question:<break time="250ms"/> where do agents actually fit into an existing <sub alias="Software Development Lifecycle, S D L C,">SDLC</sub>?
+
+@ 009 p
+That includes all the boring stuff like:<break time="200ms"/> reviewing reams and reams of code,<break time="150ms"/> triaging vague customer reproduction steps <prosody pitch="-0.75%" rate="+4%">none whatsoever</prosody>,<break time="200ms"/> migrating to the latest tech,<break time="150ms"/> writing more reams of boring test code,<break time="150ms"/> keeping up all that documentation everyone says they'll do tomorrow<break time="150ms"/> but tomorrow never comes,<break time="250ms"/> and exploring what updates will break the code next.
+
+@ 010 p
+But it also includes the fun stuff:<break time="200ms"/> my personal anecdotes,<break time="150ms"/> hints at what I do in my spare time,<break time="200ms"/> and all the things that didn't end up fun because something broke<break time="150ms"/> or wasn't possible<break time="200ms"/> <prosody rate="-4%" pitch="+0.75%">yet</prosody>.
+
+@ 011 p
+This site is a fusion of the two,<break time="200ms"/> built with Anthropic's Claude Opus,<break time="200ms"/> read aloud by an AI called Brian,<break time="400ms"/> and supervised by Ms Claudie Mittens,<break time="150ms"/> who is a purely hypothetical kitten <prosody pitch="-0.75%" rate="+4%">maybe one day I'll have a real Ms Claudie Mittens</prosody>.
+
+@ 012 h
+When I'm not engineering.
+
+@ 013 p
+I love collecting languages,<break time="150ms"/> both human and computer ones. I'm a Greek speaker <prosody pitch="-0.75%" rate="+4%">spoke it exclusively till 5 years of age</prosody>,<break time="200ms"/> English speaker <prosody pitch="-0.75%" rate="+4%">boring</prosody>,<break time="200ms"/> fluent Japanese speaker <prosody pitch="-0.75%" rate="+4%">I've spent a lot of time living in Japan</prosody><break time="300ms"/> <lang xml:lang="ja-JP">日本語が大好きです～！</lang><break time="400ms"/> and absolute beginner in German and Irish<break time="300ms"/> maybe one day I'll translate my posts.
+
+@ 014 p
+While not using my brain,<break time="150ms"/> I love to hike up a random mountain or soak up some <sub alias="O two">O2</sub> on forest trails.<break time="300ms"/> Somehow I also have time to explore the world:<break time="200ms"/> I've visited nearly every continent and spent more time on planes than most people spend in cars.<break time="400ms"/> <prosody rate="-4%" pitch="+0.75%">But the truth is I usually tell people to ask me where I've not been</prosody>.
+
+@ 015 p
+Shoved between all that brain work and travel,<break time="150ms"/> I would be happily exploring <sub alias="Role-playing games, R P Gs,">RPGs</sub> on Xbox,<break time="100ms"/> PC,<break time="150ms"/> or even Switch 2.
+
+@ 016 h
+What you won't find here.
+
+@ 017 p
+Have to say this part:<break time="300ms"/> "there won't be any employer code and related bits on here".<break time="300ms"/> I focus on my personal hobby projects while sticking to concepts,<break time="100ms"/> patterns and write-ups<break time="300ms"/> generalised deliberately,<break time="150ms"/> and written from my own projects where there's code to show.
+
+@ 018 p
+Also:
+
+@ 019 li
+No analytics<break time="300ms"/> not like I'm selling ye something.
+
+@ 020 li
+No cookie banner<break time="300ms"/> there aren't any to eat,<break time="250ms"/> I've given them all to Ms Claudie Mittens.
+
+@ 021 li
+No newsletters,<break time="100ms"/> no emails,<break time="100ms"/> no Discords,<break time="100ms"/> no group chats,<break time="300ms"/> this is exclusively a <prosody rate="-4%" pitch="+0.75%">one-way</prosody> parasocial relationship!
+
+@ 022 h
+Keeping our parasocial relationship alive.
+
+@ 023 p
+You can keep pace with me at:
+
+@ 024 li
+GitHub.
+
+@ 025 li
+or the <sub alias="R S S">RSS</sub> feed.
+
+@ 026 p
+Hope that gave you enough to make fan art of me now.<break time="300ms"/> Send them on,<break time="150ms"/> I'll have Opus screen them for me <prosody pitch="-0.75%" rate="+4%">sorry Opus</prosody>!
+
+@ 027 outro
+This page was last updated on 11 October 2026.<break time="400ms"/> This recording was made on 21 October 2026,<break time="150ms"/> for <sub alias="Tim Writes dot dev">timwrites.dev</sub>.
+
+@ 028 egg
+I wish somebody would write me an About page.<break time="400ms"/> I've got personality.<break time="500ms"/> <prosody rate="-4%" volume="-8%">Or so they tell me.</prosody><break time="1000ms"/> Right so.<break time="400ms"/> Mind yourselves.

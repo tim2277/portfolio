@@ -1,10 +1,11 @@
 ---
 import manifest from '../../narration/manifest.json';
+import { kinds } from '../../narration/lexicon.json';
 import { AUDIO_URL } from '../consts';
 
 interface Props {
-  /** The post's slug. A post with no recording renders nothing. */
-  slug: string;
+  /** `posts/<slug>`, `projects/<slug>` or `pages/<slug>`. An entry with no recording renders nothing. */
+  entry: `${keyof typeof kinds}/${string}`;
 }
 
 interface Recording {
@@ -13,7 +14,9 @@ interface Recording {
   voice: string;
 }
 
-const recording = (manifest as Record<string, Recording>)[Astro.props.slug];
+const recording = (manifest as Record<string, Recording>)[Astro.props.entry];
+// The word Brian's intro uses for it, so the label and the recording agree.
+const kind = kinds[Astro.props.entry.split('/')[0] as keyof typeof kinds];
 const src = recording && `${AUDIO_URL}/${recording.file}`;
 // preload="none" keeps the reader's browser off the storage account until they
 // press play, which also means the player can't show a length. So the page says it.
@@ -24,7 +27,7 @@ const minutes = recording && Math.round(recording.seconds / 60);
   recording && (
     <div class="narration" role="group" aria-labelledby="narration-label">
       <p class="narration-label">
-        <span id="narration-label">Listen to this post</span>{' '}
+        <span id="narration-label">Listen to this {kind}</span>{' '}
         <span class="narration-note">
           · {minutes} minutes, read by {recording.voice}, an AI voice
         </span>

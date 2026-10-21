@@ -1,22 +1,25 @@
 # Narration
 
-A post can carry a recording of itself, read aloud by an AI voice. None of it runs in the site's build or in the browser: the audio is made on Tim's machine, lives in Azure Blob Storage, and reaches the page as a native `<audio controls>` with no script. A post gets a player when `narration/manifest.json` has an entry for its slug; `Narration.astro`, placed by `EntryLayout`, draws it.
+A post, a project or a page can carry a recording of itself, read aloud by an AI voice. None of it runs in the site's build or in the browser: the audio is made on Tim's machine, lives in Azure Blob Storage, and reaches the page as a native `<audio controls>` with no script. An entry gets a player when `narration/manifest.json` has a key for it; `Narration.astro` draws it, placed by `EntryLayout` for posts and projects and by the page itself for About.
+
+Every command takes the entry as `posts/<slug>`, `projects/<slug>` or `pages/<slug>`, and a bare slug means a post. The same id is the manifest key, the sidecar's path under `narration/` and the blob's under the container. A page has to be MDX under `src/content/pages/` with a `title` and an `updated` in its frontmatter, since the intro says one and the outro the other; nothing on the page shows them. Brian calls each kind by the word in the lexicon's `kinds`, and the player's label uses the same word.
 
 | Path | Holds |
 | --- | --- |
 | `scripts/narration/narrate.mjs` | The pipeline. Its header comment lists the commands |
-| `narration/<slug>.ssml` | The tuned reading: a header (voice, language tag, base pitch, recording date, optionally a transition), then one segment per paragraph, heading, list item and table row |
+| `scripts/narration/entries.mjs` | Turns an entry id into its source, sidecar and working folder |
+| `narration/<collection>/<slug>.ssml` | The tuned reading: a header (voice, language tag, base pitch, recording date, optionally a transition), then one segment per paragraph, heading, list item and table row |
 | `narration/lexicon.json` | Pronunciations, the intro and outro wording, the default transition |
 | `narration/effects.json` | Each sound effect's source, licence and hash |
 | `narration/manifest.json` | What's published. Written by `publish`, read by the site |
 | `.narration/` | Ignored. The per-segment cache, the built takes, and a `timeline.txt` beside each take |
 
 ```powershell
-node scripts/narration/narrate.mjs init <slug>      # the mechanical first pass, then tune it by hand
-node scripts/narration/narrate.mjs check <slug>     # same words as the post, allowed tags only
-node scripts/narration/narrate.mjs audition <slug> --segments=17-18 --tag=before
-node scripts/narration/narrate.mjs build <slug>     # synthesise, stitch, encode
-node scripts/narration/narrate.mjs publish <slug>   # upload, and record it in the manifest
+node scripts/narration/narrate.mjs init pages/about      # the mechanical first pass, then tune it by hand
+node scripts/narration/narrate.mjs check pages/about     # same words as the page, allowed tags only
+node scripts/narration/narrate.mjs audition pages/about --segments=17-18 --tag=before
+node scripts/narration/narrate.mjs build pages/about     # synthesise, stitch, encode
+node scripts/narration/narrate.mjs publish pages/about   # upload, and record it in the manifest
 ```
 
 `build` and `audition` want `AZURE_SPEECH_KEY` from the Speech resource in Tim's subscription, read with `az` into the session and never written down, and `ffmpeg` on the `PATH`. `publish` wants `az` signed in. Only changed segments are synthesised again; the rest come from the cache.

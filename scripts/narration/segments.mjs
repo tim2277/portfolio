@@ -13,7 +13,7 @@ const EMOJI = /\s*[\p{Extended_Pictographic}\u{FE0F}\u{200D}]+/gu;
 // off markup that's already in the post. Judgement is the tuning pass's job.
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-export function segmentPost(path, { lexicon = {}, summary = false, site, name, recorded, reader } = {}) {
+export function segmentPost(path, { lexicon = {}, summary = false, site, name, recorded, reader, kind = 'post' } = {}) {
   const source = readFileSync(path, 'utf8');
   const tree = mdxToMdast(source, { features: { gfm: true } });
   const segments = [];
@@ -74,7 +74,10 @@ export function segmentPost(path, { lexicon = {}, summary = false, site, name, r
         break;
       case 'list':
         for (const item of node.children) {
-          push('li', item.children.filter((c) => c.type === 'paragraph').map(kids).join(' '), { stop: true });
+          // An item that is only an element, like About's `- <a rel="me">GitHub</a>`, parses as a
+          // block and not a paragraph. Skipping it would leave the next item's "or" with nothing before it.
+          const spoken = item.children.filter((c) => c.type === 'paragraph' || c.type === 'mdxJsxFlowElement');
+          push('li', spoken.map(kids).join(' '), { stop: true });
           item.children.filter((c) => c.type === 'list').forEach((c) => block(c));
         }
         break;
@@ -109,7 +112,7 @@ export function segmentPost(path, { lexicon = {}, summary = false, site, name, r
   if (!title) throw new Error(`${path}: no single-line title in the frontmatter`);
   // A [bracketed] stretch of the intro is only said of a post that links to its companion code.
   const companion = lexicon.companion && source.includes(`/${lexicon.companion}/`);
-  const intro = lexicon.intro?.replace(/\[([^\]]*)\]/g, companion ? '$1' : '');
+  const intro = lexicon.intro?.replace(/\[([^\]]*)\]/g, companion ? '$1' : '').replaceAll('{kind}', kind);
   if (intro) push('intro', prose(intro).replace('{name}', () => escapeXml(name)).replace('{voice}', reader).replace('{title}', () => prose(title)));
   else push('title', prose(title), { stop: true });
   tree.children.forEach((node) => block(node));
@@ -119,7 +122,7 @@ export function segmentPost(path, { lexicon = {}, summary = false, site, name, r
   const long = (iso) => `${Number(iso.slice(8))} ${MONTHS[iso.slice(5, 7) - 1]} ${iso.slice(0, 4)}`;
   const updated = dated('updated') ?? dated('date');
   if (lexicon.outro && updated && recorded) {
-    push('outro', prose(lexicon.outro).replace('{site}', spoken(site, true)).replace('{updated}', long(updated)).replace('{recorded}', long(recorded)));
+    push('outro', prose(lexicon.outro.replaceAll('{kind}', kind)).replace('{site}', spoken(site, true)).replace('{updated}', long(updated)).replace('{recorded}', long(recorded)));
   }
 
   return { segments, unlisted: [...unlisted] };

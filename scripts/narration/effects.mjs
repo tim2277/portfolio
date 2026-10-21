@@ -42,6 +42,6 @@ if (command === 'add') {
   const manifestPath = join(root, 'narration', 'manifest.json');
   const manifest = existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, 'utf8')) : {};
   console.log('\nPublished recordings:');
-  for (const [slug, recording] of Object.entries(manifest)) console.log(`  ${slug.padEnd(28)}${recording.transition ?? 'not recorded'}`);
+  for (const [entry, recording] of Object.entries(manifest)) console.log(`  ${entry.padEnd(40)}${recording.transition ?? 'not recorded'}`);
   if (missing) process.exit(1);
 }

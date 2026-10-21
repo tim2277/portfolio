@@ -1,6 +1,7 @@
 {
-  "intro": "Welcome to {name}. I'm {voice}, an AI voice, and Tim has asked me to read you the post, {title}. I skip the code and the footnotes, so for those, check the post[ or the public Git repository].",
-  "outro": "This post was last updated on {updated}. This recording was made on {recorded} for {site}.",
+  "intro": "Welcome to {name}. I'm {voice}, an AI voice, and Tim has asked me to read you the {kind}, {title}. I skip the code and the footnotes, so for those, check the {kind}[ or the public Git repository].",
+  "outro": "This {kind} was last updated on {updated}. This recording was made on {recorded} for {site}.",
+  "kinds": { "posts": "post", "projects": "project page", "pages": "page" },
   "companion": "wrote-it-down",
   "transition": "key-press",
   "caption": "Picture caption.",

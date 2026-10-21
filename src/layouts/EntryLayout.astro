@@ -83,7 +83,7 @@ const share = data.heroImage
             </ul>
           )
         }
-        {!isProject && <Narration slug={entry.id} />}
+        <Narration entry={`${entry.collection}/${entry.id}`} />
         {
           data.heroImage && (
             <Figure src={data.heroImage} alt={data.heroAlt ?? ''} id="entry-hero" hero />

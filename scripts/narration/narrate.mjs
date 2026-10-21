@@ -1,4 +1,6 @@
-// Narrates a post: node scripts/narration/narrate.mjs <init|check|build> <slug> [--summary] [--force]
+// Narrates a post, a project or a page: node scripts/narration/narrate.mjs <init|check|build> <entry> [--summary] [--force]
+//
+//   <entry> is posts/<slug>, projects/<slug> or pages/<slug>. A bare slug is a post.
 //
 //   init   writes narration/<slug>.ssml from the mechanical rules, for tuning by hand
 //   check  holds the tuned file to the post: same segments, same words, allowed tags only
@@ -15,7 +17,7 @@ import { execFileSync, execSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { entry, root } from './entries.mjs';
 import { segmentPost } from './segments.mjs';
 import { respell, speak, textOf, validate, words } from './ssml.mjs';
 
@@ -23,13 +25,17 @@ const VOICE = 'en-US-BrianMultilingualNeural';
 const FORMAT = 'riff-24khz-16bit-mono-pcm';
 const RATE = 24000;
 
-const [command, slug, ...flags] = process.argv.slice(2);
-if (!['init', 'check', 'respell', 'build', 'audition', 'publish'].includes(command) || !slug) fail('usage: narrate.mjs <init|check|respell|build|audition|publish> <slug> [--summary] [--force]');
+const [command, id, ...flags] = process.argv.slice(2);
+if (!['init', 'check', 'respell', 'build', 'audition', 'publish'].includes(command) || !id) fail('usage: narrate.mjs <init|check|respell|build|audition|publish> <entry> [--summary] [--force]');
 const option = (name) => flags.find((f) => f.startsWith(`--${name}=`))?.slice(name.length + 3);
 
-const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const sidecar = join(root, 'narration', `${slug}.ssml`);
-const work = join(root, '.narration', slug);
+let target;
+try {
+  target = entry(id);
+} catch (error) {
+  fail(error.message);
+}
+const { collection, slug, sidecar, work, source: post } = target;
 const cache = join(root, '.narration', 'cache');
 
 const lexicon = JSON.parse(readFileSync(join(root, 'narration', 'lexicon.json'), 'utf8'));
@@ -39,7 +45,6 @@ const head = existsSync(sidecar) && command !== 'init' ? readFileSync(sidecar, '
 const recorded = head.match(/^recorded (\d{4}-\d{2}-\d{2})$/m)?.[1] ?? new Date().toLocaleDateString('en-CA');
 // The reader introduces himself by the voice's own name, so a change of voice can't leave the intro naming the last one.
 const reader = (head.match(/^voice (\S+)$/m)?.[1] ?? VOICE).match(/^[a-z]{2}-[A-Z]{2}-([A-Z][a-z]+)/)[1];
-const post = join(root, 'src', 'content', 'posts', `${slug}.mdx`);
 // Line endings differ between a Windows checkout and the Linux one that runs the site's check.
 const sidecarHash = () => createHash('sha256').update(readFileSync(sidecar, 'utf8').replace(/\r\n/g, '\n')).digest('hex');
 const { segments: source, unlisted } = segmentPost(post, {
@@ -49,6 +54,7 @@ const { segments: source, unlisted } = segmentPost(post, {
   name: consts.match(/SITE_TITLE = '([^']+)'/)[1].replace(/[[\]]/g, ''),
   recorded,
   reader,
+  kind: lexicon.kinds[collection],
 });
 if (unlisted.length) console.warn(`not in narration/lexicon.json, read as written:\n  ${unlisted.join('\n  ')}`);
 
@@ -65,12 +71,13 @@ if (command === 'respell') {
 } else if (command === 'init') {
   if (existsSync(sidecar) && !flags.includes('--force')) fail(`${sidecar} exists. --force replaces it, tuning and all.`);
   const header = [
-    `# Narration for src/content/posts/${slug}.mdx. A header line per segment, then its SSML on one line.`,
+    `# Narration for src/content/${collection}/${slug}.mdx. A header line per segment, then its SSML on one line.`,
     `# "@ 012 p gap=1200" overrides the silence before a segment, in milliseconds.`,
-    `# node scripts/narration/narrate.mjs check ${slug}`,
+    `# node scripts/narration/narrate.mjs check ${target.id}`,
     `voice ${VOICE}`,
     `recorded ${recorded}`,
   ];
+  mkdirSync(dirname(sidecar), { recursive: true });
   writeFileSync(sidecar, [...header, ...source.map((s) => `\n@ ${s.id} ${s.kind}\n${s.ssml}`), ''].join('\n'));
   console.log(`${source.length} segments, ${source.reduce((n, s) => n + s.ssml.length, 0)} characters of SSML -> ${sidecar}`);
 } else {
@@ -226,7 +233,7 @@ function publish() {
   const opus = join(work, `${slug}.opus`);
   const bytes = readFileSync(opus);
   // The hash in the name is what lets the file be cached for a year: a new recording is a new URL.
-  const file = `posts/${slug}.${createHash('sha256').update(bytes).digest('hex').slice(0, 12)}.opus`;
+  const file = `${collection}/${slug}.${createHash('sha256').update(bytes).digest('hex').slice(0, 12)}.opus`;
   const [, account, container] = consts.match(/AUDIO_URL = 'https:\/\/([a-z0-9]+)\.[^/']+\/([^/']+)'/);
   const upload = ['storage', 'blob', 'upload', '--auth-mode', 'login', '--account-name', account, '--container-name', container];
   // az is a .cmd on Windows, which only a shell can start.
@@ -236,7 +243,7 @@ function publish() {
 
   const manifestPath = join(root, 'narration', 'manifest.json');
   const manifest = existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, 'utf8')) : {};
-  manifest[slug] = { file, seconds: stamp.seconds, bytes: bytes.length, voice: reader, recorded, transition: stamp.transition, sidecar: stamp.sidecar };
+  manifest[target.id] = { file, seconds: stamp.seconds, bytes: bytes.length, voice: reader, recorded, transition: stamp.transition, sidecar: stamp.sidecar };
   writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
   console.log(`${container}/${file}, recorded in narration/manifest.json`);
 }
