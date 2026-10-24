@@ -108,7 +108,7 @@ Two remotes, one working copy:
 | Remote | Repo | Holds |
 | --- | --- | --- |
 | `origin` | `portfolio` (public) | `main` |
-| `private` | `portfolio-drafts` (private) | `drafts/*`, plus `main` as a base |
+| `private` | `portfolio-drafts` (private) | `drafts/*`, plus `main` as a base, and `home`, its default branch |
 
 `main` lives on both, with its upstream set to `origin` — a bare `git push` on `main` is always the public one. The private copy exists so draft branches have a base; refresh it with `git push private main`.
 
@@ -118,6 +118,7 @@ Unfinished writing lives on a `drafts/<topic>` branch pushed only to `private`, 
 - **Never `git push --all` or `--mirror`.** `.githooks/pre-push` refuses `drafts/*` → `origin`. It's tracked in the repo and wired up with `git config core.hooksPath .githooks`, so a fresh clone needs that one command to arm it. `--no-verify` skips it. Seatbelt, not a lock.
 - **Publish a post as one commit on `main`, carrying only its own files.** A draft branch holds several unfinished posts at once, some never meant for the public repo, so it is never merged or squashed into `main` whole. On `main`, `git checkout drafts/<topic> -- <paths>` brings across the post, its images, its narration file and any shared file it changed, and one commit publishes them. Check `git diff --cached --stat` names nothing else before committing. Push `main` before merging it back into the draft branch: merged first, its new commits sit in draft history and `pre-push` refuses them. A normal merge would carry every intermediate draft commit, and every other draft, into the public repo permanently. This is the point of the whole arrangement — getting it wrong here undoes it.
 - **The private repo holds no secrets and has Actions disabled.** It shares history with `main`, so a workflow there could otherwise deploy draft content to the live site.
+- **The private repo's default branch is `home`, a README and nothing else.** Dependabot reads its config from the default branch, and `main` carries the public repo's `.github/dependabot.yml`, so with `main` as the default it opened PRs nobody would merge. Leave `home` as the default.
 
 Preview drafts with `npm run dev`. Draft branches never reach the public repo, so they get no PR preview environment, and that's intended.
 
