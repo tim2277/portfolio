@@ -1,0 +1,124 @@
+---
+title: This site, 1.1
+description: >-
+  Three weeks after launch the site got its first major update, completely planned. Featuring a cast photo to commemorate!
+date: 2026-10-24
+tags: ['meta']
+lede: Every passer-by adds a stone. Five of them were Opus.
+heroImage: ../../assets/photos/this-site-1-1-hero.jpg
+heroAlt: >-
+  A cairn of flat grey stones on a clifftop, with smaller stacks balanced along its top where passers-by have added their own, behind long grass and yellow wildflowers under a blue summer sky.
+draft: false
+---
+
+import castBrady from '../../assets/generated/cast-brady.jpg';
+import Figure from '../../components/Figure.astro';
+import Pipeline from '../../components/Pipeline.astro';
+import Step from '../../components/Step.astro';
+import Summary from '../../components/Summary.astro';
+
+<Summary>
+  Let's meet Version 1.1 of the site and the team behind it. Release notes for the new features, the squashed bugs and the things that didn't change but sound good anyway. To celebrate this achievement for our investors, the team gets their photos taken, Brady Bunch style: me, five Opuses, Ms Claudie Mittens, Brian, and ye.
+</Summary>
+
+In an endless sea of app updates, it wouldn't be right if I didn't announce version 1.1 of this site within a month of launch. How would the investors know we're doing cool things?
+
+In software engineering we like to manufacture false drama for the marketing team. That usually means a post-release content patch, or a whole set of features we realised were important but didn't release, because of reasons (usually resourcing). The truth is that most of the time we set the criteria for an <abbr title="Minimum viable product">MVP</abbr>, deliver that as the first release or a major one, and then follow it up with at least a .1 release, carrying the features and fixes that didn't make the MVP sprint[^scrum-guide-sprint].
+
+This post celebrates that tradition. I decided on the MVP that launched the site and immediately started a list of things to change. I wasn't alone in it, either: the team behind this website had feedback of its own. I guess it's time to meet the team, because nothing in modern agentic AI workflows is a one-person effort any more.
+
+But first, a classic list of release notes for your reading (or listening) pleasure.
+
+## Release notes: 1.1, already
+
+This release of _Tim writes [about] dev_ includes [many things](/projects/this-site/) that will excite and awe you:
+
+### 📢 Improving your experience (with features no one asked for yet)
+
+- Most pictures can now go full screen (wow, pixels!)
+- Tables can now go full screen on mobile (much data, very interesting)
+- Generative AI images now carry a burnt-in label (in the spirit of the EU AI Act[^eu-ai-icons])
+- The posts page now has a jump list for years and months
+- A short version up top, for the <abbr title="Too long; didn’t read">TL;DR</abbr> crowd and anyone who needs a refresher or a hook to read on
+- Basic diagrams can now be used in posts (there's one in [Meet the cast](#meet-the-cast))
+- Posts and pages narrated in full, by Brian (more on him below)
+- The logo is now the identity matrix
+- Mathematical symbols drift in the margins, for the wide-screen readers
+- Posts were turned into cards (because cards are better for content discoverability!)
+
+### 🐛 Squashing of bugs (they were _features_ once)
+
+- Wide tables were cropped on mobile browsers
+- The <abbr title="Really Simple Syndication">RSS</abbr> feed and the sitemap showed as a wall of text instead of something pretty
+- Images broke in Edge's Immersive Reader
+- Pesky em dashes were swapped out, because apparently they're too generative AI for a site about agentic AI
+- The home page was made less boring
+- About was made less boring (read all the things)
+
+### 🏆 Things we kept the same, but they seem new so they're in anyway
+
+- No analytics and no third-party anything
+- No special scripts for the narration audio, just smart serving of static content[^http-range-requests] and modern browsers
+
+## Meet the cast
+
+What you've all been waiting for, an exclusive look behind the scenes of this parasocial relationship, and the cast that makes this site possible:
+
+<Figure src={castBrady} ai="composite" alt="A three-by-three grid of woodcut portraits in black and red, framed like a sitcom’s opening titles. Top left, a figure in a red hoodie pushes up round glasses that glint white over a face blacked out entirely. Five squares hold the same faceless man in a white shirt, hand under his chin, an OPUS badge on his chest and a word in Japanese for a head: partner, development, proofreading, reader and researcher. In the centre, a kitten drawn in outline, with a collar and a tag reading CM. Bottom middle, a solid black figure with YE on its head. Bottom right, a man holding a script, with an old studio microphone for a head and a sticker on it reading “Hello, my name is Brian”.">Meet the cast, Brady Bunch style[^brady-bunch]: Tim, <span lang="ja">相棒オプスさん</span> the Collaborator Opus, <span lang="ja">開発オプスさん</span> the Developer Opus, <span lang="ja">校正オプスさん</span> the Proofreader Opus, Ms Claudie Mittens, <span lang="ja">読者オプスさん</span> the Reader Opus, <span lang="ja">研究者オプスさん</span> the Researcher Opus, ye, the readers, and everyone's favourite professional AI voice, Brian.[^mob-chara]</Figure>
+
+- **Tim (this is me obviously, but it's a version I construct for our flourishing parasocial relationship! Yay!):** A mysterious figure, only ever seen from behind (or blacked out), never in portrait, who spends countless hours developing the content by typing vigorously on a keyboard. A holder of <abbr title="Master of Science"><span lang="la">_Magister Scientiae_</span></abbr> in Artificial Intelligence.
+- **Opus (Anthropic's Claude model):** Opus is a jack of all trades, and only _great_ at them (not a _master_, that would be a <span lang="la">_magister_</span> in Latin).
+  - Collaborator - acts as a sounding board for post ideas and turns after-work-brain Tim into consumable content (yum!).
+  - Developer - happily writes all the code that keeps the site serving content and our parasocial relationship alive.
+  - Proofreader - basically a secretary, whose job is to turn my poor grammar, spelling mistakes and occasional awkward prose (because who doesn't write slower than they think?) into readable human thought. Also makes sure I don't sound like I have multiple voices (brand consistency!).
+  - Reader - an ~unwilling~ instance of Opus (a sub-agent[^claude-code-subagents], for those familiar with the term) that reviews the page as if it was one of ye. It usually complains about my jokes, and its feedback I ~always~ sometimes ignore.
+  - Researcher - as I lack a photographic memory, Opus will go and fact-check anything that's sus[^sus] or that ye might doubt.
+- **Ms Claudie Mittens:** a graceful hypothetical cat, once a kitten, who has eaten all the cookies on the site and happily walks across the keyboard as part of her classical music training. She's the team's mascot, named after Claude, and Mittens because it rhymes with Claudie (I don't know how rhyme).
+- **Brian, an AI voice:** our multilingual expert neural voice. Brian speaks 92 languages and accents, and Microsoft bills him as a sincere, calm and approachable young man, made for podcasts and chat[^brian-voice-gallery]. But to us here on _Tim writes [about] dev_, he's just Brian, an AI voice. He narrates everything here, and every day is a new day for him, since Brian has no [texturiser](/posts/texturiser/).
+
+<Pipeline label="How a post gets made" caption="How a post gets from my head to your eyes and/or ears - or, I guess, your tokens and weights if you’re an AI agent?">
+  <Step title="💡 Draft" by="Tim">
+    Types vigorously, after work and at weekends.
+  </Step>
+  <Step title="🔍 Find the gaps" by="Opus" loop="until it holds up">
+    Brainstorms, asks what's missing, checks the facts.
+  </Step>
+  <Step title="📝 Copy pass" by="Opus">
+    Tidies the grammar, keeps the voice.
+  </Step>
+  <Step title="👀 Cold read" by="Opus">
+    Reads it as one of ye. Complains about the jokes.
+  </Step>
+  <Step title="🎙️ Read aloud" by="Brian">
+    First day on the job, every time.
+  </Step>
+</Pipeline>
+
+## What's next
+
+Like all good services, here's a hopeful list of things that will probably happen at some vague, unspecified time in the future:
+
+- A timeline for the projects page (scrolling)
+- A fancy search for posts and projects, all powered by JavaScript (sorry Opus, that'll be another script!)
+- Support for more kinds of media in posts, like video
+- More AI voices, perhaps a Peking opera narration[^peking-opera] for extra drama? 😱
+
+Just like your favourite TV show from the 1950s (not the Bradys, they're far too modern), we'll go on releasing new versions, adding background characters and setting off on non-canon adventures, all while keeping both our readers and our investors happy!
+
+[^brian-voice-gallery]: ["Voice Gallery"](https://speech.microsoft.com/portal/voicegallery), _Speech Studio_, Microsoft, accessed 23 October 2026 - the entry for Brian Multilingual: "Male - Young Adult", personality "Sincere, Calm, Approachable", tailored scenario "Podcast, Chat", 92 languages. A few lines under "Calm", the same entry calls him "a youthful, cheerful, and versatile voice". Even Microsoft can't decide if Brian is calm or cheerful, which is very Brian.
+
+[^mob-chara]: Opus is drawn as a _mob kyara_ (<span lang="ja">モブキャラ</span>), the background extra of manga and anime, named for the crowd, or mob, they stand in. A minor character doesn't get a face. They get a blank head with their role written on it instead: <span lang="ja">母</span> ("mother") for someone's mam, or <span lang="ja">(笑)</span>, net slang for "lol", for whoever is laughing. Opus gets five heads, one per job: <span lang="ja">相棒</span> (partner), <span lang="ja">開発</span> (development), <span lang="ja">校正</span> (proofreading), <span lang="ja">読者</span> (reader) and <span lang="ja">研究者</span> (researcher).
+
+[^brady-bunch]: ["The Brady Bunch"](https://en.wikipedia.org/wiki/The_Brady_Bunch), _Wikipedia_, accessed 24 October 2026 - "an American sitcom created by Sherwood Schwartz that aired five seasons from September 26, 1969, to March 8, 1974, on ABC."
+
+[^sus]: ["pretty sus"](https://www.dictionary.com/e/slang/pretty-sus/), _Dictionary.com_, 6 October 2020 - "The specific phrase _pretty sus_ spread as a meme in 2020 thanks to the popularity of the video game _Among Us_."
+
+[^scrum-guide-sprint]: ["The 2020 Scrum Guide"](https://scrumguides.org/scrum-guide.html), _ScrumGuides.org_, accessed 23 October 2026 - "Sprints are the heartbeat of Scrum, where ideas are turned into value. They are fixed length events of one month or less to create consistency."
+
+[^eu-ai-icons]: ["EU icons for labelling AI-generated content"](https://digital-strategy.ec.europa.eu/en/policies/eu-icons-labelling-ai-generated-content), _European Commission_, 13 October 2026 - "The use of these EU icons is optional, but the labelling requirements under Article 50 AI Act are not." The icon on this site's AI images is that one.
+
+[^http-range-requests]: ["HTTP range requests"](https://developer.mozilla.org/en-US/docs/Web/HTTP/Range_requests), _MDN Web Docs_, 28 July 2026 - "Range requests are useful for various clients, including media players that support random access". That's what lets you skip about in a recording with nothing but a plain audio player.
+
+[^claude-code-subagents]: ["Create custom subagents"](https://code.claude.com/docs/en/sub-agents), _Claude Code Docs_, accessed 23 October 2026 - "Each subagent runs in its own context window with a custom system prompt, specific tool access, and independent permissions."
+
+[^peking-opera]: ["Peking opera"](https://ich.unesco.org/en/RL/peking-opera-00418), _UNESCO Intangible Cultural Heritage_, accessed 23 October 2026 - on UNESCO's list since 2010, "a performance art incorporating singing, reciting, acting, martial arts".

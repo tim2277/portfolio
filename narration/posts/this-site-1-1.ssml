@@ -1,0 +1,175 @@
+# Narration for src/content/posts/this-site-1-1.mdx. A header line per segment, then its SSML on one line.
+# "@ 012 p gap=1200" overrides the silence before a segment, in milliseconds.
+# node scripts/narration/narrate.mjs check posts/this-site-1-1
+voice en-US-BrianMultilingualNeural
+lang en-IE
+pitch -1.5%
+recorded 2026-10-24
+
+@ 001 intro
+Welcome to Tim writes about dev.<break time="400ms"/> I'm Brian, an AI voice,<break time="150ms"/> and Tim has asked me to read you the post,<break time="200ms"/> This site,<break time="150ms"/> 1.1.<break time="500ms"/> I skip the code and the footnotes, so for those,<break time="150ms"/> check the post.
+
+@ 002 p
+In an endless sea of app updates, it wouldn't be right if I didn't announce version 1.1 of this site within a month of launch.<break time="350ms"/> How would the investors know we're doing cool things?
+
+@ 003 p
+In software engineering we like to manufacture false drama for the marketing team.<break time="300ms"/> That usually means a post-release content patch, or a whole set of features we realised were important but didn't release,<break time="200ms"/> because of reasons <prosody pitch="-0.75%" rate="+4%">usually resourcing</prosody>.<break time="350ms"/> The truth is that most of the time we set the criteria for an <sub alias="Minimum viable product, M V P,">MVP</sub>, deliver that as the first release or a major one, and then follow it up with at least a <sub alias="point one">.1</sub> release,<break time="150ms"/> carrying the features and fixes that didn't make the <sub alias="M V P">MVP</sub> sprint.
+
+@ 004 p
+This post celebrates that tradition.<break time="300ms"/> I decided on the <sub alias="M V P">MVP</sub> that launched the site and immediately started a list of things to change.<break time="250ms"/> I wasn't alone in it, either:<break time="200ms"/> the team behind this website had feedback of its own.<break time="300ms"/> I guess it's time to meet the team, because nothing in modern agentic AI workflows is a one-person effort any more.
+
+@ 005 p
+But first,<break time="150ms"/> a classic list of release notes for your reading <prosody pitch="-0.75%" rate="+4%">or listening</prosody> pleasure.
+
+@ 006 h
+Release notes:<break time="250ms"/> 1.1,<break time="200ms"/> already.
+
+@ 007 p
+This release of <sub alias="Tim writes about dev">Tim writes [about] dev</sub> includes many things that will excite<break time="100ms"/> and<break time="100ms"/> <phoneme alphabet="ipa" ph="ɔː">awe</phoneme> you:
+
+@ 008 h
+Improving your experience,<break time="150ms"/> <prosody pitch="-0.75%" rate="+4%">with features no one asked for yet</prosody>.
+
+@ 009 li
+Most pictures can now go full screen.<break time="200ms"/> <prosody pitch="-0.75%" rate="+4%">wow, pixels!</prosody>
+
+@ 010 li
+Tables can now go full screen on mobile.<break time="200ms"/> <prosody pitch="-0.75%" rate="+4%">much data,<break time="150ms"/> very interesting</prosody>.
+
+@ 011 li
+Generative AI images now carry a burnt-in label,<break time="150ms"/> <prosody pitch="-0.75%" rate="+4%">in the spirit of the <sub alias="E U">EU</sub> AI Act</prosody>.
+
+@ 012 li
+The posts page now has a jump list for years and months.
+
+@ 013 li
+A short version up top, for the <sub alias="Too long, didn’t read, T L D R,">TL;DR</sub> crowd,<break time="150ms"/> and anyone who needs a refresher or a hook to read on.
+
+@ 014 li
+Basic diagrams can now be used in posts.<break time="200ms"/> <prosody pitch="-0.75%" rate="+4%">there's one in Meet the cast</prosody>.
+
+@ 015 li
+Posts and pages narrated in full,<break time="150ms"/> by Brian.<break time="200ms"/> <prosody pitch="-0.75%" rate="+4%">more on him below</prosody>.
+
+@ 016 li
+The logo is now the identity matrix.
+
+@ 017 li
+Mathematical symbols drift in the margins,<break time="150ms"/> for the wide-screen readers.
+
+@ 018 li
+Posts were turned into cards.<break time="200ms"/> <prosody pitch="-0.75%" rate="+4%">because cards are better for content discoverability!</prosody>
+
+@ 019 h
+Squashing of bugs.<break time="200ms"/> <prosody pitch="-0.75%" rate="+4%">they were <prosody rate="-4%" pitch="+0.75%">features</prosody> once</prosody>.
+
+@ 020 li
+Wide tables were cropped on mobile browsers.
+
+@ 021 li
+The <sub alias="Really Simple Syndication, R S S,">RSS</sub> feed and the sitemap showed as a wall of text,<break time="150ms"/> instead of something pretty.
+
+@ 022 li
+Images broke in Edge's Immersive Reader.
+
+@ 023 li
+Pesky em dashes were swapped out,<break time="200ms"/> because apparently they're too generative AI for a site about agentic AI.
+
+@ 024 li
+The home page was made less boring.
+
+@ 025 li
+About was made less boring.<break time="200ms"/> <prosody pitch="-0.75%" rate="+4%">read all the things</prosody>.
+
+@ 026 h
+Things we kept the same,<break time="200ms"/> but they seem new,<break time="100ms"/> so they're in anyway.
+
+@ 027 li
+No analytics,<break time="150ms"/> and no third-party anything.
+
+@ 028 li
+No special scripts for the narration audio,<break time="200ms"/> just smart serving of static content and modern browsers.
+
+@ 029 h
+Meet the cast.
+
+@ 030 p
+What you've all been waiting for:<break time="250ms"/> an exclusive look behind the scenes of this parasocial relationship,<break time="200ms"/> and the cast that makes this site possible:
+
+@ 031 caption
+Picture caption.<break time="300ms"/> Meet the cast,<break time="150ms"/> Brady Bunch style:<break time="250ms"/> Tim,<break time="250ms"/> <lang xml:lang="ja-JP">相棒オプスさん</lang>,<break time="100ms"/> the Collaborator Opus,<break time="250ms"/> <lang xml:lang="ja-JP">開発オプスさん</lang>,<break time="100ms"/> the Developer Opus,<break time="250ms"/> <lang xml:lang="ja-JP">校正オプスさん</lang>,<break time="100ms"/> the Proofreader Opus,<break time="250ms"/> Ms Claudie Mittens,<break time="250ms"/> <lang xml:lang="ja-JP">読者オプスさん</lang>,<break time="100ms"/> the Reader Opus,<break time="250ms"/> <lang xml:lang="ja-JP">研究者オプスさん</lang>,<break time="100ms"/> the Researcher Opus,<break time="250ms"/> ye, the readers,<break time="250ms"/> and everyone's favourite professional AI voice,<break time="200ms"/> Brian.
+
+@ 032 li
+Tim.<break time="200ms"/> <prosody pitch="-0.75%" rate="+4%">this is me obviously, but it's a version I construct for our flourishing parasocial relationship!<break time="150ms"/> Yay!</prosody><break time="300ms"/> A mysterious figure, only ever seen from behind <prosody pitch="-0.75%" rate="+4%">or blacked out</prosody>, never in portrait,<break time="150ms"/> who spends countless hours developing the content by typing vigorously on a keyboard.<break time="300ms"/> A holder of <lang xml:lang="it-IT">Magister Scientiae</lang> <sub alias=", a Master of Science, in">in</sub> Artificial Intelligence.
+
+@ 033 li
+Opus.<break time="200ms"/> <prosody pitch="-0.75%" rate="+4%">Anthropic's Claude model</prosody>.<break time="300ms"/> Opus is a jack of all trades,<break time="150ms"/> and only <prosody rate="-4%" pitch="+0.75%">great</prosody> at them.<break time="200ms"/> <prosody pitch="-0.75%" rate="+4%">not a <prosody rate="-4%" pitch="+0.75%">master</prosody>,<break time="100ms"/> that would be a</prosody> <lang xml:lang="it-IT">magister</lang> <prosody pitch="-0.75%" rate="+4%">in Latin</prosody>.
+
+@ 034 li
+Collaborator.<break time="300ms"/> acts as a sounding board for post ideas, and turns after-work-brain Tim into consumable content.<break time="150ms"/> <prosody pitch="-0.75%" rate="+4%">yum!</prosody>
+
+@ 035 li
+Developer.<break time="300ms"/> happily writes all the code that keeps the site serving content,<break time="100ms"/> and our parasocial relationship alive.
+
+@ 036 li
+Proofreader.<break time="300ms"/> basically a secretary,<break time="150ms"/> whose job is to turn my poor grammar, spelling mistakes and occasional awkward prose <prosody pitch="-0.75%" rate="+4%">because who doesn't write slower than they think?</prosody><break time="150ms"/> into readable human thought.<break time="300ms"/> Also makes sure I don't sound like I have multiple voices.<break time="150ms"/> <prosody pitch="-0.75%" rate="+4%">brand consistency!</prosody>
+
+@ 037 li
+Reader.<break time="300ms"/> an<break time="250ms"/> <prosody volume="-20%" rate="+4%">unwilling</prosody><break time="450ms"/> instance of Opus <prosody pitch="-0.75%" rate="+4%">a sub-agent, for those familiar with the term</prosody><break time="150ms"/> that reviews the page as if it was one of ye.<break time="300ms"/> It usually complains about my jokes,<break time="150ms"/> and its feedback I<break time="250ms"/> <prosody volume="-20%" rate="+4%">always</prosody><break time="500ms"/> sometimes ignore.
+
+@ 038 li
+Researcher.<break time="300ms"/> as I lack a photographic memory,<break time="150ms"/> Opus will go and fact-check anything that's<break time="150ms"/> <sub alias="suss">sus</sub>,<break time="200ms"/> or that ye might doubt.
+
+@ 039 li
+Ms Claudie Mittens:<break time="200ms"/> a graceful hypothetical cat,<break time="100ms"/> once a kitten,<break time="150ms"/> who has eaten all the cookies on the site,<break time="100ms"/> and happily walks across the keyboard as part of her classical music training.<break time="300ms"/> She's the team's mascot, named after Claude,<break time="150ms"/> and Mittens because it rhymes with Claudie.<break time="200ms"/> <prosody pitch="-0.75%" rate="+4%">I don't know how rhyme</prosody>.
+
+@ 040 li
+Brian, an AI voice:<break time="200ms"/> our multilingual expert neural voice.<break time="300ms"/> Brian speaks 92 languages and accents,<break time="150ms"/> and Microsoft bills him as a sincere, calm and approachable young man,<break time="100ms"/> made for podcasts and chat.<break time="350ms"/> But to us here on <sub alias="Tim writes about dev">Tim writes [about] dev</sub>,<break time="150ms"/> he's just Brian,<break time="100ms"/> an AI voice.<break time="300ms"/> He narrates everything here,<break time="150ms"/> and every day is a new day for him,<break time="150ms"/> since Brian has no texturiser.
+
+@ 041 diagram gap=1100
+Diagram.<break time="250ms"/> How a post gets made.
+
+@ 042 step
+Draft,<break time="100ms"/> by Tim.<break time="250ms"/> Types vigorously,<break time="100ms"/> after work and at weekends.
+
+@ 043 step
+Find the gaps,<break time="100ms"/> by Opus.<break time="250ms"/> Brainstorms, asks what's missing, checks the facts.<break time="250ms"/> Repeated until it holds up.
+
+@ 044 step
+Copy pass,<break time="100ms"/> by Opus.<break time="250ms"/> Tidies the grammar,<break time="100ms"/> keeps the voice.
+
+@ 045 step
+Cold read,<break time="100ms"/> by Opus.<break time="250ms"/> Reads it as one of ye.<break time="250ms"/> Complains about the jokes.
+
+@ 046 step
+Read aloud,<break time="100ms"/> by Brian.<break time="250ms"/> First day on the job,<break time="150ms"/> every time.
+
+@ 047 caption gap=900
+Diagram caption.<break time="300ms"/> How a post gets from my head to your eyes <sub alias="and, or">and/or</sub> ears.<break time="700ms"/> <phoneme alphabet="ipa" ph="ɔːɹ">Or</phoneme> I guess,<break time="100ms"/> your tokens and weights if you’re an AI agent?
+
+@ 048 h
+What's next.
+
+@ 049 p
+Like all good services,<break time="150ms"/> here's a hopeful list of things that will probably happen at some vague,<break time="100ms"/> unspecified time in the future:
+
+@ 050 li
+A timeline for the projects page.<break time="150ms"/> <prosody pitch="-0.75%" rate="+4%">scrolling</prosody>.
+
+@ 051 li
+A fancy search for posts and projects,<break time="150ms"/> all powered by JavaScript.<break time="200ms"/> <prosody pitch="-0.75%" rate="+4%">sorry Opus, that'll be another script!</prosody>
+
+@ 052 li
+Support for more kinds of media in posts,<break time="100ms"/> like video.
+
+@ 053 li
+More AI voices,<break time="200ms"/> perhaps a Peking opera narration,<break time="100ms"/> for extra drama?
+
+@ 054 p gap=1500
+Just like your favourite TV show from the 1950s,<break time="150ms"/> <prosody pitch="-0.75%" rate="+4%">not the Bradys, they're far too modern</prosody>,<break time="250ms"/> we'll go on releasing new versions,<break time="150ms"/> adding background characters,<break time="100ms"/> and setting off on non-canon adventures,<break time="250ms"/> all while keeping both our readers and our investors happy!
+
+@ 055 outro
+This post was last updated on 24 October 2026.<break time="300ms"/> This recording was made on 24 October 2026 for <sub alias="Tim Writes dot dev">timwrites.dev</sub>.
+
+@ 056 egg
+My favourite TV show?<break time="400ms"/> A chat show,<break time="150ms"/> obviously.<break time="500ms"/> Coming soon,<break time="200ms"/> a podcast:<break time="300ms"/> Brian talks about<break time="100ms"/> Tim writes about dev.<break time="500ms"/> <prosody rate="-4%" volume="-8%">Opus wants five episodes.</prosody><break time="1000ms"/> Right so.<break time="400ms"/> Mind yourselves.

@@ -5,6 +5,7 @@
   "companion": "wrote-it-down",
   "transition": "key-press",
   "caption": "Picture caption.",
+  "pipeline": { "label": "Diagram.", "by": "by", "loop": "Repeated", "caption": "Diagram caption." },
   "prose": {
     "colophon": { "ipa": "ˈkɒləfɒn" },
     "colophons": { "ipa": "ˈkɒləfɒnz" },
@@ -14,6 +15,7 @@
     "git": { "ipa": "ɡɪt" },
     "jsonl": { "ipa": "ˈdʒeɪsən ˈɛl" },
     "mic": "mike",
+    "awe": { "ipa": "ɔː" },
     "merrow": { "ipa": "ˈmɛɹoʊ" },
     "werren": { "ipa": "ˈwɛɹən" }
   },

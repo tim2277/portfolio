@@ -19,7 +19,7 @@ Tim invents the characters and writes their lines. Suggest a spot where one coul
 | Ms Claudie Mittens | Posts, as an example or a callback | Tim |
 | Brian | The recordings only | Opus drafts candidates, Tim picks and reshapes |
 
-**How the cast is drawn.** One style for all of them: a fifteenth-century printer's device. A woodcut in two inks, black and rubric red, on cream paper, with bold shapes and nothing that needs lettering. Each character is one emblem with at most one prop, simple enough to read at favicon size. The style is fixed before any character is, since a drifting style is harder to repair than a wrong detail. Each has a Look below. The art is AI-generated, so every file goes through the converter with `-Ai` and lives in `src/assets/generated/`. It was made with FLUX.2 klein 4B, at 768 pixels square. No page uses it yet.
+**How the cast is drawn.** One style for all of them: a fifteenth-century printer's device. A woodcut in two inks, black and rubric red, on cream paper, with bold shapes and nothing that needs lettering. Each character is one emblem with at most one prop, simple enough to read at favicon size. The style is fixed before any character is, since a drifting style is harder to repair than a wrong detail. Each has a Look below. The art is AI-generated, so every file goes through the converter with `-Ai` and lives in `src/assets/generated/`. It was made with FLUX.2 klein 4B, at 768 pixels square. The prompts, seeds and settings are in `C:\gen-ai\prompts\cast-2026-10-11.md`, off the repo; re-running one reproduces its image exactly. The first page to show the cast is `this-site-1-1`, in a Brady Bunch photo where everyone but Ms Claudie Mittens is in costume: Tim in glasses with his face blacked out, Opus as five faceless extras, Brian as a voice actor with his microphone for a head. Costume art lives in that post only; a character's Look below is still the canon one.
 
 ## Tim
 
@@ -53,12 +53,13 @@ Opus gets no sample lines here. An example in a rules file is an instruction to 
 
 **Look.** No face, no body, no robot, no glowing orb. A printer's mark in the manner of the 1471 colophon: a manicule, the pointing hand a medieval reader drew in a margin, inside a pair of heavy square brackets. The hand comes out of a red cuff with the thumb cocked and the finger raised, about to make one small point. In a scene with the others it is the hand in the margin and nothing more. Anthropic's logo and colours are not used. Art: `src/assets/generated/cast-opus.jpg`.
 
-Behind the page Opus does four jobs. They are roles with different rules, and the reader meets only the character.
+Behind the page Opus does five jobs. They are roles with different rules, and the reader meets only the character. `this-site-1-1` gives them the names on the heads in its cast photo (Collaborator, Developer, Proofreader, Reader, Researcher); the names below are the working ones.
 
 | Role | What it does | Where its rules are |
 | --- | --- | --- |
 | Dev | Builds and maintains the site | `AGENTS.md`, `.claude/rules/components.md`, `.claude/rules/comments.md` |
-| Collaborator | Brainstorms, finds the gaps in a draft, checks facts and fetches the sources | Voice in `.claude/rules/writing.md` |
+| Collaborator | Brainstorms and finds the gaps in a draft | Voice in `.claude/rules/writing.md` |
+| Researcher | Checks anything dated, priced or attributed, and fetches the source before it's cited | "Fix facts, don't soften them" and "Footnotes" in `.claude/rules/writing.md` |
 | Copy pass | Tightens Tim's prose in the session that drafted it, and keeps the voice | Voice in `.claude/rules/writing.md` |
 | Cold reader | A fresh agent that reads a finished post as a stranger would | "Before a post goes live" in `.claude/rules/writing.md` |
 
@@ -77,7 +78,9 @@ She has no lines. How Tim speaks of her:
 
 > A texturiser gives you a friend, not a hoover: one who knows about Ms Claudie Mittens and how she loves to stretch out on your keyboard.
 
-**Look.** A kitten drawn in outline only and never filled in, because she doesn't exist. Outline-only is the rule for anything hypothetical. Her four paws are outlined in red, which is what makes them mittens on a body the colour of the paper. Whiskers, a red nose, red inside the ears. She has two forms, since she has a timeline: the kitten sitting upright, and the grown cat stretched across a keyboard. Art: `src/assets/generated/cast-ms-claudie-mittens.jpg`, the kitten. The cat has not been drawn.
+**Look.** A kitten drawn in outline only and never filled in, because she doesn't exist. Outline-only is the rule for anything hypothetical. Her four paws are outlined in red, which is what makes them mittens on a body the colour of the paper. Whiskers, a red nose, red inside the ears. A collar in red outline sits tucked under her chin, with a round tag lettered CM; it's her one prop, and the cat wears it too. She has two forms, since she has a timeline: the kitten sitting upright, and the grown cat stretched across a keyboard. Art: `src/assets/generated/cast-ms-claudie-mittens.jpg`, the kitten, converted as `composite`: the collar is drawn in Inkscape over the model's kitten (`C:\gen-ai\composites\cast-brady\claudie\claudie-collar.svg`), then her black lines are copied back over it from the original so it sits under her chin and behind her body. The finished file before conversion is `claudie-collar-final4.png` in the same folder. The cat has not been drawn.
+
+In the cast photo in `this-site-1-1` everyone else is in costume, and she is the one in her own art.
 
 ## Brian
 
@@ -95,6 +98,6 @@ In his words, after the last line of a post:
 
 > Eighty years of artificial intelligence, from Turing to now. And on my first day they have me reading the blog.
 
-**Look.** No person. A studio microphone on a short stand with a "Hello, my name is" sticker on it, because every recording is his first day. The lettering on the sticker is added by hand, which makes the image a composite. Art: `src/assets/generated/cast-brian.jpg`, with the sticker still blank and so converted as `generated` for now.
+**Look.** No person. A studio microphone on a short stand with a "Hello, my name is" sticker on it, because every recording is his first day. The lettering on the sticker is added by hand, which makes the image a composite. Art: `src/assets/generated/cast-brian.jpg`, converted as `composite`. The lettering is set in Inkscape over the model's blank label; the source is `C:\gen-ai\composites\cast-brady\brian\brian-sticker.svg`.
 
 The remark is offered to Tim as two or three candidates and never recorded unseen. `narration/README.md` has the rest: what he may and may not say, and how a recording is made.

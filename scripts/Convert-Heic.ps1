@@ -338,16 +338,22 @@ foreach ($src in $sources) {
       Write-Warning "exists, skipping: $outPath (use -Force to overwrite)"
       continue
     }
+    # Written beside the target and moved over it only once it passes, so a run
+    # that fails verification with -Force doesn't take the existing file with it.
+    $finalPath = $outPath
+    $outPath = Join-Path $destDir "$leaf.converting.jpg"
 
     $caption = @($Location, $Credit | Where-Object { $_ }) -join ' · '
     $watermarked = $caption -and -not $NoWatermark
 
-    # Built from the pixels alone — no metadata handed to the encoder. That
-    # isn't the same as a clean file: WIC's and System.Drawing's own JPEG
-    # encoders stamp in a few boilerplate tags regardless (see
-    # $script:AllowedExifTags), so the output is verified below rather than
-    # assumed clean.
-    $outFrame = [System.Windows.Media.Imaging.BitmapFrame]::Create($image)
+    # An image nothing was rotated, cropped or scaled is still the decoded frame,
+    # and BitmapFrame.Create carries a frame's metadata across: GPS from a small
+    # phone JPEG, or the Software tag Inkscape writes into every PNG. Copying
+    # the pixels out drops it. Even then the JPEG encoders stamp in a few
+    # boilerplate tags (see $script:AllowedExifTags), so the output is still
+    # verified below rather than assumed clean.
+    $pixels = [System.Windows.Media.Imaging.WriteableBitmap]::new($image)
+    $outFrame = [System.Windows.Media.Imaging.BitmapFrame]::Create($pixels)
 
     if (-not $watermarked) {
       $encoder = [System.Windows.Media.Imaging.JpegBitmapEncoder]::new()
@@ -447,14 +453,15 @@ foreach ($src in $sources) {
     }
     if ($cleanIssues) {
       Remove-Item -LiteralPath $outPath -Force
-      throw "Convert-Heic: '$outPath' failed metadata verification and was deleted:`n  $($cleanIssues -join "`n  ")"
+      throw "Convert-Heic: '$finalPath' failed metadata verification and was not written:`n  $($cleanIssues -join "`n  ")"
     }
+    Move-Item -LiteralPath $outPath -Destination $finalPath -Force
 
     [pscustomobject]@{
       Source      = $src.Name
-      Output      = Split-Path $outPath -Leaf
+      Output      = Split-Path $finalPath -Leaf
       Size        = '{0}x{1}' -f $image.PixelWidth, $image.PixelHeight
-      KB          = [math]::Round((Get-Item $outPath).Length / 1KB)
+      KB          = [math]::Round((Get-Item $finalPath).Length / 1KB)
       Rotated     = $angle
       # Unconditional because Test-JpegClean has already thrown on any GPS.
       GpsStripped = $true

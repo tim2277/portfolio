@@ -166,7 +166,7 @@ function gapBefore(previous, segment) {
   if (segment.kind === 'callout-title') return 1100;
   if (previous.kind === 'callout' && segment.kind !== 'callout') return 1100;
   if (previous.kind === 'callout-title') return 450;
-  if (segment.kind === 'li' || segment.kind === 'tr') return 500;
+  if (segment.kind === 'li' || segment.kind === 'tr' || segment.kind === 'step') return 500;
   return 700;
 }
 

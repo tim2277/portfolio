@@ -98,6 +98,24 @@ export function segmentPost(path, { lexicon = {}, summary = false, site, name, r
           push('caption', `${prose(lexicon.caption ?? '')} ${kids(node)}`);
           break;
         }
+        // Left to the fallback, a pipeline is its step bodies run together: no names, no
+        // order, and the label and caption lost, since they're attributes.
+        if (node.name === 'Pipeline') {
+          const attr = (n, name) => n.attributes.find((a) => a.name === name)?.value;
+          const lex = lexicon.pipeline ?? {};
+          const label = attr(node, 'label');
+          if (typeof label === 'string') push('diagram', `${prose(lex.label ?? '')} ${prose(label)}`, { stop: true });
+          for (const step of node.children.filter((c) => c.name === 'Step')) {
+            const [title, by, loop] = ['title', 'by', 'loop'].map((name) => attr(step, name));
+            const body = step.children.some((c) => c.type === 'paragraph') ? step.children.map(kids).join(' ') : kids(step);
+            const head = [title, by && `${lex.by ?? 'by'} ${by}`].filter((s) => typeof s === 'string').map(prose).join(', ');
+            const tail = typeof loop === 'string' ? ` ${prose(`${lex.loop ?? ''} ${loop}`)}` : '';
+            push('step', `${head}. ${body}${tail}`, { stop: true });
+          }
+          const caption = attr(node, 'caption');
+          if (typeof caption === 'string') push('caption', `${prose(lex.caption ?? '')} ${prose(caption)}`);
+          break;
+        }
         const title = node.attributes.find((a) => a.name === 'title')?.value;
         const inner = node.name === 'Callout' ? 'callout' : node.name === 'Summary' ? 'summary' : kind;
         if (typeof title === 'string') push('callout-title', prose(title), { stop: true });
