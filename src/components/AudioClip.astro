@@ -1,0 +1,50 @@
+---
+import { AUDIO_URL } from '../consts';
+
+interface Props {
+  /** Path under the audio container, e.g. `clips/projects/this-site/latin-ipa.bf44b0996fd7.opus`. */
+  src: string;
+  /** A few words, shown above the player like the narration label. */
+  label: string;
+}
+
+const { src, label } = Astro.props;
+// Same host as the narration, so `media-src` already allows it. A clip from anywhere
+// else plays in `astro dev` and is refused in silence on the live site.
+const url = `${AUDIO_URL}/${src}`;
+---
+
+<figure class="clip">
+  <p class="clip-label">{label}</p>
+  <audio controls preload="none" src={url}>
+    <a href={url}>Download the clip</a>
+  </audio>
+  <figcaption><slot /></figcaption>
+</figure>
+
+<style>
+  .clip {
+    margin-block: 1.5rem;
+  }
+
+  .clip-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin-block: 0 0.4rem;
+  }
+
+  audio {
+    display: block;
+    inline-size: 100%;
+    block-size: 2.5rem;
+  }
+
+  figcaption {
+    margin-block-start: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+</style>

@@ -52,5 +52,14 @@
     "recorded": "2026-10-24",
     "transition": "key-press",
     "sidecar": "12633a65208677672798ef13be804e14fcff7aea1578a9d0bb65d06d6d99dfc0"
+  },
+  "projects/this-site": {
+    "file": "projects/this-site.f813c82e3cd8.opus",
+    "seconds": 1577,
+    "bytes": 5910375,
+    "voice": "Brian",
+    "recorded": "2026-10-24",
+    "transition": "key-press",
+    "sidecar": "18e9603c0d8e3b01f67ed0e900d8d761c9e1e30f9ec6d75ecd3d9b6f8ae2fc74"
   }
 }

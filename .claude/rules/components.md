@@ -24,6 +24,8 @@ None of these produce an error, like the traps in `AGENTS.md`. The converter, an
 
 **A pipeline diagram is a `Pipeline` of `Step`s.** `<Pipeline label="…" caption="…">` around `<Step title="…" by="…" human loop="…">`, with the description as the body. It's an ordered list styled as cards and arrows, so it follows the theme and reads as a list anywhere the stylesheet doesn't reach. More than three steps never wrap: they run off the article's edge in one row and open full size in a popover. Below 48rem it's a single column. It draws a sequence and nothing else. A step that repeats says so with `loop`; a diagram that forks or merges needs another tool, and that decision hasn't been made.
 
+**An audio clip in a page is an `AudioClip`.** `<AudioClip src="clips/<collection>/<slug>/<name>.<hash>.opus" label="…">Caption.</AudioClip>`: a native `<audio controls>` with a label and a caption, no script. `src` is a path under `AUDIO_URL`, uploaded by hand with the same `az storage blob upload` flags `publish` uses, hash in the name. A clip from any other host plays in `astro dev` and is refused by `media-src` on the live site, in silence.
+
 **The watermark arguments have to match the `Hero` props.** The credit is burnt into the pixels, so it's placed at conversion time against a crop the script can only be told about:
 
 | Script | `Hero` prop | Meaning |

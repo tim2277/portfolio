@@ -12,7 +12,7 @@ Every command takes the entry as `posts/<slug>`, `projects/<slug>` or `pages/<sl
 | `narration/lexicon.json` | Pronunciations, the intro and outro wording, the default transition |
 | `narration/effects.json` | Each sound effect's source, licence and hash |
 | `narration/manifest.json` | What's published. Written by `publish`, read by the site |
-| `.narration/` | Ignored. The per-segment cache, the built takes, and a `timeline.txt` beside each take |
+| `.narration/` | Ignored. The per-segment cache, the built takes, and a `timeline.txt` beside each take, under `<collection>/<slug>/`. Ignored files go with a worktree when it's removed, so record in the main checkout, or copy `.narration/` across first |
 
 ```powershell
 node scripts/narration/narrate.mjs init pages/about      # the mechanical first pass, then tune it by hand
@@ -26,7 +26,7 @@ node scripts/narration/narrate.mjs publish pages/about   # upload, and record it
 
 **Claude can't hear any of it.** Tim judges every take by ear. Give him short auditions to compare, a before and an after, and use `timeline.txt` to turn "13:43 sounded wrong" into a segment. A claim that something sounds right is a guess.
 
-**The words are the post's.** `check` strips the tags from each tuned segment and compares what's left with the post, word for word. Punctuation is the tuner's to change; words aren't. Code blocks, footnotes, emoji and the `<Summary>` are skipped, and the intro says so. The intro and outro come from the lexicon's templates. A blockquote is read, a `quote` segment per paragraph. A `Figure`'s caption is read too, announced with the lexicon's `caption` wording so it doesn't arrive as a paragraph about nothing. A `Pipeline` is announced by its label, each step read as its title, who does it and its body, a `loop` said aloud, and its caption last, with the wording under the lexicon's `pipeline`. The one segment that's exempt is a closing `egg`, which is Brian's own remark.
+**The words are the post's.** `check` strips the tags from each tuned segment and compares what's left with the post, word for word. Punctuation is the tuner's to change; words aren't. Code blocks, footnotes, emoji and the `<Summary>` are skipped, and the intro says so. The intro and outro come from the lexicon's templates. A blockquote is read, a `quote` segment per paragraph. A `Figure`'s caption is read too, announced with the lexicon's `caption` wording so it doesn't arrive as a paragraph about nothing. A `Pipeline` is announced by its label, each step read as its title, who does it and its body, a `loop` said aloud, and its caption last, with the wording under the lexicon's `pipeline`. An `AudioClip` is played, not described: Brian announces it with the lexicon's `clip` wording and its label, `build` splices the clip in after him, and the caption follows as its own segment, in the page's order. The file comes from the public container the page plays it from, cached under `.narration/clips/`, and the segment carries it as `clip=<src>` on its header line, which `check` holds to the page. The one segment that's exempt is a closing `egg`, which is Brian's own remark.
 
 **Tune with pauses.** On the current voice, an inline pitch move beyond ±0.75% or a rate change beyond ±4% makes the reader sound like a second person, so the validator in `ssml.mjs` refuses them. Don't put pauses inside a short code phrase to make it sound like code. Those limits belong to the voice: a new voice means new auditions, and the tuning doesn't carry over.
 
@@ -36,6 +36,7 @@ node scripts/narration/narrate.mjs publish pages/about   # upload, and record it
 
 - A one-syllable word on its own gets swallowed or garbled: "awe", "sus". Give it a beat before it and a fixed reading, either the lexicon's IPA or a `<sub alias>` respelling ("suss").
 - "Or" after a pause is the worst of them. A lone "or," followed by a break stumbles, and so does a sentence that opens with "Or" after a long break, which gets dropped outright. Run it on with no comma after it, and if there's a pause before it, pin it: `<phoneme alphabet="ipa" ph="ɔːɹ">Or</phoneme>`.
+- A suffix after inline code is read as a letter: `` `Step`s `` comes out "step S" and `` `Figure`'s `` "figure S". Take the suffix inside the tag and say it in the alias: `<sub alias="figure's">Figure's</sub>`.
 - Struck-out text is read as a mutter: the struck word at `volume="-20%"`, with a pause before it and a longer one after it, then the correction. Without both pauses it sounds quiet rather than retracted.
 - A phrase read in another language can't hold its English expansion, since a `<sub alias>` can't contain a `<lang>`. Hang the expansion on the next word instead: in `this-site-1-1`, `<lang xml:lang="it-IT">Magister Scientiae</lang> <sub alias=", a Master of Science, in">in</sub>`. Keep the space between the tags, or `check` reads the two as one word.
 

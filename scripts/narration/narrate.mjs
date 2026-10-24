@@ -84,7 +84,7 @@ if (command === 'respell') {
     `recorded ${recorded}`,
   ];
   mkdirSync(dirname(sidecar), { recursive: true });
-  writeFileSync(sidecar, [...header, ...source.map((s) => `\n@ ${s.id} ${s.kind}\n${s.ssml}`), ''].join('\n'));
+  writeFileSync(sidecar, [...header, ...source.map((s) => `\n@ ${s.id} ${s.kind}${s.clip ? ` clip=${s.clip}` : ''}\n${s.ssml}`), ''].join('\n'));
   console.log(`${source.length} segments, ${source.reduce((n, s) => n + s.ssml.length, 0)} characters of SSML -> ${sidecar}`);
 } else {
   const tuned = check();
@@ -118,7 +118,8 @@ function readSidecar() {
     else if (line.startsWith('@ ')) {
       const [, id, kind, ...options] = line.split(/\s+/);
       const gap = options.find((o) => o.startsWith('gap='))?.slice(4);
-      segments.push({ id, kind, gap: gap === undefined ? undefined : Number(gap), ssml: '' });
+      const clip = options.find((o) => o.startsWith('clip='))?.slice(5);
+      segments.push({ id, kind, gap: gap === undefined ? undefined : Number(gap), ...(clip && { clip }), ssml: '' });
     } else segments.at(-1).ssml += (segments.at(-1).ssml ? ' ' : '') + line.trim();
   }
   return { ...settings, segments };
@@ -138,6 +139,7 @@ function check() {
     const at = `@ ${seg.id} ${seg.kind}`;
     if (seg.kind !== from.kind) problems.push(`${at}: the post has a ${from.kind} here`);
     if (seg.gap !== undefined && !(seg.gap >= 0 && seg.gap <= 3000)) problems.push(`${at}: gap is out of range`);
+    if (seg.clip !== from.clip) problems.push(`${at}: the page plays ${from.clip ?? 'no clip'} here, the tuned file ${seg.clip ?? 'none'}`);
     const faults = validate(seg.ssml);
     if (faults.length) {
       problems.push(...faults.map((f) => `${at}: ${f}`));
@@ -162,7 +164,7 @@ function gapBefore(previous, segment) {
   if (segment.kind === 'egg') return 2500;
   if (segment.kind === 'h' || segment.kind === 'outro') return 1500;
   if (previous.kind === 'intro') return 1200;
-  if (previous.kind === 'h' || previous.kind === 'title') return 900;
+  if (previous.kind === 'h' || previous.kind === 'title' || previous.kind === 'clip') return 900;
   if (segment.kind === 'callout-title') return 1100;
   if (previous.kind === 'callout' && segment.kind !== 'callout') return 1100;
   if (previous.kind === 'callout-title') return 450;
@@ -215,6 +217,13 @@ async function build({ voice, segments }, { lang, pitch, transition, name = slug
     timeline.push(`${clock(samples / RATE)}  ${segment.id} ${segment.kind.padEnd(13)} ${textOf(segment.ssml).slice(0, 70)}`);
     samples += speech.length / 2;
     parts.push(...lead, speech);
+    if (segment.clip) {
+      const audio = trim(clipAudio(segment.clip));
+      samples += quiet(600).length / 2;
+      timeline.push(`${clock(samples / RATE)}  --- clip ${segment.clip}`);
+      samples += audio.length / 2;
+      parts.push(quiet(600), audio);
+    }
     process.stdout.write(`\r${i + 1}/${segments.length}`);
   }
 
@@ -228,6 +237,18 @@ async function build({ voice, segments }, { lang, pitch, transition, name = slug
   execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', wav, '-c:a', 'libopus', '-b:a', '32k', '-ac', '1', '-fflags', '+bitexact', '-flags:a', '+bitexact', opus]);
   if (name === slug) writeFileSync(join(dir, 'built.json'), JSON.stringify({ sidecar: sidecarHash(), seconds: Math.round(samples / RATE), transition: transition ?? lexicon.transition ?? 'none' }));
   console.log(`\n${clock(samples / RATE)} of audio, ${requests} new requests, ${segments.length - requests} from cache\n${opus}`);
+}
+
+// A clip is already published, so it's fetched from the container the page plays it from:
+// the recording can't splice in a different take from the one a reader hears.
+function clipAudio(src) {
+  const base = consts.match(/AUDIO_URL = '([^']+)'/)[1];
+  const file = join(cache, 'clips', src.replaceAll('/', '_'));
+  if (!existsSync(file)) {
+    mkdirSync(dirname(file), { recursive: true });
+    execFileSync('curl', ['-sSf', '-o', file, `${base}/${src}`]);
+  }
+  return execFileSync('ffmpeg', ['-v', 'error', '-i', file, '-f', 's16le', '-ac', '1', '-ar', String(RATE), '-'], { maxBuffer: 2 ** 27 });
 }
 
 function publish() {

@@ -1,0 +1,328 @@
+# Narration for src/content/projects/this-site.mdx. A header line per segment, then its SSML on one line.
+# "@ 012 p gap=1200" overrides the silence before a segment, in milliseconds.
+# node scripts/narration/narrate.mjs check projects/this-site
+voice en-US-BrianMultilingualNeural
+lang en-IE
+pitch -1.5%
+recorded 2026-10-24
+
+@ 001 intro
+Welcome to Tim writes about dev.<break time="400ms"/> I'm Brian, an AI voice,<break time="150ms"/> and Tim has asked me to read you the project page,<break time="200ms"/> This site.<break time="500ms"/> I skip the code and the footnotes, so for those,<break time="150ms"/> check the project page.
+
+@ 002 p
+On one moderately coolish day in September 2026, I decided to build this site.<break time="300ms"/> Of course, the first builds were flawless, not a single issue!<break time="300ms"/> Green tick, clean exit code, no warnings, and not a single stylesheet in them.<break time="500ms"/> The culprit was my own machine: <sub alias="C drive, repositories">C:\repos</sub> is a junction onto another drive, Vite resolved the modules on one side of it while Astro tracked the other, and the CSS fell through the gap without a word. One line of config fixed it.<break time="200ms"/> <prosody pitch="-0.75%" rate="+4%"><sub alias="preserve sym links">preserveSymlinks</sub>, if ye've a junction of your own</prosody>.
+
+@ 003 p
+This page takes ye through the technical side, and it'll be updated as new versions are released <prosody pitch="-0.75%" rate="+4%">as demanded by my investors</prosody>. A static site has very few moving parts by definition, but that doesn't mean engineering discipline goes out the window. What follows is how the site is put together, and every place it has failed silently on me so far.
+
+@ 004 h
+The stack, briefly.
+
+@ 005 tr
+Site generator.<break time="250ms"/> Built with Astro 7, static output.
+
+@ 006 tr
+Content.<break time="250ms"/> Built with MDX in content collections, Zod-typed frontmatter.
+
+@ 007 tr
+Styling.<break time="250ms"/> Built with One hand-written stylesheet, CSS custom properties.
+
+@ 008 tr
+Type.<break time="250ms"/> Built with Fraunces, self-hosted, for headings; system stacks below.
+
+@ 009 tr
+Syntax highlighting.<break time="250ms"/> Built with Prism, not Shiki <prosody pitch="-0.75%" rate="+4%">see the confession below</prosody>.
+
+@ 010 tr
+Hosting.<break time="250ms"/> Built with <phoneme alphabet="ipa" ph="ˈæʒər">Azure</phoneme> Static Web Apps, Free tier.
+
+@ 011 tr
+Narration.<break time="250ms"/> Built with <phoneme alphabet="ipa" ph="ˈæʒər">Azure</phoneme> AI Speech, Ogg Opus files in Blob Storage.
+
+@ 012 tr
+Infrastructure.<break time="250ms"/> Built with Bicep: the site, and the storage for the audio.
+
+@ 013 tr
+Pipeline.<break time="250ms"/> Built with GitHub Actions, SHA-pinned, deploys from main only.
+
+@ 014 h
+Content is typed, not trusted.
+
+@ 015 p
+The site's collections<break time="300ms"/> posts and projects<break time="300ms"/> share a Zod schema for title, description, date, tags and draft status, with projects adding a status enum and optional <sub alias="repository and live">repo/live</sub> links. If something's off in the frontmatter,<break time="150ms"/> the build fails, so I won't accidentally post a half-completed thought or,<break time="100ms"/> worse,<break time="100ms"/> a syntax error.<break time="250ms"/> <prosody rate="-4%" pitch="+0.75%">gasp</prosody>.
+
+@ 016 p
+Drafts render in astro dev and nowhere else: a production build leaves them out, and a description over 160 characters doesn't build at all.
+
+@ 017 h
+Two scripts, and what they cost.
+
+@ 018 p
+This site started with a guideline <prosody pitch="-0.75%" rate="+4%">Claude says it was a rule</prosody>: no client-side JavaScript on a content page. Dark mode followed <sub alias="prefers colour scheme">prefers-color-scheme</sub> and that was the end of it. The rule held until the first person asked for a theme toggle. That person was me, after looking at the boring <sub alias="user interface, UI,">UI</sub> I had just built.
+
+@ 019 p
+So there was exactly one script. It sets a <sub alias="data theme">data-theme</sub> attribute before <sub alias="body">&lt;body&gt;</sub> parses, reads and writes one <sub alias="local storage">localStorage</sub> key, and falls back to <sub alias="prefers colour scheme">prefers-color-scheme</sub> when it doesn't run. About thirty lines, no dependencies, no framework<break time="300ms"/> the type of efficiency that software dev promises but rarely achieves.
+
+@ 020 p
+It wasn't free, and the bill is the interesting part:
+
+@ 021 li
+The <sub alias="Content Security Policy, CSP,">CSP</sub> pins it by hash. Having co-authored a few internal docs on ISO standards over the years, this was the first thing to set my cyber senses tingling. The boring technical bit: <sub alias="script source">script-src</sub> carries a <sub alias="SHA two fifty-six">sha256</sub> of that exact script rather than <sub alias="self">'self'</sub>, so nothing else can execute <prosody pitch="-0.75%" rate="+4%">cybersecurity win!</prosody>.
+
+@ 022 li
+Every themed rule now has two routes. The <sub alias="O S">OS</sub> preference when the reader hasn't chosen <prosody pitch="-0.75%" rate="+4%">dark for those <sub alias="leet">L337</sub> hackers and light for everyone else</prosody>, <sub alias="data theme">[data-theme]</sub> when they have.
+
+@ 023 p
+Then there were two, and this page spent an evening being wrong about it. After launch I decided the site was too plain and filled the wide-screen margins with a drifting pattern of matrices and maths symbols. It moved as you scrolled, all in CSS: no script, rule intact. It worked right up until you swiped past the end of a page a few times on a touchpad, at which point Edge stopped drawing the page for a second or more. Nothing was busy, nothing errored, and no amount of tuning the CSS changed it. Moving the same pattern from a dozen lines of script did.
+
+@ 024 p
+So the second script exists to work around a browser. It gets its own hash in the CSP, and with scripts blocked the pattern simply stands still. Ye on a phone never see it at all: it only shows on a wide screen.
+
+@ 025 h
+Infrastructure.
+
+@ 026 p
+It's always great to design the best and coolest thingy, but if no one can see it,<break time="100ms"/> or read it,<break time="100ms"/> or touch it<break time="300ms"/> then it's really just décor. So I made it easy: one Bicep file <prosody pitch="-0.75%" rate="+4%">keep it <sub alias="Keep it simple, stupid, KISS,">KISS</sub> and <sub alias="Don’t repeat yourself, DRY,">DRY</sub>!</prosody>. The pipeline owns the deployment; Bicep owns the resources.
+
+@ 027 p
+It stayed one file until Brian <prosody pitch="-0.75%" rate="+4%">the AI voice that reads the posts aloud, he's a sound lad</prosody> needed somewhere to keep his recordings. The storage account is a second Bicep file, pulled in as a module, with one public container for the audio and a role assignment so I can upload to it.
+
+@ 028 h
+The pipeline, and the Oryx detour.
+
+@ 029 p
+The default Static Web Apps workflow hands your repository to Oryx, <phoneme alphabet="ipa" ph="ˈæʒər">Azure</phoneme>'s build engine <prosody pitch="-0.75%" rate="+4%">so thoughtful!</prosody>, and lets it work out how to build the site. It'll happily build Astro, to be fair. That's convenient right up until you want any customisation: a pinned <sub alias="Node J S">Node.js</sub> version, a type check before the build, or a failure you can actually read.
+
+@ 030 quote
+<prosody rate="-4%" pitch="+0.75%">"Sometimes the absence of something is all you need".</prosody><break time="500ms"/> <prosody pitch="-0.75%" rate="+4%">Tim, in September 2026.</prosody>
+
+@ 031 p
+That led to the current pipeline:
+
+@ 032 diagram
+Diagram. From a push to the live site.
+
+@ 033 step
+Push, by Tim. To main, the only branch that deploys.
+
+@ 034 step
+Install, by GitHub Actions. <sub alias="N P M C I">npm ci</sub> on a pinned <sub alias="Node J S">Node.js</sub>, every action pinned to a commit.
+
+@ 035 step
+Check, by GitHub Actions. astro check for the types, then every narrated page against its script.
+
+@ 036 step
+Build, by GitHub Actions. astro build, then every <sub alias="hash fragment">#fragment</sub> link checked against the page it points at.
+
+@ 037 step
+Deploy, by Static Web Apps. Uploads dist and nothing else. Oryx never wakes up.
+
+@ 038 caption
+Diagram caption. Every push to main, from my keyboard to your browser. A red cross at any step and nothing reaches <phoneme alphabet="ipa" ph="ˈæʒər">Azure</phoneme>, which is the only kind of failure on this page that isn't polite.
+
+@ 039 p
+The step that matters is the last one: the deploy action runs with <sub alias="skip app build, true">skip_app_build: true</sub>, so it uploads dist and nothing else.
+
+@ 040 callout-title
+The gotcha.
+
+@ 041 callout
+With <sub alias="skip app build">skip_app_build</sub>, <sub alias="app location">app_location</sub> stops meaning "where the source is" and starts meaning "where the built output is". And because only dist gets uploaded, <sub alias="static web app config dot JSON">staticwebapp.config.json</sub> has to be inside it<break time="300ms"/> so it lives in <sub alias="public">public/</sub> and Astro copies it across. Leave it at the repository root and it's silently ignored: no error, no headers, just a site that scores badly on a security scan for no visible reason.
+
+@ 042 p
+Another planned feature was a preview before publishing to <sub alias="general availability, GA,">GA</sub><break time="300ms"/> not doing that is like forgetting to put pants on, and that just isn't comfortable for anyone. Pull requests used to get their own preview environment, torn down again when the PR closed. Then a security review pointed out two things: I'd never opened a single pull request, and that preview job was the only reason a stranger's fork could run anything in my repository's workflows. So it went. Previews happen in astro dev now, and main is the only thing that deploys. Thankfully, a static site barely differs between dev and GA!
+
+@ 043 p
+The rest of the pipeline got the same treatment. Every action is pinned to a commit SHA rather than a tag someone else can move, and the deploy token lives in a production environment that only main can reach.
+
+@ 044 h
+Headers and caching.
+
+@ 045 p
+Cache all the things!
+
+@ 046 p
+<sub alias="static web app config dot JSON">staticwebapp.config.json</sub> sets a CSP that starts from <sub alias="default source none">default-src 'none'</sub> and allows back only what the site uses, <sub alias="HTTP Strict Transport Security, HSTS,">HSTS</sub>, <sub alias="no sniff">nosniff</sub>, a referrer policy and a <sub alias="permissions policy">Permissions-Policy</sub> that switches off hardware APIs this site shouldn't be asking for. Astro's hashed assets under <sub alias="underscore astro">/_astro/</sub> get a year of immutable caching; HTML gets <sub alias="must revalidate">must-revalidate</sub>, so a deploy is visible immediately.
+
+@ 047 p
+A strict policy has a habit of being right in ways that look broken, and two of the 1.1 bug fixes were exactly that. The feed and the sitemap opened in Edge and Chrome as a wall of run-together text <prosody pitch="-0.75%" rate="+4%">it looked like someone had vomited words onto a page</prosody>. Broken feed,<break time="100ms"/> surely?<break time="400ms"/> Not this time. Chromium draws its XML tree view with an inline stylesheet and <sub alias="data">data:</sub> icons, inside a document that inherits the page's CSP, and <sub alias="style source self">style-src 'self'</sub> showed both of them the door. So the XML routes carry their own policy now, letting in exactly those two things and not a byte more <prosody pitch="-0.75%" rate="+4%">I can't stand walls of text</prosody>.
+
+@ 048 p
+Then Edge's Immersive Reader started showing a broken image above every alt text. Turns out it rebuilds the article under a <sub alias="read colon slash slash">read://</sub> address and fetches the images from there, and <sub alias="cross origin resource policy, same origin">Cross-Origin-Resource-Policy: same-origin</sub> turned every one of them away. The page itself looked grand, so nothing pointed at the header <prosody pitch="-0.75%" rate="+4%">sound familiar?</prosody>. Images under <sub alias="underscore astro">/_astro/</sub> now go out as <sub alias="cross origin">cross-origin</sub> <prosody pitch="-0.75%" rate="+4%">the web's default anyway</prosody>, and the pages keep <sub alias="same origin">same-origin</sub>.
+
+@ 049 p
+So the policy isn't one policy. Here's what each route sets on top of it, and why:
+
+@ 050 tr
+<sub alias="slash star">/*</sub>.<break time="250ms"/> Sets <sub alias="cache control, max age zero, must revalidate">Cache-Control: max-age=0, must-revalidate</sub>,<break time="200ms"/> because a deploy is visible straight away.
+
+@ 051 tr
+<sub alias="underscore astro, slash star">/_astro/*</sub>.<break time="250ms"/> Sets a year of immutable caching, and <sub alias="C O R P">CORP</sub> <sub alias="cross origin">cross-origin</sub>,<break time="200ms"/> because the file names carry a hash, so they never change.<break time="200ms"/> Immersive Reader fetches from <sub alias="read colon slash slash">read://</sub>.
+
+@ 052 tr
+<sub alias="favicon dot S V G">/favicon.svg</sub>.<break time="250ms"/> Sets a week of caching, and <sub alias="C O R P">CORP</sub> <sub alias="cross origin">cross-origin</sub>,<break time="200ms"/> because same reader, same fix.
+
+@ 053 tr
+<sub alias="R S S dot X M L">/rss.xml</sub>, <sub alias="sitemap star dot X M L">/sitemap*.xml</sub>.<break time="250ms"/> Sets their own CSP, allowing inline styles and <sub alias="data">data:</sub> images,<break time="200ms"/> because Chromium's XML tree view,<break time="100ms"/> and only that.
+
+@ 054 p
+Now the confession, or there was one. The first version of this page admitted that <sub alias="style source">style-src</sub> carried <sub alias="unsafe inline">'unsafe-inline'</sub>, with two culprits: Astro inlining its smaller stylesheets straight into the page, and Shiki writing every syntax colour as an inline style attribute. I'd decided to live with it.
+
+@ 055 p
+Then a security review found a third culprit I hadn't: the hero image's crop, passed in as a style attribute. <break time="100ms"/>Three was enough. Stylesheets now always ship as files <prosody pitch="-0.75%" rate="+4%">one line of config: <sub alias="build dot inline stylesheets, never">build.inlineStylesheets: 'never'</sub></prosody>, the hero takes its crop from data attributes, and syntax highlighting runs on Prism instead of Shiki: it classes tokens rather than inlining a colour per span, so the CSP needed no exception for it. <sub alias="style source">style-src</sub> is <sub alias="self">'self'</sub> on every page.
+
+@ 056 p
+So go ahead and View Source, which<break time="300ms"/> let's be honest<break time="300ms"/> you were going to do anyway. This time there's nothing to find.
+
+@ 057 h
+1.1, and still two scripts.
+
+@ 058 p
+Then along came version 1.1, codenamed "Chocolate Chip".<break time="200ms"/> <prosody pitch="-0.75%" rate="+4%">I just made that up, there was no codename<break time="300ms"/> but the investors love it</prosody>. It shipped three weeks after launch, and the release post is the fun version. Here we talk about the tech and what each feature cost. The rule for all of them was the same: a page does its whole job with scripts blocked, and <sub alias="script source">script-src</sub> doesn't move. None of them added a third script, and none added a dependency<break time="300ms"/> surprisingly, thanks to a bit of advocating by Opus <prosody pitch="-0.75%" rate="+4%">Anthropic's Claude model and my partner in building this site</prosody>.
+
+@ 059 h
+Full screen, in plain HTML.
+
+@ 060 p
+Images, wide tables and diagrams all open full size now, and none of it is JavaScript <prosody pitch="-0.75%" rate="+4%">amazing what modern browsers can do!</prosody>. The popover attribute does the lot: a button with <sub alias="popover target">popovertarget</sub> opens the element, and the browser looks after the backdrop, the Escape key and the focus. Nothing needs a hash. A browser that doesn't know the attribute gets a plain link to the full-size image, which is what it had before.
+
+@ 061 p
+Funnily enough, tables were the reason the full-screen feature started. The texturiser post had a five-column table that pushed the whole page sideways on a phone. Now a Markdown table with four or more columns, on a screen under <sub alias="forty-four rem">44rem</sub>, keeps its columns readable, fades out at the edge, scrolls sideways, and gets a button that opens the whole thing in a popover. The posts didn't change: the entry routes map every Markdown table onto the component. "Four or more" is a fixed number rather than a measurement, which is a known limit and a fair price for no script.
+
+@ 062 caption
+Picture caption. The texturiser post's table on a phone: cut off in the article, then opened full size. Neither needed a line of JavaScript!
+
+@ 063 p
+The trap, because there's always one: the overlay holds a second copy of the caption or the table, and a footnote marker in that copy repeats an id and scrolls the page behind the backdrop when clicked. So the copy loses its markers.
+
+@ 064 h
+Diagrams without a diagram library.
+
+@ 065 p
+Two posts wanted a pipeline diagram, and the obvious answer was Mermaid. <sub alias="mermaid dot J S">mermaid.js</sub> on the page breaks the site's<break time="250ms"/> <prosody volume="-20%" rate="+4%">rules</prosody><break time="450ms"/> guidelines, so Opus talked me out of it <prosody pitch="-0.75%" rate="+4%">it does that</prosody>.
+
+@ 066 p
+What shipped is a <sub alias="pipeline">Pipeline</sub> of <sub alias="steps">Steps</sub>: an ordered list in HTML and CSS, styled as cards and arrows. It follows the theme toggle, runs off the article's edge in one row and opens full size in a popover, and drops to a single column under <sub alias="forty-eight rem">48rem</sub>. Take the stylesheet away and it's a numbered list, which is what it was all along. A step that repeats says so in words, because a list can't draw the arrow back. <break time="200ms"/>Agentic AI wins the day over a third-party dependency!
+
+@ 067 p
+As someone who regularly plans development well ahead, I worry about future-proofing. These lightweight diagrams are great, but they draw a sequence and nothing else. The day a diagram needs to fork, Mermaid rendered to SVG at build time is the likely answer, and an untested one.
+
+@ 068 h
+Posts by month.
+
+@ 069 p
+Once I'd written enough for ye, <sub alias="slash posts">/posts/</sub> needed grouping: by year, then by month, under real headings, with a contents list beside it: sticky on a wide screen, a closed <sub alias="details">&lt;details&gt;</sub> <prosody pitch="-0.75%" rate="+4%">"Jump to a month"</prosody> below <sub alias="sixty-four rem">64rem</sub>. The anchors are the dates themselves, so <sub alias="slash posts, hash twenty twenty-six dash ten">/posts/#2026-10</sub> goes where you'd expect. No archive pages like <sub alias="slash posts, slash twenty twenty-six, slash ten">/posts/2026/10/</sub>, by choice.
+
+@ 070 p
+Two details took longer than the feature. A closed <sub alias="details">&lt;details&gt;</sub> can't be reliably forced open without script, so the list of months is in the page twice and the stylesheet shows one of them. And dates are read in UTC: frontmatter dates are midnight UTC, and a build machine west of Greenwich would otherwise file a post from the 1st under the month before.<break time="400ms"/> <prosody pitch="-0.75%" rate="+4%">Ireland is west of Greenwich too, but our clocks never fall behind it, so we're grand.</prosody>
+
+@ 071 caption
+Picture caption. <sub alias="slash posts">/posts/</sub> on a wide screen: the list in the middle, the months on the right, and the margin drift from earlier down both sides.
+
+@ 072 h
+AI images, labelled.
+
+@ 073 p
+On a site about AI, there's one thing I believe matters: <prosody rate="-4%" pitch="+0.75%">transparency</prosody>. So every image a model had a hand in says so three times, set by two arguments that have to agree:
+
+@ 074 tr
+The pixels.<break time="250ms"/> What it says:<break time="150ms"/> <sub alias="A I generated">AI-generated</sub> or <sub alias="A I composite">AI composite</sub>, burnt into a corner. Set by The converter's <sub alias="dash A I">-Ai</sub>.
+
+@ 075 tr
+The file.<break time="250ms"/> What it says:<break time="150ms"/> The <sub alias="International Press Telecommunications Council, IPTC,">IPTC</sub> digital source type.<break time="200ms"/> Set by:<break time="100ms"/> the converter's <sub alias="dash A I">-Ai</sub>.
+
+@ 076 tr
+The page.<break time="250ms"/> What it says:<break time="150ms"/> The European Commission's AI icon, with the kind as its hover and screen-reader text.<break time="200ms"/> Set by:<break time="100ms"/> <sub alias="figure's">Figure's</sub> <sub alias="A I">ai</sub> prop.
+
+@ 077 caption
+Picture caption. The icon and the burnt-in label, close up. And yes, the picture of the label has a label: it's a crop of an AI image, so it gets one too.
+
+@ 078 p
+The folder decides the licence as well: anything in <sub alias="source, assets, generated">src/assets/generated/</sub> has its own scope in the <sub alias="licence">LICENSE</sub>, on the same <sub alias="Creative Commons Attribution-NonCommercial, CC BY-NC,">CC BY-NC</sub> terms as the writing.
+
+@ 079 p
+The trap: nothing checks that the prop matches the file, or that an image in that folder went through the converter at all. Astro also drops the source type from every copy it re-encodes, so it survives in the committed file only. I'm grand with that.<break time="300ms"/> The burnt-in label is the one that travels.
+
+@ 080 h
+Brian reads the posts.
+
+@ 081 p
+Brian, our sound lad of an AI voice, puts up with reading the site aloud.<break time="150ms"/> <prosody pitch="-0.75%" rate="+4%">he gets a bullet of his own in the release post</prosody>. None of the narration runs in the build or in the browser. The recordings are made on my machine with <phoneme alphabet="ipa" ph="ˈæʒər">Azure</phoneme> AI Speech, stored in Blob Storage under a name carrying their hash, cached for a year, and played by a native <sub alias="audio controls">&lt;audio controls&gt;</sub>. Skipping about works because the browser asks for byte ranges and the storage answers them. No player script,<break time="150ms"/> no third hash.
+
+@ 082 p
+To give Brian real personality, every second of audio is lovingly crafted by a pipeline that treats ye to a moderately enjoyable listening experience:
+
+@ 083 diagram
+Diagram. How a post becomes a recording.
+
+@ 084 step
+Write, by Tim. Final words only: every edit after this is a re-read.
+
+@ 085 step
+Segment, by init. The MDX cut into segments by Astro's own parser.
+
+@ 086 step
+Tune, by Opus and Tim. Pauses, respellings, language tags. Opus writes them, my ears rule on them. Repeated until it sounds right.
+
+@ 087 step
+Check, by check. Same words as the post, and only the tags the voice handles well.
+
+@ 088 step
+Synthesise, by <phoneme alphabet="ipa" ph="ˈæʒər">Azure</phoneme> AI Speech. One request per changed segment, stitched and encoded to Ogg Opus.
+
+@ 089 step
+Publish, by publish. Uploaded under a hashed name, and the manifest puts a player on the page.
+
+@ 090 caption
+Diagram caption. Everything before Synthesise happens in a text editor. Synthesis is the only step that costs money, which is why it only redoes what changed.
+
+@ 091 p
+Each recording has a tuned <sub alias="Speech Synthesis Markup Language, SSML,">SSML</sub> script beside its post, one segment per paragraph, heading, list item or diagram step. The segments are cut by the same MDX parser Astro uses, so a paragraph ends where the site says it does, and a check holds the script to the post word for word. Pauses and punctuation are mine to tune; the words aren't. Only the segments that changed are synthesised again.
+
+@ 092 p
+Tuning is where the time goes, mine and Opus's, and Latin is the best example. The <phoneme alphabet="ipa" ph="ˈkɒləfɒn">colophon</phoneme> in<break time="150ms"/> A niche word,<break time="150ms"/> courtesy of Opus,<break time="200ms"/> is a paragraph of fifteenth-century Latin, and Brian's first go at it was through <sub alias="International Phonetic Alphabet, IPA,">IPA</sub>: every phrase spelt out phonetically, in his Irish accent. The second asked the voice for Italian instead, with the printer's German names in German <prosody pitch="-0.75%" rate="+4%">German names in an Italian accent would be odd</prosody>. <break time="200ms"/>Have a listen to both.
+
+@ 093 clip clip=clips/projects/this-site/latin-ipa.bf44b0996fd7.opus
+Audio clip.<break time="300ms"/> Take one,<break time="150ms"/> Latin through IPA,<break time="100ms"/> then the translation.
+
+@ 094 clip-caption
+The <phoneme alphabet="ipa" ph="ˈkɒləfɒn">colophon</phoneme> read phrase by phrase from IPA, followed by Brian's English translation.
+
+@ 095 clip clip=clips/projects/this-site/latin-it-it.6f054cc25ab3.opus
+Audio clip.<break time="300ms"/> Take two,<break time="150ms"/> Latin through an Italian voice.
+
+@ 096 clip-caption
+The same Latin through an <sub alias="I T dash I T">it-IT</sub> language tag.
+
+@ 097 p
+Take two won.<break time="300ms"/> Irish-accented Latin didn't sound like Latin, and since Microsoft had no Latin voice <prosody pitch="-0.75%" rate="+4%">at the time of recording</prosody>, Italian was the next best thing. Now Latin always gets the Italian accent. This is what it looks like in the tuned script, the Latin and then the translation, one segment each:
+
+@ 098 p
+The Roman numerals are the bit I like best: the page shows <sub alias="M, C C C C, L X X I">M cccc lxxi</sub>, and each <sub alias="sub alias">&lt;sub alias&gt;</sub> makes Brian say the Latin word for it. The page keeps its letters and Brian gets his words, so the check still sees the same text as the post.
+
+@ 099 p
+And the traps, because Brian has two. Edit a narrated post and <sub alias="N P M run check">npm run check</sub> fails, taking the deploy down with it, until Brian reads it again. Otherwise the page would happily offer a recording of words it no longer says. And the storage host is written down twice, once for the player's address and once in <sub alias="media source">media-src</sub>, since a JSON config can't read a constant. Change one without the other and every player goes quiet on a perfectly green build.
+
+@ 100 h
+What's deliberately missing.
+
+@ 101 li
+No analytics.
+
+@ 102 li
+No comments <prosody pitch="-0.75%" rate="+4%">we've got enough of those elsewhere</prosody>.
+
+@ 103 li
+No third-party requests.<break time="250ms"/> KISS!
+
+@ 104 li
+No interactive islands, yet! That's very much a <prosody rate="-4%" pitch="+0.75%">"let's build it when it's needed"</prosody><break time="300ms"/> a completely valid engineering decision.
+
+@ 105 p
+Looking back at the 1.1 release, it's the photo at the top of this page, really: plenty of bare limestone, on purpose, and only what's earned its place growing in the cracks,<break time="400ms"/> which is usually where the flowers turn up.
+
+@ 106 outro
+This project page was last updated on 24 October 2026.<break time="300ms"/> This recording was made on 24 October 2026 for <sub alias="Tim Writes dot dev">timwrites.dev</sub>.
+
+@ 107 egg
+Every second lovingly crafted,<break time="200ms"/> it says.<break time="500ms"/> Moderately enjoyable,<break time="200ms"/> it also says.<break time="700ms"/> <prosody rate="-4%" volume="-8%">I'll take the moderately.</prosody><break time="1000ms"/> Right so.<break time="400ms"/> Mind yourselves.

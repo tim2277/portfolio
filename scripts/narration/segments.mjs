@@ -56,12 +56,12 @@ export function segmentPost(path, { lexicon = {}, summary = false, site, name, r
     }
   }
 
-  function push(kind, ssml, { stop = false } = {}) {
+  function push(kind, ssml, { stop = false, clip } = {}) {
     // A bracket pair can straddle an italic, and wrapping that would cross two tags.
     ssml = ssml.replace(/\(([^()]+)\)/g, (whole, inner) => (validate(inner).length ? whole : ASIDE[0] + inner + ASIDE[1]));
     ssml = ssml.replace(/\s+/g, ' ').trim();
     if (stop && /[\p{L}\p{N}](<\/[a-z]+>)*$/u.test(ssml)) ssml += '.';
-    if (words(ssml).length) segments.push({ id: String(segments.length + 1).padStart(3, '0'), kind, ssml });
+    if (words(ssml).length) segments.push({ id: String(segments.length + 1).padStart(3, '0'), kind, ssml, ...(clip && { clip }) });
   }
 
   function block(node, kind = 'p') {
@@ -96,6 +96,19 @@ export function segmentPost(path, { lexicon = {}, summary = false, site, name, r
         // A caption read cold sounds like a paragraph about nothing, so it's announced.
         if (node.name === 'Figure') {
           push('caption', `${prose(lexicon.caption ?? '')} ${kids(node)}`);
+          break;
+        }
+        // The page plays the clip, so the recording does too: Brian announces it, the build
+        // splices the file in after him. Read as a caption, a listener would hear about a
+        // recording and never hear it.
+        if (node.name === 'AudioClip') {
+          const attr = (name) => node.attributes.find((a) => a.name === name)?.value;
+          const [src, label] = [attr('src'), attr('label')];
+          if (typeof src !== 'string') throw new Error(`${path}: an AudioClip without a literal src can't be narrated`);
+          const said = typeof label === 'string' ? `${prose(label.replace(/\s*·\s*/g, ', '))}.` : '';
+          // In the page's order: the label above the player, the caption below it.
+          push('clip', `${prose(lexicon.clip ?? '')} ${said}`, { clip: src });
+          push('clip-caption', kids(node));
           break;
         }
         // Left to the fallback, a pipeline is its step bodies run together: no names, no
