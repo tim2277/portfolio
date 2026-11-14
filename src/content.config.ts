@@ -17,23 +17,32 @@ const baseSchema = ({ image }: SchemaContext) =>
     draft: z.boolean().default(false),
     heroImage: image().optional(),
     heroAlt: z.string().optional(),
+    // Same values as Figure's `ai` prop. A hero in src/assets/generated/ with
+    // this unset carries only the label burnt into its pixels, not the mark.
+    heroAi: z.enum(['generated', 'composite']).optional(),
   });
 
-type HeroFields = { heroImage?: unknown; heroAlt?: string };
+type HeroFields = { heroImage?: unknown; heroAlt?: string; heroAi?: string };
 
 /*
   A hero with no alt text is a silent accessibility hole, and `?? ''` in the
   layout would paper over it. An empty string is still allowed — that says
-  'decorative' deliberately, rather than by forgetting.
+  'decorative' deliberately, rather than by forgetting. `heroAi` with no hero
+  is a label on nothing, and would never show.
 
   Applied last, after any `.extend()`: `.refine()` returns a ZodEffects, which
   has no `.extend()` on it.
 */
 const requireHeroAlt = <T extends z.ZodType<HeroFields>>(schema: T) =>
-  schema.refine((data) => data.heroImage === undefined || data.heroAlt !== undefined, {
-    message: 'heroAlt is required when heroImage is set (use "" for a decorative image)',
-    path: ['heroAlt'],
-  });
+  schema
+    .refine((data) => data.heroImage === undefined || data.heroAlt !== undefined, {
+      message: 'heroAlt is required when heroImage is set (use "" for a decorative image)',
+      path: ['heroAlt'],
+    })
+    .refine((data) => data.heroAi === undefined || data.heroImage !== undefined, {
+      message: 'heroAi needs a heroImage to label',
+      path: ['heroAi'],
+    });
 
 const posts = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/posts' }),

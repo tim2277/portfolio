@@ -86,7 +86,13 @@ const share = data.heroImage
         <Narration entry={`${entry.collection}/${entry.id}`} />
         {
           data.heroImage && (
-            <Figure src={data.heroImage} alt={data.heroAlt ?? ''} id="entry-hero" hero />
+            <Figure
+              src={data.heroImage}
+              alt={data.heroAlt ?? ''}
+              ai={data.heroAi}
+              id="entry-hero"
+              hero
+            />
           )
         }
       </header>
