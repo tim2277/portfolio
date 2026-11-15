@@ -61,5 +61,20 @@
     "recorded": "2026-10-24",
     "transition": "key-press",
     "sidecar": "18e9603c0d8e3b01f67ed0e900d8d761c9e1e30f9ec6d75ecd3d9b6f8ae2fc74"
+  },
+  "posts/whatever-happened-to-the-secretary": {
+    "file": "posts/whatever-happened-to-the-secretary.b7c06195d86d.opus",
+    "seconds": 1684,
+    "bytes": 6367059,
+    "voice": "Brian",
+    "recorded": "2026-11-15",
+    "transition": "key-press",
+    "stings": [
+      "jazz-noir",
+      "ragtime-1930s",
+      "synthpop-1980s",
+      "punk-2000s"
+    ],
+    "sidecar": "0e217391ccfc84522c41d20fedfe283538d0b3a2bbde3acccbba2cf442ec8cfb"
   }
 }

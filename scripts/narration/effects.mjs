@@ -1,9 +1,11 @@
-// The sound effects a narration can use for its transition.
+// The sound effects a narration can use for its transition, or as a sting before a segment.
 //
 //   node scripts/narration/effects.mjs
 //       lists narration/effects.json and says, for each, whether this machine has the file it describes
 //   node scripts/narration/effects.mjs add <name> <file> <source-url> "<title>" "<by>" ["<licence>"]
 //       copies a downloaded file into narration/effects/ and registers where it came from
+//
+// A whole track plays in full unless its entry gains "start" and "seconds", by hand, to pick the window.
 //
 // The files are ignored by git and the registry isn't: the Pixabay licence allows an effect in
 // a recording and forbids handing it on as a bare file, which a public repo would be doing.
@@ -42,6 +44,6 @@ if (command === 'add') {
   const manifestPath = join(root, 'narration', 'manifest.json');
   const manifest = existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, 'utf8')) : {};
   console.log('\nPublished recordings:');
-  for (const [entry, recording] of Object.entries(manifest)) console.log(`  ${entry.padEnd(40)}${recording.transition ?? 'not recorded'}`);
+  for (const [entry, recording] of Object.entries(manifest)) console.log(`  ${entry.padEnd(40)}${recording.transition ?? 'not recorded'}${recording.stings ? `, stings: ${recording.stings.join(', ')}` : ''}`);
   if (missing) process.exit(1);
 }

@@ -14,5 +14,45 @@
     "source": "https://pixabay.com/sound-effects/film-special-effects-page-flip2-178323/",
     "licence": "Pixabay Content License",
     "sha256": "126e661c13992e1a3af82dc5619d1f11d8c7465479e385f95d2d19ed91bc4a6e"
+  },
+  "synthpop-1980s": {
+    "file": "synthpop-1980s.mp3",
+    "title": "Technology Synthpop",
+    "by": "MiroMaxMusic",
+    "source": "https://pixabay.com/music/synth-pop-technology-synthpop-no-copyright-633148/",
+    "licence": "Pixabay Content License",
+    "sha256": "898a3009bd564008099c897c0c0f477d567decc6925cc636d57a507ef292d766",
+    "start": 1,
+    "seconds": 15
+  },
+  "jazz-noir": {
+    "file": "jazz-noir.mp3",
+    "title": "Copper Nights",
+    "by": "pink_sound",
+    "source": "https://pixabay.com/music/smooth-jazz-copper-nights-jazz-background-music-for-video-stories-full-version-633222/",
+    "licence": "Pixabay Content License",
+    "sha256": "8dd3ba30b180e56e1339fd6a07ac8293dd3d0df98ba23369c5c463913edecb1d",
+    "start": 0,
+    "seconds": 15
+  },
+  "ragtime-1930s": {
+    "file": "ragtime-1930s.mp3",
+    "title": "Ragtime",
+    "by": "aurec",
+    "source": "https://pixabay.com/music/synthwave-ragtime-587559/",
+    "licence": "Pixabay Content License",
+    "sha256": "ff573d57294d7e89c9b05fbbb83188680294fb31f79b632b6a5cbc01c5ef550e",
+    "start": 0,
+    "seconds": 12
+  },
+  "punk-2000s": {
+    "file": "punk-2000s.mp3",
+    "title": "Punk Rock Rebellion",
+    "by": "echoes_of_lumen",
+    "source": "https://pixabay.com/music/rock-punk-rock-rebellion-fast-energy-589273/",
+    "licence": "Pixabay Content License",
+    "sha256": "15c28c8b375097db79ed2b6e898aec619a4b2a5e418ff1aaf49dfae248d2913a",
+    "start": 1,
+    "seconds": 12
   }
 }

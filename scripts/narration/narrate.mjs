@@ -76,7 +76,7 @@ if (command === 'respell') {
   if (existsSync(sidecar) && !flags.includes('--force')) fail(`${sidecar} exists. --force replaces it, tuning and all.`);
   const header = [
     `# Narration for src/content/${collection}/${slug}.mdx. A header line per segment, then its SSML on one line.`,
-    `# "@ 012 p gap=1200" overrides the silence before a segment, in milliseconds.`,
+    `# "@ 012 p gap=1200" overrides the silence before a segment, in milliseconds. "sting=<name>" plays a registered effect before it.`,
     `# node scripts/narration/narrate.mjs check ${target.id}`,
     `voice ${VOICE}`,
     `lang ${LANG}`,
@@ -119,7 +119,8 @@ function readSidecar() {
       const [, id, kind, ...options] = line.split(/\s+/);
       const gap = options.find((o) => o.startsWith('gap='))?.slice(4);
       const clip = options.find((o) => o.startsWith('clip='))?.slice(5);
-      segments.push({ id, kind, gap: gap === undefined ? undefined : Number(gap), ...(clip && { clip }), ssml: '' });
+      const sting = options.find((o) => o.startsWith('sting='))?.slice(6);
+      segments.push({ id, kind, gap: gap === undefined ? undefined : Number(gap), ...(clip && { clip }), ...(sting && { sting }), ssml: '' });
     } else segments.at(-1).ssml += (segments.at(-1).ssml ? ' ' : '') + line.trim();
   }
   return { ...settings, segments };
@@ -140,6 +141,8 @@ function check() {
     if (seg.kind !== from.kind) problems.push(`${at}: the post has a ${from.kind} here`);
     if (seg.gap !== undefined && !(seg.gap >= 0 && seg.gap <= 3000)) problems.push(`${at}: gap is out of range`);
     if (seg.clip !== from.clip) problems.push(`${at}: the page plays ${from.clip ?? 'no clip'} here, the tuned file ${seg.clip ?? 'none'}`);
+    // Checked against the registry, not the file: the site's check runs where the effects aren't.
+    if (seg.sting && !registry()[seg.sting]) problems.push(`${at}: no effect called "${seg.sting}" in narration/effects.json`);
     const faults = validate(seg.ssml);
     if (faults.length) {
       problems.push(...faults.map((f) => `${at}: ${f}`));
@@ -175,15 +178,30 @@ function gapBefore(previous, segment) {
 // The effect files stay out of git, since their licence forbids passing them on bare, so
 // narration/effects.json is what says which file a name means. A missing or different file
 // stops the build: a take without its transition, or with the wrong one, sounds finished.
+function registry() {
+  return JSON.parse(readFileSync(join(root, 'narration', 'effects.json'), 'utf8'));
+}
+
 function effectFile(name) {
   if (!name || name === 'none') return null;
-  const effect = JSON.parse(readFileSync(join(root, 'narration', 'effects.json'), 'utf8'))[name];
+  const effect = registry()[name];
   if (!effect) fail(`no effect called "${name}" in narration/effects.json`);
   const file = join(root, 'narration', 'effects', effect.file);
   const restore = `"${effect.title}" by ${effect.by}, from ${effect.source}, saved as narration/effects/${effect.file}`;
-  if (!existsSync(file)) fail(`the "${name}" transition isn't on this machine. It is ${restore}`);
+  if (!existsSync(file)) fail(`the "${name}" effect isn't on this machine. It is ${restore}`);
   if (createHash('sha256').update(readFileSync(file)).digest('hex') !== effect.sha256) fail(`narration/effects/${effect.file} isn't the file the registry describes, which is ${restore}`);
   return file;
+}
+
+// A whole track is registered as downloaded, so its hash still matches the source; "start" and
+// "seconds" in its registry entry pick the window, which fades out rather than stopping dead.
+function effectAudio(name) {
+  const file = effectFile(name);
+  if (!file) return null;
+  const { start, seconds } = registry()[name];
+  const window = seconds ? ['-ss', String(start ?? 0), '-t', String(seconds)] : [];
+  const fade = seconds ? ['-af', `afade=t=out:st=${Math.max(0, seconds - 0.8)}:d=0.8`] : [];
+  return level(trim(execFileSync('ffmpeg', ['-v', 'error', ...window, '-i', file, ...fade, '-f', 's16le', '-ac', '1', '-ar', String(RATE), '-'], { maxBuffer: 2 ** 26 })), 0.35);
 }
 
 async function build({ voice, segments }, { lang, pitch, transition, name = slug, dir = work } = {}) {
@@ -195,8 +213,9 @@ async function build({ voice, segments }, { lang, pitch, transition, name = slug
 
   // Plays between the intro and the post and again before the outro. A post names its own with a
   // "transition <name>" header line, or "transition none"; without one it gets the lexicon's.
-  const effect = effectFile(transition ?? lexicon.transition);
-  const sting = effect && level(trim(execFileSync('ffmpeg', ['-v', 'error', '-i', effect, '-f', 's16le', '-ac', '1', '-ar', String(RATE), '-'], { maxBuffer: 2 ** 26 })), 0.35);
+  const sting = effectAudio(transition ?? lexicon.transition);
+  // "@ 027 h sting=<name>" plays a registered effect before that segment, framed like the transition.
+  const stings = new Map([...new Set(segments.map((s) => s.sting).filter(Boolean))].map((name) => [name, effectAudio(name)]));
   const quiet = (ms) => Buffer.alloc(Math.round((ms / 1000) * RATE) * 2);
   const parts = [];
   const timeline = [];
@@ -209,9 +228,12 @@ async function build({ voice, segments }, { lang, pitch, transition, name = slug
       writeFileSync(file, await synthesise(endpoint, key, document));
       requests++;
     }
-    const framed = sting && (segments[i - 1]?.kind === 'intro' || segment.kind === 'outro');
-    const lead = framed ? [quiet(700), sting, quiet(700)] : [quiet(gapBefore(segments[i - 1], segment))];
-    if (framed) timeline.push(`${clock((samples + lead[0].length / 2) / RATE)}  --- transition`);
+    // A segment's own sting takes the transition's place where both fall, or the two would play back to back.
+    const own = segment.sting && stings.get(segment.sting);
+    const framed = !own && sting && (segments[i - 1]?.kind === 'intro' || segment.kind === 'outro');
+    const lead = own ? [quiet(900), own, quiet(700)] : framed ? [quiet(700), sting, quiet(700)] : [quiet(gapBefore(segments[i - 1], segment))];
+    if (own) timeline.push(`${clock((samples + lead[0].length / 2) / RATE)}  --- sting ${segment.sting}`);
+    else if (framed) timeline.push(`${clock((samples + lead[0].length / 2) / RATE)}  --- transition`);
     const speech = trim(pcm(readFileSync(file), file));
     samples += lead.reduce((n, part) => n + part.length, 0) / 2;
     timeline.push(`${clock(samples / RATE)}  ${segment.id} ${segment.kind.padEnd(13)} ${textOf(segment.ssml).slice(0, 70)}`);
@@ -235,7 +257,7 @@ async function build({ voice, segments }, { lang, pitch, transition, name = slug
   // Without bitexact the Ogg stream gets a random serial number, so the same take would hash,
   // and so publish, under a new name every build.
   execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', wav, '-c:a', 'libopus', '-b:a', '32k', '-ac', '1', '-fflags', '+bitexact', '-flags:a', '+bitexact', opus]);
-  if (name === slug) writeFileSync(join(dir, 'built.json'), JSON.stringify({ sidecar: sidecarHash(), seconds: Math.round(samples / RATE), transition: transition ?? lexicon.transition ?? 'none' }));
+  if (name === slug) writeFileSync(join(dir, 'built.json'), JSON.stringify({ sidecar: sidecarHash(), seconds: Math.round(samples / RATE), transition: transition ?? lexicon.transition ?? 'none', ...(stings.size && { stings: [...stings.keys()] }) }));
   console.log(`\n${clock(samples / RATE)} of audio, ${requests} new requests, ${segments.length - requests} from cache\n${opus}`);
 }
 
@@ -270,7 +292,7 @@ function publish() {
 
   const manifestPath = join(root, 'narration', 'manifest.json');
   const manifest = existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, 'utf8')) : {};
-  manifest[target.id] = { file, seconds: stamp.seconds, bytes: bytes.length, voice: reader, recorded, transition: stamp.transition, sidecar: stamp.sidecar };
+  manifest[target.id] = { file, seconds: stamp.seconds, bytes: bytes.length, voice: reader, recorded, transition: stamp.transition, ...(stamp.stings && { stings: stamp.stings }), sidecar: stamp.sidecar };
   writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
   console.log(`${container}/${file}, recorded in narration/manifest.json`);
 }
